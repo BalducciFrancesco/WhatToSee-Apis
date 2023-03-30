@@ -1,8 +1,12 @@
-package com.what2see.model;
+package com.what2see.model.tour;
 
+import com.what2see.model.user.Guide;
+import com.what2see.model.user.Tourist;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
@@ -11,6 +15,9 @@ import java.util.List;
 
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Tour {
 
     @Id

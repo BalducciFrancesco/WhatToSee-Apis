@@ -1,9 +1,7 @@
-package com.what2see.model;
+package com.what2see.model.tour;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 @Entity

@@ -1,5 +1,6 @@
-package com.what2see.model;
+package com.what2see.model.tour;
 
+import com.what2see.model.user.Tourist;
 import jakarta.persistence.*;
 import lombok.Data;
 

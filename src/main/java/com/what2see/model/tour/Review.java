@@ -1,8 +1,7 @@
-package com.what2see.model;
+package com.what2see.model.tour;
 
+import com.what2see.model.user.Tourist;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Max;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Range;

@@ -1,5 +1,6 @@
-package com.what2see.model;
+package com.what2see.model.user;
 
+import com.what2see.model.tour.Tour;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.Data;

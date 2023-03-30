@@ -1,4 +1,4 @@
-package com.what2see.model;
+package com.what2see.model.user;
 
 import jakarta.persistence.*;
 import lombok.Data;

@@ -1,5 +1,8 @@
-package com.what2see.model;
+package com.what2see.model.user;
 
+import com.what2see.model.tour.Report;
+import com.what2see.model.tour.Review;
+import com.what2see.model.tour.Tour;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
