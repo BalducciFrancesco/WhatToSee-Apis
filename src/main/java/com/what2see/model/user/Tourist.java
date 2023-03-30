@@ -7,11 +7,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
 @Data
 @Entity
+@SuperBuilder
+@NoArgsConstructor
 public class Tourist extends User {
 
     @OneToMany(mappedBy = "author")
