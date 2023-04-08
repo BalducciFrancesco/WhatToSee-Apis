@@ -1,12 +1,12 @@
-package com.what2see.controller;
+package com.what2see.controller.user;
 
 import com.what2see.dto.user.TouristLoginDTO;
 import com.what2see.dto.user.TouristLoginResponseDTO;
 import com.what2see.dto.user.TouristRegisterDTO;
 import com.what2see.dto.user.TouristRegisterResponseDTO;
-import com.what2see.mapper.TouristDTOMapper;
+import com.what2see.mapper.user.TouristDTOMapper;
 import com.what2see.model.user.Tourist;
-import com.what2see.service.TouristService;
+import com.what2see.service.user.TouristService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;

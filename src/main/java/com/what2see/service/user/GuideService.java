@@ -1,10 +1,10 @@
-package com.what2see.service;
+package com.what2see.service.user;
 
 import com.what2see.dto.user.GuideLoginDTO;
 import com.what2see.dto.user.GuideRegisterDTO;
-import com.what2see.mapper.GuideDTOMapper;
+import com.what2see.mapper.user.GuideDTOMapper;
 import com.what2see.model.user.Guide;
-import com.what2see.repository.GuideRepository;
+import com.what2see.repository.user.GuideRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;

@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class TouristLoginResponseDTO {
+public class TouristResponseDTO {
 
     private @NotBlank Long id;
 

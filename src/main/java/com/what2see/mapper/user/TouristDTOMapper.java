@@ -1,8 +1,7 @@
-package com.what2see.mapper;
+package com.what2see.mapper.user;
 
-import com.what2see.dto.user.TouristLoginResponseDTO;
 import com.what2see.dto.user.TouristRegisterDTO;
-import com.what2see.dto.user.TouristRegisterResponseDTO;
+import com.what2see.dto.user.TouristResponseDTO;
 import com.what2see.model.user.Tourist;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,21 +26,13 @@ public class TouristDTOMapper {
                 .build();
     }
 
-    public TouristLoginResponseDTO convertLoginResponse(Tourist loggedTourist) {
-        return TouristLoginResponseDTO.builder()
-                .id(loggedTourist.getId())
-                .username(loggedTourist.getUsername())
-                .firstName(loggedTourist.getFirstName())
-                .lastName(loggedTourist.getLastName())
+    public TouristResponseDTO convertResponse(Tourist t) {
+        return TouristResponseDTO.builder()
+                .id(t.getId())
+                .username(t.getUsername())
+                .firstName(t.getFirstName())
+                .lastName(t.getLastName())
                 .build();
     }
 
-    public TouristRegisterResponseDTO convertRegisterResponse(Tourist createdTourist) {
-        return TouristRegisterResponseDTO.builder()
-                .id(createdTourist.getId())
-                .username(createdTourist.getUsername())
-                .firstName(createdTourist.getFirstName())
-                .lastName(createdTourist.getLastName())
-                .build();
-    }
 }

@@ -1,4 +1,4 @@
-package com.what2see.repository;
+package com.what2see.repository.user;
 
 import com.what2see.model.user.Tourist;
 import org.springframework.data.jpa.repository.JpaRepository;

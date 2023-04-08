@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class AdministratorLoginResponseDTO {
+public class GuideResponseDTO {
 
     private @NotBlank Long id;
 
@@ -18,5 +18,7 @@ public class AdministratorLoginResponseDTO {
 
     private @NotBlank String lastName;
 
-    private @Builder.Default @NotBlank int role = UserRole.ADMINISTRATOR.ordinal();
+    private @Builder.Default @NotBlank int role = UserRole.GUIDE.ordinal();
+
+
 }

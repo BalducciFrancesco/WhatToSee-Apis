@@ -1,10 +1,10 @@
-package com.what2see.controller;
+package com.what2see.controller.user;
 
 import com.what2see.dto.user.AdministratorLoginDTO;
-import com.what2see.dto.user.AdministratorLoginResponseDTO;
-import com.what2see.mapper.AdministratorDTOMapper;
+import com.what2see.dto.user.AdministratorResponseDTO;
+import com.what2see.mapper.user.AdministratorDTOMapper;
 import com.what2see.model.user.Administrator;
-import com.what2see.service.AdministratorService;
+import com.what2see.service.user.AdministratorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class AdministratorController {
     private final AdministratorDTOMapper administratorMapper;
 
     @PostMapping("/login")
-    public ResponseEntity<AdministratorLoginResponseDTO> login(@RequestBody @Valid AdministratorLoginDTO t) {
+    public ResponseEntity<AdministratorResponseDTO> login(@RequestBody @Valid AdministratorLoginDTO t) {
         Administrator loggedAdministrator = administratorService.login(t);
         if(loggedAdministrator != null) {
             return ResponseEntity.ok(this.administratorMapper.convertLoginResponse(loggedAdministrator));

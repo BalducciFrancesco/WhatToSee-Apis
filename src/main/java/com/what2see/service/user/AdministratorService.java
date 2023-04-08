@@ -1,8 +1,8 @@
-package com.what2see.service;
+package com.what2see.service.user;
 
 import com.what2see.dto.user.AdministratorLoginDTO;
 import com.what2see.model.user.Administrator;
-import com.what2see.repository.AdministratorRepository;
+import com.what2see.repository.user.AdministratorRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

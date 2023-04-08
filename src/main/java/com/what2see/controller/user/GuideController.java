@@ -1,12 +1,11 @@
-package com.what2see.controller;
+package com.what2see.controller.user;
 
 import com.what2see.dto.user.GuideLoginDTO;
-import com.what2see.dto.user.GuideLoginResponseDTO;
 import com.what2see.dto.user.GuideRegisterDTO;
-import com.what2see.dto.user.GuideRegisterResponseDTO;
-import com.what2see.mapper.GuideDTOMapper;
+import com.what2see.dto.user.GuideResponseDTO;
+import com.what2see.mapper.user.GuideDTOMapper;
 import com.what2see.model.user.Guide;
-import com.what2see.service.GuideService;
+import com.what2see.service.user.GuideService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -29,18 +28,18 @@ public class GuideController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<GuideLoginResponseDTO> login(@RequestBody @Valid GuideLoginDTO t) {
+    public ResponseEntity<GuideResponseDTO> login(@RequestBody @Valid GuideLoginDTO t) {
         Guide loggedGuide = guideService.login(t);
         if(loggedGuide != null) {
-            return ResponseEntity.ok(this.guideMapper.convertLoginResponse(loggedGuide));
+            return ResponseEntity.ok(this.guideMapper.convertResponse(loggedGuide));
         } else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Credenziali non valide");
     }
 
     @PostMapping("/register")
-    public ResponseEntity<GuideRegisterResponseDTO> register(@RequestBody @Valid GuideRegisterDTO t) {
+    public ResponseEntity<GuideResponseDTO> register(@RequestBody @Valid GuideRegisterDTO t) {
         try {
             Guide createdGuide = guideService.register(t);
-            return ResponseEntity.ok(this.guideMapper.convertRegisterResponse(createdGuide));
+            return ResponseEntity.ok(this.guideMapper.convertResponse(createdGuide));
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username già esistente");
         }
