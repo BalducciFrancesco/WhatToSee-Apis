@@ -28,6 +28,9 @@ public class Tour {
     private String title;
 
     @Column(nullable = false)
+    private String description;
+
+    @Column(nullable = false)
     private Double approxCost;
 
     @Column(nullable = false)

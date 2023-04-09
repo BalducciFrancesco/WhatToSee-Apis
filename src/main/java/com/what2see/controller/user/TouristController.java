@@ -1,9 +1,8 @@
 package com.what2see.controller.user;
 
 import com.what2see.dto.user.TouristLoginDTO;
-import com.what2see.dto.user.TouristLoginResponseDTO;
 import com.what2see.dto.user.TouristRegisterDTO;
-import com.what2see.dto.user.TouristRegisterResponseDTO;
+import com.what2see.dto.user.TouristResponseDTO;
 import com.what2see.mapper.user.TouristDTOMapper;
 import com.what2see.model.user.Tourist;
 import com.what2see.service.user.TouristService;
@@ -12,11 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -27,19 +26,24 @@ public class TouristController {
 
     private final TouristDTOMapper touristMapper;
 
+    @GetMapping()
+    public ResponseEntity<List<TouristResponseDTO>> getAll() {
+        return ResponseEntity.ok(this.touristService.getAll().stream().map(t -> this.touristMapper.convertResponse(t)).collect(Collectors.toList()));
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<TouristLoginResponseDTO> login(@RequestBody @Valid TouristLoginDTO t) {
+    public ResponseEntity<TouristResponseDTO> login(@RequestBody @Valid TouristLoginDTO t) {
         Tourist loggedTourist = touristService.login(t);
         if(loggedTourist != null) {
-            return ResponseEntity.ok(this.touristMapper.convertLoginResponse(loggedTourist));
+            return ResponseEntity.ok(this.touristMapper.convertResponse(loggedTourist));
         } else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Credenziali non valide");
     }
 
     @PostMapping("/register")
-    public ResponseEntity<TouristRegisterResponseDTO> register(@RequestBody @Valid TouristRegisterDTO t) {
+    public ResponseEntity<TouristResponseDTO> register(@RequestBody @Valid TouristRegisterDTO t) {
         try {
             Tourist createdTourist = touristService.register(t);
-            return ResponseEntity.ok(this.touristMapper.convertRegisterResponse(createdTourist));
+            return ResponseEntity.ok(this.touristMapper.convertResponse(createdTourist));
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username già esistente");
         }

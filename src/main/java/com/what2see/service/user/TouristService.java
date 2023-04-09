@@ -9,6 +9,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -16,6 +18,10 @@ public class TouristService {
 
     private final TouristRepository touristRepository;
     private final TouristDTOMapper touristMapper;
+
+    public List<Tourist> getAll() {
+        return this.touristRepository.findAll();
+    }
 
     public Tourist register(TouristRegisterDTO dto) {
         Tourist t = touristMapper.convertRegister(dto);
