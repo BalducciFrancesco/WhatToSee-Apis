@@ -22,6 +22,6 @@ public class Theme {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "theme")
+    @OneToMany(mappedBy = "theme", cascade = CascadeType.ALL)
     private List<Tour> tours;
 }

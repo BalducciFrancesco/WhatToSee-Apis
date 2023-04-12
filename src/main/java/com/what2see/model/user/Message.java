@@ -34,7 +34,7 @@ public class Message {
     @Column(nullable = false)
     private Date timestamp;
 
-    @ManyToOne
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "conversationId", nullable = false)
     private Conversation conversation;
 }

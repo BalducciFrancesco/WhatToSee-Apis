@@ -1,6 +1,7 @@
 package com.what2see.model.user;
 
 import com.what2see.model.tour.Tour;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
@@ -15,9 +16,9 @@ import java.util.List;
 @NoArgsConstructor
 public class Guide extends User {
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Tour> createdTours;
 
-    @OneToMany(mappedBy = "guide")
+    @OneToMany(mappedBy = "guide", cascade = CascadeType.ALL)
     private List<Conversation> conversations;
 }

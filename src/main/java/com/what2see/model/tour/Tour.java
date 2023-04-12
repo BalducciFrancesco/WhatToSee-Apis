@@ -43,24 +43,24 @@ public class Tour {
     @Column(nullable = false, columnDefinition = "tinyint(1) default 1")
     private boolean isPublic;
 
-    @ManyToOne
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "guideId", nullable = false)
     private Guide author;
 
-    @OneToMany(mappedBy = "tour")
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL)
     private List<TourStop> stops;
 
-    @OneToMany(mappedBy = "tour")
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL)
     private List<Report> reports;
 
-    @OneToMany(mappedBy = "tour")
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
-    @ManyToOne
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "cityId")
     private City city;
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinTable(
             name = "tour_tags",
             joinColumns = {@JoinColumn(name = "tourId")},
@@ -68,11 +68,11 @@ public class Tour {
     )
     private List<Tag> tags;
 
-    @ManyToOne
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "themeId", nullable = false)
     private Theme theme;
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinTable(
         name = "tour_shares",
         joinColumns = {@JoinColumn(name = "tourId")},
@@ -80,7 +80,7 @@ public class Tour {
     )
     private List<Tourist> sharedTourists;
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })  // TODO does this remove tourists too?
     @JoinTable(
             name = "tour_completes",
             joinColumns = {@JoinColumn(name = "tourId")},

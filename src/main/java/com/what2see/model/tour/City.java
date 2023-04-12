@@ -23,6 +23,6 @@ public class City {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "city")
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
     private List<Tour> tours;
 }

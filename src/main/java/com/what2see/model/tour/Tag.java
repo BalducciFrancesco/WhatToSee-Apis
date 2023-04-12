@@ -22,6 +22,6 @@ public class Tag {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     private List<Tour> tours;
 }

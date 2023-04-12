@@ -43,7 +43,7 @@ public class TourStop {
 
     private String transferOtherOptions;
 
-    @ManyToOne
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "tourId", nullable = false)
     private Tour tour;
 
