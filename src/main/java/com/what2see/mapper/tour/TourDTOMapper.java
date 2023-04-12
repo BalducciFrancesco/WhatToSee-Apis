@@ -64,7 +64,7 @@ public class TourDTOMapper {
     }
 
     public Tour convertCreate(TourCreateDTO t, Long guideAuthorId) throws NoSuchElementException {
-        return Tour.builder()
+        Tour tour = Tour.builder()
                 .title(t.getTitle())
                 .description(t.getDescription())
                 .approxCost(t.getApproxCost())
@@ -81,6 +81,8 @@ public class TourDTOMapper {
                 .sharedTourists(t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(tId -> touristRepository.findById(tId).orElseThrow()).collect(Collectors.toList()) : new ArrayList<>())
                 .markedTourists(new ArrayList<>())
                 .build();
+        tour.getStops().forEach(s -> s.setTour(tour));
+        return tour;
     }
 
 }

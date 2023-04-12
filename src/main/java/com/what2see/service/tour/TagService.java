@@ -7,8 +7,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,10 +23,14 @@ public class TagService {
     }
 
     public List<Tag> findOrCreateTags(List<String> tagNames) {
-        // TODO check if exists already, in order to not overwrite
-        return tagNames.stream()
-                .map(tagName -> Tag.builder().name(tagName).build())
-                .map(tagRepository::save)
-                .collect(Collectors.toList());
+        List<Tag> tags = new ArrayList();
+        for(String tagName : tagNames) {
+            Tag t = tagRepository.findByName(tagName);
+            if(t == null) {
+                t = tagRepository.save(Tag.builder().name(tagName).build());
+            }
+            tags.add(t);
+        }
+        return tags;
     }
 }

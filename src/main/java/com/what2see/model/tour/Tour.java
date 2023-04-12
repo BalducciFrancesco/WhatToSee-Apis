@@ -57,7 +57,7 @@ public class Tour {
     private List<Review> reviews;
 
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
-    @JoinColumn(name = "cityId")
+    @JoinColumn(name = "cityId", nullable = false)
     private City city;
 
     @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
@@ -80,7 +80,7 @@ public class Tour {
     )
     private List<Tourist> sharedTourists;
 
-    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })  // TODO does this remove tourists too?
+    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinTable(
             name = "tour_completes",
             joinColumns = {@JoinColumn(name = "tourId")},
