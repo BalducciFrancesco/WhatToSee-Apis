@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,4 +22,11 @@ public class TagService {
         return this.tagRepository.findAll();
     }
 
+    public List<Tag> findOrCreateTags(List<String> tagNames) {
+        // TODO check if exists already, in order to not overwrite
+        return tagNames.stream()
+                .map(tagName -> Tag.builder().name(tagName).build())
+                .map(tagRepository::save)
+                .collect(Collectors.toList());
+    }
 }
