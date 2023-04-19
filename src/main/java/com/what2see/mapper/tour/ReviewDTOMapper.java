@@ -4,8 +4,8 @@ import com.what2see.dto.tour.ReviewCreateDTO;
 import com.what2see.dto.tour.ReviewResponseDTO;
 import com.what2see.mapper.user.TouristDTOMapper;
 import com.what2see.model.tour.Review;
-import com.what2see.repository.tour.TourRepository;
-import com.what2see.repository.user.TouristRepository;
+import com.what2see.service.tour.TourService;
+import com.what2see.service.user.TouristService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +18,9 @@ public class ReviewDTOMapper {
 
     private final TouristDTOMapper touristMapper;
 
-    private final TouristRepository touristRepository;
+    private final TouristService touristService;
 
-    private final TourRepository tourRepository;
+    private final TourService tourService;
 
     public ReviewResponseDTO convertResponse(Review review) {
         return ReviewResponseDTO.builder()
@@ -37,8 +37,8 @@ public class ReviewDTOMapper {
                 .timestamp(new Date())
                 .stars(r.getStars())
                 .description(r.getDescription())
-                .tour(tourRepository.findById(r.getTourId()).orElseThrow())
-                .author(touristRepository.findById(touristAuthorId).orElseThrow())
+                .tour(tourService.findById(r.getTourId()).orElseThrow())
+                .author(touristService.findById(touristAuthorId).orElseThrow())
                 .build();
     }
 }

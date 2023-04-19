@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +18,7 @@ import java.util.List;
 public class TouristService {
 
     private final TouristRepository touristRepository;
+
     private final TouristDTOMapper touristMapper;
 
     public List<Tourist> getAll() {
@@ -31,5 +33,9 @@ public class TouristService {
     public Tourist login(TouristLoginDTO dto) {
         Tourist t = touristRepository.authenticate(dto.getUsername(), dto.getPassword());
         return t;
+    }
+
+    public Optional<Tourist> findById(Long touristId) {
+        return touristRepository.findById(touristId);
     }
 }

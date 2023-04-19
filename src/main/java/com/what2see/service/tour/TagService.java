@@ -1,6 +1,5 @@
 package com.what2see.service.tour;
 
-import com.what2see.mapper.tour.TagDTOMapper;
 import com.what2see.model.tour.Tag;
 import com.what2see.repository.tour.TagRepository;
 import jakarta.transaction.Transactional;
@@ -16,7 +15,6 @@ import java.util.List;
 public class TagService {
 
     private final TagRepository tagRepository;
-    private final TagDTOMapper tagMapper;
 
     public List<Tag> getAll() {
         return this.tagRepository.findAll();
@@ -32,5 +30,9 @@ public class TagService {
             tags.add(t);
         }
         return tags;
+    }
+
+    public List<Tag> findAllById(List<Long> tagIds) {
+        return tagRepository.findAllById(tagIds);
     }
 }

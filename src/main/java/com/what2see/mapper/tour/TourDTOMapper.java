@@ -4,11 +4,11 @@ import com.what2see.dto.tour.TourCreateDTO;
 import com.what2see.dto.tour.TourResponseDTO;
 import com.what2see.mapper.user.GuideDTOMapper;
 import com.what2see.model.tour.Tour;
-import com.what2see.repository.tour.CityRepository;
-import com.what2see.repository.tour.ThemeRepository;
-import com.what2see.repository.user.GuideRepository;
-import com.what2see.repository.user.TouristRepository;
+import com.what2see.service.tour.CityService;
 import com.what2see.service.tour.TagService;
+import com.what2see.service.tour.ThemeService;
+import com.what2see.service.user.GuideService;
+import com.what2see.service.user.TouristService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,24 +22,23 @@ import java.util.stream.Collectors;
 @Service
 public class TourDTOMapper {
 
-    private final TouristRepository touristRepository;
+    private final TouristService touristService;
+
+    private final GuideService guideService;
 
     private final GuideDTOMapper guideMapper;
 
-    private final GuideRepository guideRepository;
+    private final CityService cityService;
 
     private final CityDTOMapper cityMapper;
 
-    private final CityRepository cityRepository;
+    private final TagService tagService;
 
     private final TagDTOMapper tagMapper;
 
-    private final TagService tagService;
-
-
     private final ThemeDTOMapper themeMapper;
 
-    private final ThemeRepository themeRepository;
+    private final ThemeService themeService;
 
     private final TourStopDTOMapper tourStopMapper;
 
@@ -76,14 +75,14 @@ public class TourDTOMapper {
                 .approxDuration(t.getApproxDuration())
                 .creationDate(new Date())
                 .isPublic(t.getIsPublic())
-                .author(guideRepository.findById(guideAuthorId).orElseThrow())
+                .author(guideService.findById(guideAuthorId).orElseThrow())
                 .stops(t.getStops().stream().map(tourStopMapper::convertCreate).collect(Collectors.toList()))
                 .reports(new ArrayList<>())
                 .reviews(new ArrayList<>())
-                .city(cityRepository.findById(t.getCityId()).orElseThrow())
-                .theme(themeRepository.findById(t.getThemeId()).orElseThrow())
+                .city(cityService.findById(t.getCityId()).orElseThrow())
+                .theme(themeService.findById(t.getThemeId()).orElseThrow())
                 .tags(t.getTagNames() != null ? tagService.findOrCreateTags(t.getTagNames()) : new ArrayList<>())
-                .sharedTourists(t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(tId -> touristRepository.findById(tId).orElseThrow()).collect(Collectors.toList()) : new ArrayList<>())
+                .sharedTourists(t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(tId -> touristService.findById(tId).orElseThrow()).collect(Collectors.toList()) : new ArrayList<>())
                 .markedTourists(new ArrayList<>())
                 .build();
         tour.getStops().forEach(s -> s.setTour(tour));

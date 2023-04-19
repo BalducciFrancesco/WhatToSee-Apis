@@ -7,9 +7,6 @@ import com.what2see.model.tour.City;
 import com.what2see.model.tour.Tag;
 import com.what2see.model.tour.Theme;
 import com.what2see.model.tour.Tour;
-import com.what2see.repository.tour.CityRepository;
-import com.what2see.repository.tour.TagRepository;
-import com.what2see.repository.tour.ThemeRepository;
 import com.what2see.repository.tour.TourRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,13 +23,14 @@ import java.util.stream.Collectors;
 public class TourService {
 
     private final TourRepository tourRepository;
+
     private final TourDTOMapper tourMapper;
 
-    private final CityRepository cityRepository;
+    private final CityService cityService;
 
-    private final TagRepository tagRepository;
+    private final TagService tagService;
 
-    private final ThemeRepository themeRepository;
+    private final ThemeService themeService;
 
 
     public Tour create(TourCreateDTO dto, Long guideId) {
@@ -41,9 +40,9 @@ public class TourService {
 
     public List<Tour> search(TourSearchDTO s) throws NoSuchElementException {
         // if search field ids are specified, they must match an existing entity
-        City city = s.getCityId() != null ? cityRepository.findById(s.getCityId()).orElseThrow() : null;
-        Theme theme = s.getThemeId() != null ? themeRepository.findById(s.getThemeId()).orElseThrow() : null;
-        List<Tag> tags = s.getTagIds() != null ? tagRepository.findAllById(s.getTagIds()) : null;
+        City city = s.getCityId() != null ? cityService.findById(s.getCityId()).orElseThrow() : null;
+        Theme theme = s.getThemeId() != null ? themeService.findById(s.getThemeId()).orElseThrow() : null;
+        List<Tag> tags = s.getTagIds() != null ? tagService.findAllById(s.getTagIds()) : null;
 
         List<Tour> result = tourRepository.search(city, theme, s.getApproxDuration());
         if(tags != null && !tags.isEmpty())
@@ -51,5 +50,9 @@ public class TourService {
             result = result.stream().filter(tour -> tour.getTags().stream().anyMatch(tags::contains)).collect(Collectors.toList());
 
         return result;
+    }
+
+    public Optional<Tour> findById(Long tourId) {
+        return tourRepository.findById(tourId);
     }
 }
