@@ -21,7 +21,7 @@ public class TourCreateDTO {
 
     private @NotNull Long cityId;
 
-    private List<String> tags;    // can be empty and created if not existing
+    private List<String> tagNames;    // can be empty and created if not existing
 
     private @NotNull Long themeId;
 

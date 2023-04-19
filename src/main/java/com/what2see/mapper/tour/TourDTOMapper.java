@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -63,6 +64,10 @@ public class TourDTOMapper {
                 .build();
     }
 
+    public List<TourResponseDTO> convertResponse(List<Tour> tour) {
+        return tour.stream().map(this::convertResponse).collect(Collectors.toList());
+    }
+
     public Tour convertCreate(TourCreateDTO t, Long guideAuthorId) throws NoSuchElementException {
         Tour tour = Tour.builder()
                 .title(t.getTitle())
@@ -77,7 +82,7 @@ public class TourDTOMapper {
                 .reviews(new ArrayList<>())
                 .city(cityRepository.findById(t.getCityId()).orElseThrow())
                 .theme(themeRepository.findById(t.getThemeId()).orElseThrow())
-                .tags(t.getTags() != null ? tagService.findOrCreateTags(t.getTags()) : new ArrayList<>())
+                .tags(t.getTagNames() != null ? tagService.findOrCreateTags(t.getTagNames()) : new ArrayList<>())
                 .sharedTourists(t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(tId -> touristRepository.findById(tId).orElseThrow()).collect(Collectors.toList()) : new ArrayList<>())
                 .markedTourists(new ArrayList<>())
                 .build();
