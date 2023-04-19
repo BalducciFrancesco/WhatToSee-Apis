@@ -19,10 +19,17 @@ public class City {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @Column(nullable = false, unique = true)
     private String name;
 
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
     private List<Tour> tours;
+
+    @Override
+    public String toString() {
+        return "City{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

@@ -21,4 +21,9 @@ public class Guide extends User {
 
     @OneToMany(mappedBy = "guide", cascade = CascadeType.ALL)
     private List<Conversation> conversations;
+
+    @Override
+    public String toString() {
+        return "Guide{} " + super.toString();
+    }
 }

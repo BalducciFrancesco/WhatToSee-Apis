@@ -47,4 +47,19 @@ public class TourStop {
     @JoinColumn(name = "tourId", nullable = false)
     private Tour tour;
 
+    @Override
+    public String toString() {
+        return "TourStop{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", cost=" + cost +
+                ", duration='" + duration + '\'' +
+                ", transferCost=" + transferCost +
+                ", transferDuration='" + transferDuration + '\'' +
+                ", transferType='" + transferType + '\'' +
+                ", transferDetails='" + transferDetails + '\'' +
+                ", transferOtherOptions='" + transferOtherOptions + '\'' +
+                '}';
+    }
 }

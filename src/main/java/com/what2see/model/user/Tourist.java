@@ -34,4 +34,9 @@ public class Tourist extends User {
     @OneToMany(mappedBy = "tourist", cascade = CascadeType.ALL)
     private List<Conversation> conversations;
 
+    @Override
+    public String toString() {
+        return "Tourist{} " + super.toString();
+    }
+
 }

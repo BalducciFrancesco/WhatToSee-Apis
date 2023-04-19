@@ -87,4 +87,6 @@ public class Tour {
             inverseJoinColumns = {@JoinColumn(name = "touristId")}
     )
     private List<Tourist> markedTourists;
+
+
 }
