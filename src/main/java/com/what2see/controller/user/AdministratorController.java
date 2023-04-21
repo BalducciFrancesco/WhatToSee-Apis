@@ -28,7 +28,7 @@ public class AdministratorController {
     public ResponseEntity<AdministratorResponseDTO> login(@RequestBody @Valid AdministratorLoginDTO t) {
         Administrator loggedAdministrator = administratorService.login(t);
         if(loggedAdministrator != null) {
-            return ResponseEntity.ok(this.administratorMapper.convertLoginResponse(loggedAdministrator));
+            return ResponseEntity.ok(administratorMapper.convertLoginResponse(loggedAdministrator));
         } else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Credenziali non valide");
     }
 

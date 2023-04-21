@@ -23,7 +23,7 @@ public class TagController {
 
     @GetMapping()
     public ResponseEntity<List<TagResponseDTO>> getAll() {
-        return ResponseEntity.ok(this.tagService.getAll().stream().map(t -> this.tagMapper.convert(t)).collect(Collectors.toList()));
+        return ResponseEntity.ok(tagService.getAll().stream().map(tagMapper::convert).collect(Collectors.toList()));
     }
 
 }

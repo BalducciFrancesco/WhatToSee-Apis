@@ -28,14 +28,14 @@ public class TouristController {
 
     @GetMapping()
     public ResponseEntity<List<TouristResponseDTO>> getAll() {
-        return ResponseEntity.ok(this.touristService.getAll().stream().map(t -> this.touristMapper.convertResponse(t)).collect(Collectors.toList()));
+        return ResponseEntity.ok(this.touristService.getAll().stream().map(touristMapper::convertResponse).collect(Collectors.toList()));
     }
 
     @PostMapping("/login")
     public ResponseEntity<TouristResponseDTO> login(@RequestBody @Valid TouristLoginDTO t) {
         Tourist loggedTourist = touristService.login(t);
         if(loggedTourist != null) {
-            return ResponseEntity.ok(this.touristMapper.convertResponse(loggedTourist));
+            return ResponseEntity.ok(touristMapper.convertResponse(loggedTourist));
         } else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Credenziali non valide");
     }
 
@@ -43,7 +43,7 @@ public class TouristController {
     public ResponseEntity<TouristResponseDTO> register(@RequestBody @Valid TouristRegisterDTO t) {
         try {
             Tourist createdTourist = touristService.register(touristMapper.convertRegister(t));
-            return ResponseEntity.ok(this.touristMapper.convertResponse(createdTourist));
+            return ResponseEntity.ok(touristMapper.convertResponse(createdTourist));
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username già esistente");
         }

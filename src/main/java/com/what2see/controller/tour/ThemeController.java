@@ -23,7 +23,7 @@ public class ThemeController {
 
     @GetMapping()
     public ResponseEntity<List<ThemeResponseDTO>> getAll() {
-        return ResponseEntity.ok(this.themeService.getAll().stream().map(t -> this.themeMapper.convert(t)).collect(Collectors.toList()));
+        return ResponseEntity.ok(themeService.getAll().stream().map(themeMapper::convert).collect(Collectors.toList()));
     }
 
 }

@@ -31,7 +31,7 @@ public class GuideController {
     public ResponseEntity<GuideResponseDTO> login(@RequestBody @Valid GuideLoginDTO g) {
         Guide loggedGuide = guideService.login(g);
         if(loggedGuide != null) {
-            return ResponseEntity.ok(this.guideMapper.convertResponse(loggedGuide));
+            return ResponseEntity.ok(guideMapper.convertResponse(loggedGuide));
         } else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Credenziali non valide");
     }
 
@@ -39,7 +39,7 @@ public class GuideController {
     public ResponseEntity<GuideResponseDTO> register(@RequestBody @Valid GuideRegisterDTO g) {
         try {
             Guide createdGuide = guideService.register(guideMapper.convertRegister(g));
-            return ResponseEntity.ok(this.guideMapper.convertResponse(createdGuide));
+            return ResponseEntity.ok(guideMapper.convertResponse(createdGuide));
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username già esistente");
         }
