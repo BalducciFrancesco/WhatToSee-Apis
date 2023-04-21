@@ -25,16 +25,21 @@ public class TourController {
 
     private final TourDTOMapper tourMapper;
 
-    @GetMapping("/search")
-    public ResponseEntity<List<TourResponseDTO>> search(@Valid TourSearchDTO s, @RequestHeader(value="Authentication") Long guideId) {
-        return ResponseEntity.ok(tourMapper.convertResponse(tourService.search(s)));
-    }
 
+    @GetMapping("/{tourId}")
+    public ResponseEntity<TourResponseDTO> getById(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long guideId) {
+        return ResponseEntity.ok(tourMapper.convertResponse(tourService.findById(tourId).orElseThrow()));
+    }
 
     @PostMapping()
     public ResponseEntity<TourResponseDTO> create(@RequestBody @Valid TourCreateDTO t, @RequestHeader(value="Authentication") Long guideId) {
         Tour createdTour = tourService.create(tourMapper.convertCreate(t, guideId));
-        return ResponseEntity.ok(this.tourMapper.convertResponse(createdTour));
+        return ResponseEntity.ok(tourMapper.convertResponse(createdTour));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<TourResponseDTO>> search(@Valid TourSearchDTO s, @RequestHeader(value="Authentication") Long guideId) {
+        return ResponseEntity.ok(tourMapper.convertResponse(tourService.search(s)));
     }
 
 }
