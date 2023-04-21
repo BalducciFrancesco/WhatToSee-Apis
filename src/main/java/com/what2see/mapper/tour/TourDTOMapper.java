@@ -81,7 +81,7 @@ public class TourDTOMapper {
                 .reviews(new ArrayList<>())
                 .city(cityService.findById(t.getCityId()).orElseThrow())
                 .theme(themeService.findById(t.getThemeId()).orElseThrow())
-                .tags(t.getTagNames() != null ? tagService.findOrCreateTags(t.getTagNames()) : new ArrayList<>())
+                .tags(t.getTagNames() != null ? tagService.findAllByNames(t.getTagNames()) : new ArrayList<>())
                 .sharedTourists(t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(tId -> touristService.findById(tId).orElseThrow()).collect(Collectors.toList()) : new ArrayList<>())
                 .markedTourists(new ArrayList<>())
                 .build();

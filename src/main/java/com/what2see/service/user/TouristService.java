@@ -3,7 +3,6 @@ package com.what2see.service.user;
 import com.what2see.dto.user.TouristLoginDTO;
 import com.what2see.model.user.Tourist;
 import com.what2see.repository.user.TouristRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +11,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class TouristService {
 
     private final TouristRepository touristRepository;

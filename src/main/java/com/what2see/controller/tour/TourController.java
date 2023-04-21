@@ -6,6 +6,7 @@ import com.what2see.dto.tour.TourResponseDTO;
 import com.what2see.dto.tour.TourSearchDTO;
 import com.what2see.mapper.tour.TourDTOMapper;
 import com.what2see.model.tour.Tour;
+import com.what2see.service.tour.TagService;
 import com.what2see.service.tour.TourService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,9 @@ public class TourController {
 
     private final TourService tourService;
 
+    private final TagService tagService;
+
+
     private final TourDTOMapper tourMapper;
 
 
@@ -33,6 +37,7 @@ public class TourController {
 
     @PostMapping()
     public ResponseEntity<TourResponseDTO> create(@RequestBody @Valid TourCreateDTO t, @RequestHeader(value="Authentication") Long guideId) {
+        tagService.create(t.getTagNames()); // create tags if not already exists
         Tour createdTour = tourService.create(tourMapper.convertCreate(t, guideId));
         return ResponseEntity.ok(tourMapper.convertResponse(createdTour));
     }

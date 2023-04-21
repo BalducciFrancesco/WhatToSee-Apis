@@ -6,7 +6,6 @@ import com.what2see.model.tour.Tag;
 import com.what2see.model.tour.Theme;
 import com.what2see.model.tour.Tour;
 import com.what2see.repository.tour.TourRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class TourService {
 
     private final TourRepository tourRepository;
