@@ -42,7 +42,7 @@ public class TouristController {
     @PostMapping("/register")
     public ResponseEntity<TouristResponseDTO> register(@RequestBody @Valid TouristRegisterDTO t) {
         try {
-            Tourist createdTourist = touristService.register(t);
+            Tourist createdTourist = touristService.register(touristMapper.convertRegister(t));
             return ResponseEntity.ok(this.touristMapper.convertResponse(createdTourist));
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username già esistente");

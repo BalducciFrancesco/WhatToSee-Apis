@@ -15,7 +15,6 @@ public class AdministratorService {
     private final AdministratorRepository administratorRepository;
 
     public Administrator login(AdministratorLoginDTO dto) {
-        Administrator t = administratorRepository.authenticate(dto.getUsername(), dto.getPassword());
-        return t;
+        return administratorRepository.authenticate(dto.getUsername(), dto.getPassword());
     }
 }

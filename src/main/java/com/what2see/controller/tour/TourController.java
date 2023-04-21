@@ -33,7 +33,7 @@ public class TourController {
 
     @PostMapping()
     public ResponseEntity<TourResponseDTO> create(@RequestBody @Valid TourCreateDTO t, @RequestHeader(value="Authentication") Long guideId) {
-        Tour createdTour = tourService.create(t, guideId);
+        Tour createdTour = tourService.create(tourMapper.convertCreate(t, guideId));
         return ResponseEntity.ok(this.tourMapper.convertResponse(createdTour));
     }
 

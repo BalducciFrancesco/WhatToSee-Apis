@@ -1,8 +1,6 @@
 package com.what2see.service.user;
 
 import com.what2see.dto.user.GuideLoginDTO;
-import com.what2see.dto.user.GuideRegisterDTO;
-import com.what2see.mapper.user.GuideDTOMapper;
 import com.what2see.model.user.Guide;
 import com.what2see.repository.user.GuideRepository;
 import jakarta.transaction.Transactional;
@@ -19,11 +17,8 @@ public class GuideService {
 
     private final GuideRepository guideRepository;
 
-    private final GuideDTOMapper guideMapper;
-
-    public Guide register(GuideRegisterDTO dto) throws DataIntegrityViolationException {
-        Guide t = guideMapper.convertRegister(dto);
-        return guideRepository.save(t);
+    public Guide register(Guide g) throws DataIntegrityViolationException {
+        return guideRepository.save(g);
     }
 
     public Guide login(GuideLoginDTO dto) {

@@ -1,8 +1,6 @@
 package com.what2see.service.tour;
 
-import com.what2see.dto.tour.TourCreateDTO;
 import com.what2see.dto.tour.TourSearchDTO;
-import com.what2see.mapper.tour.TourDTOMapper;
 import com.what2see.model.tour.City;
 import com.what2see.model.tour.Tag;
 import com.what2see.model.tour.Theme;
@@ -24,8 +22,6 @@ public class TourService {
 
     private final TourRepository tourRepository;
 
-    private final TourDTOMapper tourMapper;
-
     private final CityService cityService;
 
     private final TagService tagService;
@@ -33,8 +29,7 @@ public class TourService {
     private final ThemeService themeService;
 
 
-    public Tour create(TourCreateDTO dto, Long guideId) {
-        Tour t = tourMapper.convertCreate(dto, guideId);
+    public Tour create(Tour t) {
         return tourRepository.save(t);
     }
 
