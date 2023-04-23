@@ -5,18 +5,15 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.hibernate.validator.constraints.Range;
 
 @Data
 @Builder
 @AllArgsConstructor
-public class ReviewCreateDTO {
+public class ReportCreateDTO {
 
-    // implicitly is current user
+    // implicitly is current user in current timestamp
 
     private @NotNull Long tourId;
-
-    private @NotNull @Range(min = 1, max = 5) Integer stars;
 
     private @NotBlank String description;
 

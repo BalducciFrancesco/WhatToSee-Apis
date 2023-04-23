@@ -27,7 +27,7 @@ public class Review {
     private Date timestamp;
 
     @Column(nullable = false)
-    @Range(min = 0, max = 5)
+    @Range(min = 1, max = 5)
     private int stars;
 
     @Column(nullable = false)

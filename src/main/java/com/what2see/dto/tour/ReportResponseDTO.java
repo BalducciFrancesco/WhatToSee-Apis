@@ -1,22 +1,20 @@
 package com.what2see.dto.tour;
 
+import com.what2see.dto.user.TouristResponseDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.hibernate.validator.constraints.Range;
 
 @Data
 @Builder
 @AllArgsConstructor
-public class ReviewCreateDTO {
+public class ReportResponseDTO {
 
-    // implicitly is current user
+    private @NotNull Long id;
 
-    private @NotNull Long tourId;
-
-    private @NotNull @Range(min = 1, max = 5) Integer stars;
+    private @NotNull TouristResponseDTO author;
 
     private @NotBlank String description;
 
