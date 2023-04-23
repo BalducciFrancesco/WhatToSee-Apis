@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class TourStopResponseDTO {
+public class StopResponseDTO {
 
     private @NotNull Long id;
 

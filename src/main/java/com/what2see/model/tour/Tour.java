@@ -48,7 +48,7 @@ public class Tour {
     private Guide author;
 
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL)
-    private List<TourStop> stops;
+    private List<Stop> stops;
 
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL)
     private List<Report> reports;
@@ -74,7 +74,7 @@ public class Tour {
 
     @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinTable(
-        name = "tour_shares",
+        name = "shares",
         joinColumns = {@JoinColumn(name = "tourId")},
         inverseJoinColumns = {@JoinColumn(name = "touristId")}
     )
@@ -82,7 +82,7 @@ public class Tour {
 
     @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinTable(
-            name = "tour_completes",
+            name = "completes",
             joinColumns = {@JoinColumn(name = "tourId")},
             inverseJoinColumns = {@JoinColumn(name = "touristId")}
     )

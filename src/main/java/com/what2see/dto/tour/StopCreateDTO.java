@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class TourStopCreateDTO {
+public class StopCreateDTO {
 
     private @NotBlank String title;
 

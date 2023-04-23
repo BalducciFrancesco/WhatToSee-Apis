@@ -40,7 +40,7 @@ public class TourDTOMapper {
 
     private final ThemeService themeService;
 
-    private final TourStopDTOMapper tourStopMapper;
+    private final StopDTOMapper stopMapper;
 
     private final ReviewDTOMapper reviewMapper;
 
@@ -58,7 +58,7 @@ public class TourDTOMapper {
                 .approxCost(tour.getApproxCost())
                 .approxDuration(tour.getApproxDuration())
                 .creationDate(tour.getCreationDate())
-                .stops(tour.getStops().stream().map(tourStopMapper::convertResponse).collect(Collectors.toList()))
+                .stops(tour.getStops().stream().map(stopMapper::convertResponse).collect(Collectors.toList()))
                 .reviews(tour.getReviews().stream().map(reviewMapper::convertResponse).collect(Collectors.toList()))
                 .build();
     }
@@ -76,7 +76,7 @@ public class TourDTOMapper {
                 .creationDate(new Date())
                 .isPublic(t.getIsPublic())
                 .author(guideService.findById(guideAuthorId).orElseThrow())
-                .stops(t.getStops().stream().map(tourStopMapper::convertCreate).collect(Collectors.toList()))
+                .stops(t.getStops().stream().map(stopMapper::convertCreate).collect(Collectors.toList()))
                 .reports(new ArrayList<>())
                 .reviews(new ArrayList<>())
                 .city(cityService.findById(t.getCityId()).orElseThrow())

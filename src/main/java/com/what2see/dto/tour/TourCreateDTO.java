@@ -33,6 +33,6 @@ public class TourCreateDTO {
 
     private List<Long> sharedTouristIds;
 
-    private @NotEmpty List<TourStopCreateDTO> stops;
+    private @NotEmpty List<StopCreateDTO> stops;
 
 }

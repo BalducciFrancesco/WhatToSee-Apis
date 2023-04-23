@@ -39,7 +39,7 @@ public class TourResponseDTO {
 
     private @NotNull Date creationDate;
 
-    private @NotEmpty List<TourStopResponseDTO> stops;
+    private @NotEmpty List<StopResponseDTO> stops;
 
     private @NotNull List<ReviewResponseDTO> reviews;   // can be empty
 

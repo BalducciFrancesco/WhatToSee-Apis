@@ -1,17 +1,17 @@
 package com.what2see.mapper.tour;
 
-import com.what2see.dto.tour.TourStopCreateDTO;
-import com.what2see.dto.tour.TourStopResponseDTO;
-import com.what2see.model.tour.TourStop;
+import com.what2see.dto.tour.StopCreateDTO;
+import com.what2see.dto.tour.StopResponseDTO;
+import com.what2see.model.tour.Stop;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class TourStopDTOMapper {
+public class StopDTOMapper {
 
-    public TourStopResponseDTO convertResponse(TourStop stop) {
-        return TourStopResponseDTO.builder()
+    public StopResponseDTO convertResponse(Stop stop) {
+        return StopResponseDTO.builder()
                 .id(stop.getId())
                 .title(stop.getTitle())
                 .description(stop.getDescription())
@@ -25,8 +25,8 @@ public class TourStopDTOMapper {
                 .build();
     }
 
-    public TourStop convertCreate(TourStopCreateDTO t) {
-        return TourStop.builder()
+    public Stop convertCreate(StopCreateDTO t) {
+        return Stop.builder()
                 .title(t.getTitle())
                 .description(t.getDescription())
                 .cost(t.getCost())
