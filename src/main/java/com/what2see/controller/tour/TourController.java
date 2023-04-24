@@ -58,16 +58,22 @@ public class TourController {
         return ResponseEntity.ok(tourMapper.convertResponse(tourService.search(s)));
     }
 
-    @PostMapping("/review")
-    public ResponseEntity<ReviewResponseDTO> createReview(@RequestBody @Valid ReviewCreateDTO r, @RequestHeader(value="Authentication") Long touristId) {
-        Review createdReview = reviewService.create(reviewMapper.convertCreate(r, touristId));
+    @PostMapping("/{tourId}/review")
+    public ResponseEntity<ReviewResponseDTO> createReview(@PathVariable Long tourId, @RequestBody @Valid ReviewCreateDTO r, @RequestHeader(value="Authentication") Long touristId) {
+        Review createdReview = reviewService.create(reviewMapper.convertCreate(r, tourId, touristId));
         return ResponseEntity.ok(reviewMapper.convertResponse(createdReview));
     }
 
-    @PostMapping("/report")
-    public ResponseEntity<ReportResponseDTO> createReport(@RequestBody @Valid ReportCreateDTO r, @RequestHeader(value="Authentication") Long touristId) {
-        Report createdReport = reportService.create(reportMapper.convertCreate(r, touristId));
+    @PostMapping("/{tourId}/report")
+    public ResponseEntity<ReportResponseDTO> createReport(@PathVariable Long tourId, @RequestBody @Valid ReportCreateDTO r, @RequestHeader(value="Authentication") Long touristId) {
+        Report createdReport = reportService.create(reportMapper.convertCreate(r, tourId, touristId));
         return ResponseEntity.ok(reportMapper.convertResponse(createdReport));
+    }
+
+    @PostMapping("/{tourId}/completed")
+    public ResponseEntity<Void> markAsCompleted(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long touristId) {
+        tourService.markAsCompleted(tourId, touristId);
+        return ResponseEntity.ok().build();
     }
 
 }

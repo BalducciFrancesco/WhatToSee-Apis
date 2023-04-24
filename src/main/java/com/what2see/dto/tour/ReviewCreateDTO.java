@@ -12,9 +12,7 @@ import org.hibernate.validator.constraints.Range;
 @AllArgsConstructor
 public class ReviewCreateDTO {
 
-    // implicitly is current user
-
-    private @NotNull Long tourId;
+    // implicitly is current user in current timestamp in tour context
 
     private @NotNull @Range(min = 1, max = 5) Integer stars;
 

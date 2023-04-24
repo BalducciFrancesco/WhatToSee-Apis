@@ -32,12 +32,12 @@ public class ReviewDTOMapper {
                 .build();
     }
 
-    public Review convertCreate(ReviewCreateDTO r, Long touristAuthorId) throws NoSuchElementException {
+    public Review convertCreate(ReviewCreateDTO r, Long tourId, Long touristAuthorId) throws NoSuchElementException {
         return Review.builder()
                 .timestamp(new Date())
                 .stars(r.getStars())
                 .description(r.getDescription())
-                .tour(tourService.findById(r.getTourId()).orElseThrow())
+                .tour(tourService.findById(tourId).orElseThrow())
                 .author(touristService.findById(touristAuthorId).orElseThrow())
                 .build();
     }

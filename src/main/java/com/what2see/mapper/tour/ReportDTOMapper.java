@@ -29,9 +29,9 @@ public class ReportDTOMapper {
                 .build();
     }
 
-    public Report convertCreate(ReportCreateDTO r, Long touristAuthorId) throws NoSuchElementException {
+    public Report convertCreate(ReportCreateDTO r, Long tourId, Long touristAuthorId) throws NoSuchElementException {
         return Report.builder()
-                .tour(tourService.findById(r.getTourId()).orElseThrow())
+                .tour(tourService.findById(tourId).orElseThrow())
                 .author(touristService.findById(touristAuthorId).orElseThrow())
                 .description(r.getDescription())
                 .build();
