@@ -59,6 +59,7 @@ public class TourDTOMapper {
                 .creationDate(tour.getCreationDate())
                 .stops(tour.getStops().stream().map(stopMapper::convertResponse).collect(Collectors.toList()))
                 .reviews(tour.getReviews().stream().map(reviewMapper::convertResponse).collect(Collectors.toList()))
+                .markedAsCompletedCount((long) tour.getMarkedTourists().size())
                 .build();
     }
 

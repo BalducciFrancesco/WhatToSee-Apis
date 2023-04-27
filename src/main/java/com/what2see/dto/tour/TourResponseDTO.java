@@ -43,4 +43,6 @@ public class TourResponseDTO {
 
     private @NotNull List<ReviewResponseDTO> reviews;   // can be empty
 
+    private @NotNull Long markedAsCompletedCount;   // how many tourists tagged as completed
+
 }

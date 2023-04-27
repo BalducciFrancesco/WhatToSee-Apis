@@ -8,6 +8,7 @@ import com.what2see.model.tour.Tour;
 import com.what2see.model.user.Tourist;
 import com.what2see.repository.tour.TourRepository;
 import com.what2see.service.user.TouristService;
+import com.what2see.utils.TourSearchResultComparator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,8 @@ public class TourService {
             // filter the tags for those who contain at least one of the requested filters
             result = result.stream().filter(tour -> tour.getTags().stream().anyMatch(tags::contains)).collect(Collectors.toList());
         }
+
+        result.sort(new TourSearchResultComparator());  // sort primarily by reviews count and secondarily for marked count
         return result;
     }
 
