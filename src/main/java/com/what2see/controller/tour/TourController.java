@@ -9,10 +9,14 @@ import com.what2see.mapper.tour.TourDTOMapper;
 import com.what2see.model.tour.Report;
 import com.what2see.model.tour.Review;
 import com.what2see.model.tour.Tour;
+import com.what2see.model.user.Guide;
+import com.what2see.model.user.Tourist;
 import com.what2see.service.tour.ReportService;
 import com.what2see.service.tour.ReviewService;
 import com.what2see.service.tour.TagService;
 import com.what2see.service.tour.TourService;
+import com.what2see.service.user.GuideService;
+import com.what2see.service.user.TouristService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,6 +47,11 @@ public class TourController {
 
     private final ReportDTOMapper reportMapper;
 
+    private final GuideService guideService;
+
+    private final TouristService touristService;
+
+
 
     @GetMapping("/{tourId}")
     public ResponseEntity<TourResponseDTO> getById(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long userId) {
@@ -51,6 +60,17 @@ public class TourController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a visualizzare questo tour");
         }
         return ResponseEntity.ok(tourMapper.convertResponse(t));
+    }
+
+    @DeleteMapping("/{tourId}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long guideId) {
+        Tour t = tourService.findById(tourId);
+        Guide g = guideService.findById(guideId);
+        if(!t.getAuthor().equals(g)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a eliminare questo tour");
+        }
+        tourService.delete(t);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping()
@@ -67,7 +87,14 @@ public class TourController {
 
     @GetMapping("/shared")
     public ResponseEntity<List<TourResponseDTO>> getShared(@RequestHeader(value="Authentication") Long touristId) {
-        return ResponseEntity.ok(tourMapper.convertResponse(tourService.findShared(touristId)));
+        Tourist t = touristService.findById(touristId);
+        return ResponseEntity.ok(tourMapper.convertResponse(t.getSharedTours()));
+    }
+
+    @GetMapping("/created")
+    public ResponseEntity<List<TourResponseDTO>> getCreated(@RequestHeader(value="Authentication") Long guideId) {
+        Guide g = guideService.findById(guideId);
+        return ResponseEntity.ok(tourMapper.convertResponse(g.getCreatedTours()));
     }
 
     @PostMapping("/{tourId}/review")
@@ -88,12 +115,15 @@ public class TourController {
 
     @GetMapping("/completed")
     public ResponseEntity<List<TourResponseDTO>> getCompleted(@RequestHeader(value="Authentication") Long touristId) {
-        return ResponseEntity.ok(tourMapper.convertResponse(tourService.findCompleted(touristId)));
+        Tourist t = touristService.findById(touristId);
+        return ResponseEntity.ok(tourMapper.convertResponse(t.getMarkedTours()));
     }
 
     @PostMapping("/{tourId}/completed")
     public ResponseEntity<Void> markAsCompleted(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long touristId) {
-        tourService.markAsCompleted(tourId, touristId);
+        Tour t = tourService.findById(tourId);
+        Tourist tt = touristService.findById(touristId);
+        tourService.markAsCompleted(t, tt);
         return ResponseEntity.ok().build();
     }
 

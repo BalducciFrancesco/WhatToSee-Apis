@@ -7,7 +7,6 @@ import com.what2see.model.tour.Theme;
 import com.what2see.model.tour.Tour;
 import com.what2see.model.user.Tourist;
 import com.what2see.repository.tour.TourRepository;
-import com.what2see.service.user.TouristService;
 import com.what2see.utils.TourSearchResultComparator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +28,6 @@ public class TourService {
     private final TagService tagService;
 
     private final ThemeService themeService;
-
-    private final TouristService touristService;
 
 
     public Tour create(Tour t) {
@@ -62,21 +59,15 @@ public class TourService {
         return t.isPublic() || (t.getAuthor().getId().equals(userId) || t.getSharedTourists().stream().anyMatch(tt -> tt.getId().equals(userId)));
     }
 
-    public List<Tour> findShared(Long touristId) {
-        return touristService.findById(touristId).getSharedTours();
-    }
-
-    public List<Tour> findCompleted(Long touristId) {
-        return touristService.findById(touristId).getMarkedTours();
-    }
-
-    public void markAsCompleted(Long tourId, Long touristId) {
-        Tour t = tourRepository.findById(tourId).orElseThrow();
-        Tourist tt = touristService.findById(touristId);
+    public void markAsCompleted(Tour t, Tourist tt) {
         List<Tourist> completes = t.getMarkedTourists();
         if(!completes.contains(tt)) {
             completes.add(tt);
         }
+    }
+
+    public void delete(Tour t) {
+        tourRepository.delete(t);
     }
 
 }
