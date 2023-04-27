@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
@@ -32,13 +31,13 @@ public class ReviewDTOMapper {
                 .build();
     }
 
-    public Review convertCreate(ReviewCreateDTO r, Long tourId, Long touristAuthorId) throws NoSuchElementException {
+    public Review convertCreate(ReviewCreateDTO r, Long tourId, Long touristAuthorId) {
         return Review.builder()
                 .timestamp(new Date())
                 .stars(r.getStars())
                 .description(r.getDescription())
-                .tour(tourService.findById(tourId).orElseThrow())
-                .author(touristService.findById(touristAuthorId).orElseThrow())
+                .tour(tourService.findById(tourId))
+                .author(touristService.findById(touristAuthorId))
                 .build();
     }
 }

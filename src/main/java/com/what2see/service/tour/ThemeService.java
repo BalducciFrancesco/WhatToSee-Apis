@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +18,7 @@ public class ThemeService {
         return this.themeRepository.findAll();
     }
 
-    public Optional<Theme> findById(Long themeId) {
-        return themeRepository.findById(themeId);
+    public Theme findById(Long themeId) throws NoSuchElementException {
+        return themeRepository.findById(themeId).orElseThrow();
     }
 }

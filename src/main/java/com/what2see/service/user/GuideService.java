@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -20,11 +20,10 @@ public class GuideService {
     }
 
     public Guide login(GuideLoginDTO dto) {
-        Guide t = guideRepository.authenticate(dto.getUsername(), dto.getPassword());
-        return t;
+        return guideRepository.authenticate(dto.getUsername(), dto.getPassword());
     }
 
-    public Optional<Guide> findById(Long guideId) {
-        return guideRepository.findById(guideId);
+    public Guide findById(Long guideId) throws NoSuchElementException {
+        return guideRepository.findById(guideId).orElseThrow();
     }
 }

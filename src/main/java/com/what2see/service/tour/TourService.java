@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,25 +38,38 @@ public class TourService {
 
     public List<Tour> search(TourSearchDTO s) throws NoSuchElementException {
         // if search field ids are specified, they must match an existing entity
-        City city = s.getCityId() != null ? cityService.findById(s.getCityId()).orElseThrow() : null;
-        Theme theme = s.getThemeId() != null ? themeService.findById(s.getThemeId()).orElseThrow() : null;
+        City city = s.getCityId() != null ? cityService.findById(s.getCityId()) : null;
+        Theme theme = s.getThemeId() != null ? themeService.findById(s.getThemeId()) : null;
         List<Tag> tags = s.getTagIds() != null ? tagService.findAllById(s.getTagIds()) : null;
 
         List<Tour> result = tourRepository.search(city, theme, s.getApproxDuration());
-        if(tags != null && !tags.isEmpty())
+        if(tags != null && !tags.isEmpty()) {
             // filter the tags for those who contain at least one of the requested filters
             result = result.stream().filter(tour -> tour.getTags().stream().anyMatch(tags::contains)).collect(Collectors.toList());
-
+        }
         return result;
     }
 
-    public Optional<Tour> findById(Long tourId) {
-        return tourRepository.findById(tourId);
+    public Tour findById(Long tourId) throws NoSuchElementException {
+        return tourRepository.findById(tourId).orElseThrow();
     }
 
-    public void markAsCompleted(Long tourId, Long touristId) throws NoSuchElementException {
+    // if is public or is author or is one of the shared tourists
+    public boolean checkVisibility(Tour t, Long userId) {
+        return t.isPublic() || (t.getAuthor().getId().equals(userId) || t.getSharedTourists().stream().anyMatch(tt -> tt.getId().equals(userId)));
+    }
+
+    public List<Tour> findShared(Long touristId) {
+        return touristService.findById(touristId).getSharedTours();
+    }
+
+    public List<Tour> findCompleted(Long touristId) {
+        return touristService.findById(touristId).getMarkedTours();
+    }
+
+    public void markAsCompleted(Long tourId, Long touristId) {
         Tour t = tourRepository.findById(tourId).orElseThrow();
-        Tourist tt = touristService.findById(touristId).orElseThrow();
+        Tourist tt = touristService.findById(touristId);
         List<Tourist> completes = t.getMarkedTourists();
         if(!completes.contains(tt)) {
             completes.add(tt);

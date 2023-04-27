@@ -9,8 +9,6 @@ import com.what2see.service.user.TouristService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
-
 @RequiredArgsConstructor
 @Service
 public class ReportDTOMapper {
@@ -29,10 +27,10 @@ public class ReportDTOMapper {
                 .build();
     }
 
-    public Report convertCreate(ReportCreateDTO r, Long tourId, Long touristAuthorId) throws NoSuchElementException {
+    public Report convertCreate(ReportCreateDTO r, Long tourId, Long touristAuthorId) {
         return Report.builder()
-                .tour(tourService.findById(tourId).orElseThrow())
-                .author(touristService.findById(touristAuthorId).orElseThrow())
+                .tour(tourService.findById(tourId))
+                .author(touristService.findById(touristAuthorId))
                 .description(r.getDescription())
                 .build();
     }

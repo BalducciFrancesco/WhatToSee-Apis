@@ -2,6 +2,7 @@ package com.what2see.controller.tour;
 
 
 import com.what2see.dto.tour.*;
+import com.what2see.exception.TourNotMarkedException;
 import com.what2see.mapper.tour.ReportDTOMapper;
 import com.what2see.mapper.tour.ReviewDTOMapper;
 import com.what2see.mapper.tour.TourDTOMapper;
@@ -14,8 +15,10 @@ import com.what2see.service.tour.TagService;
 import com.what2see.service.tour.TourService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -43,7 +46,11 @@ public class TourController {
 
     @GetMapping("/{tourId}")
     public ResponseEntity<TourResponseDTO> getById(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long userId) {
-        return ResponseEntity.ok(tourMapper.convertResponse(tourService.findById(tourId).orElseThrow()));
+        Tour t = tourService.findById(tourId);
+        if(!tourService.checkVisibility(t, userId)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a visualizzare questo tour");
+        }
+        return ResponseEntity.ok(tourMapper.convertResponse(t));
     }
 
     @PostMapping()
@@ -58,16 +65,30 @@ public class TourController {
         return ResponseEntity.ok(tourMapper.convertResponse(tourService.search(s)));
     }
 
+    @GetMapping("/shared")
+    public ResponseEntity<List<TourResponseDTO>> getShared(@RequestHeader(value="Authentication") Long touristId) {
+        return ResponseEntity.ok(tourMapper.convertResponse(tourService.findShared(touristId)));
+    }
+
     @PostMapping("/{tourId}/review")
     public ResponseEntity<ReviewResponseDTO> createReview(@PathVariable Long tourId, @RequestBody @Valid ReviewCreateDTO r, @RequestHeader(value="Authentication") Long touristId) {
-        Review createdReview = reviewService.create(reviewMapper.convertCreate(r, tourId, touristId));
-        return ResponseEntity.ok(reviewMapper.convertResponse(createdReview));
+        try {
+            Review createdReview = reviewService.create(reviewMapper.convertCreate(r, tourId, touristId));
+            return ResponseEntity.ok(reviewMapper.convertResponse(createdReview));
+        } catch (TourNotMarkedException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Non è possibile recensire tour che non sono stati segnati come percorsi");
+        }
     }
 
     @PostMapping("/{tourId}/report")
     public ResponseEntity<ReportResponseDTO> createReport(@PathVariable Long tourId, @RequestBody @Valid ReportCreateDTO r, @RequestHeader(value="Authentication") Long touristId) {
         Report createdReport = reportService.create(reportMapper.convertCreate(r, tourId, touristId));
         return ResponseEntity.ok(reportMapper.convertResponse(createdReport));
+    }
+
+    @GetMapping("/completed")
+    public ResponseEntity<List<TourResponseDTO>> getCompleted(@RequestHeader(value="Authentication") Long touristId) {
+        return ResponseEntity.ok(tourMapper.convertResponse(tourService.findCompleted(touristId)));
     }
 
     @PostMapping("/{tourId}/completed")

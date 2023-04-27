@@ -4,10 +4,11 @@ import com.what2see.dto.user.TouristLoginDTO;
 import com.what2see.model.user.Tourist;
 import com.what2see.repository.user.TouristRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -19,16 +20,16 @@ public class TouristService {
         return this.touristRepository.findAll();
     }
 
-    public Tourist register(Tourist t) {
+    public Tourist register(Tourist t) throws DataIntegrityViolationException {
         return touristRepository.save(t);
     }
 
     public Tourist login(TouristLoginDTO dto) {
-        Tourist t = touristRepository.authenticate(dto.getUsername(), dto.getPassword());
-        return t;
+        return touristRepository.authenticate(dto.getUsername(), dto.getPassword());
     }
 
-    public Optional<Tourist> findById(Long touristId) {
-        return touristRepository.findById(touristId);
+    public Tourist findById(Long touristId) throws NoSuchElementException {
+        return touristRepository.findById(touristId).orElseThrow();
     }
+
 }

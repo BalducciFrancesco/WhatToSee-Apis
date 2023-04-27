@@ -40,4 +40,15 @@ public class Review {
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "touristId", nullable = false)
     private Tourist author;
+
+    @Override
+    public String toString() {
+        return "Review{" +
+                "id=" + id +
+                ", timestamp=" + timestamp +
+                ", stars=" + stars +
+                ", description='" + description + '\'' +
+                ", author=" + author +
+                '}';
+    }
 }

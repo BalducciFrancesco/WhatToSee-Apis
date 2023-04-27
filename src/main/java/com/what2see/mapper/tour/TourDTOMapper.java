@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -67,7 +66,7 @@ public class TourDTOMapper {
         return tour.stream().map(this::convertResponse).collect(Collectors.toList());
     }
 
-    public Tour convertCreate(TourCreateDTO t, Long guideAuthorId) throws NoSuchElementException {
+    public Tour convertCreate(TourCreateDTO t, Long guideAuthorId) {
         Tour tour = Tour.builder()
                 .title(t.getTitle())
                 .description(t.getDescription())
@@ -75,14 +74,14 @@ public class TourDTOMapper {
                 .approxDuration(t.getApproxDuration())
                 .creationDate(new Date())
                 .isPublic(t.getIsPublic())
-                .author(guideService.findById(guideAuthorId).orElseThrow())
+                .author(guideService.findById(guideAuthorId))
                 .stops(t.getStops().stream().map(stopMapper::convertCreate).collect(Collectors.toList()))
                 .reports(new ArrayList<>())
                 .reviews(new ArrayList<>())
-                .city(cityService.findById(t.getCityId()).orElseThrow())
-                .theme(themeService.findById(t.getThemeId()).orElseThrow())
+                .city(cityService.findById(t.getCityId()))
+                .theme(themeService.findById(t.getThemeId()))
                 .tags(t.getTagNames() != null ? tagService.findAllByNames(t.getTagNames()) : new ArrayList<>())
-                .sharedTourists(t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(tId -> touristService.findById(tId).orElseThrow()).collect(Collectors.toList()) : new ArrayList<>())
+                .sharedTourists(t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(touristService::findById).collect(Collectors.toList()) : new ArrayList<>())
                 .markedTourists(new ArrayList<>())
                 .build();
         tour.getStops().forEach(s -> s.setTour(tour));

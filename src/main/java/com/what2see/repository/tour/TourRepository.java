@@ -14,11 +14,11 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
 
     // all fields are optional filters for search
     // also not searching for tags, will be done code-side
-    @Query("SELECT t FROM Tour t JOIN t.tags tt WHERE " +
+    @Query("SELECT t FROM Tour t LEFT JOIN t.tags tt WHERE " +
             "t.isPublic = TRUE AND " +
             "(:city IS NULL OR t.city = :city) AND " +
             "(:theme IS NULL OR t.theme = :theme) AND " +
             "(:approxDuration IS NULL OR t.approxDuration <= :approxDuration)")
-    List<Tour> search(City city, Theme theme, String approxDuration);   // TODO allow shared with tourist?
+    List<Tour> search(City city, Theme theme, String approxDuration);
 
 }
