@@ -28,6 +28,6 @@ public class Conversation {
     private Guide guide;
 
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL)
-    private List<Message> messageList;
+    private List<Message> messages;
 
 }

@@ -24,3 +24,5 @@ INSERT INTO tour(approx_cost, approx_duration, description, creation_date, is_pu
 INSERT INTO stop(cost, description, duration, title, transfer_cost, transfer_details, transfer_duration, transfer_other_options, transfer_type, tour_id) VALUES (8.50, 'Osservare le piccole finestre', '02:00', 'Visita alla piazza dalle mille finestre', 2.5, 'Prendere la metro B direzione Rebibbia', '00:30', 'Con il tram A2', 'Metro', 3);
 INSERT INTO tour_tags(tour_id, tag_id) VALUES (3, 3);
 INSERT INTO shares(tour_id, tourist_id) VALUES (3, 1);
+
+INSERT INTO conversation(guide_id, tourist_id) VALUES (2, 1);
