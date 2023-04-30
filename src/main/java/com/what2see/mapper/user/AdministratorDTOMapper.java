@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AdministratorDTOMapper {
 
-    public AdministratorResponseDTO convertLoginResponse(Administrator loggedAdministrator) {
+    public AdministratorResponseDTO convertResponse(Administrator loggedAdministrator) {
         return AdministratorResponseDTO.builder()
                 .id(loggedAdministrator.getId())
                 .username(loggedAdministrator.getUsername())

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TagDTOMapper {
 
-    public TagResponseDTO convert(Tag tag) {
+    public TagResponseDTO convertResponse(Tag tag) {
         return TagResponseDTO.builder()
                 .id(tag.getId())
                 .name(tag.getName())

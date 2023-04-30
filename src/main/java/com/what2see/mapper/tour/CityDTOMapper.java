@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CityDTOMapper {
 
-    public CityResponseDTO convert(City city) {
+    public CityResponseDTO convertResponse(City city) {
         return CityResponseDTO.builder()
                 .id(city.getId())
                 .name(city.getName())

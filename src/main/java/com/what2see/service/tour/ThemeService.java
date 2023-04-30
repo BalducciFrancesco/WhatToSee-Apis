@@ -14,7 +14,7 @@ public class ThemeService {
 
     private final ThemeRepository themeRepository;
 
-    public List<Theme> getAll() {
+    public List<Theme> findAll() {
         return this.themeRepository.findAll();
     }
 

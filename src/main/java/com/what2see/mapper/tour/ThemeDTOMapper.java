@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ThemeDTOMapper {
 
-    public ThemeResponseDTO convert(Theme theme) {
+    public ThemeResponseDTO convertResponse(Theme theme) {
         return ThemeResponseDTO.builder()
                 .id(theme.getId())
                 .name(theme.getName())
