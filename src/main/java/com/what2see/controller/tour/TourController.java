@@ -2,10 +2,12 @@ package com.what2see.controller.tour;
 
 
 import com.what2see.dto.tour.*;
+import com.what2see.dto.user.TouristResponseDTO;
 import com.what2see.exception.TourNotMarkedException;
 import com.what2see.mapper.tour.ReportDTOMapper;
 import com.what2see.mapper.tour.ReviewDTOMapper;
 import com.what2see.mapper.tour.TourDTOMapper;
+import com.what2see.mapper.user.TouristDTOMapper;
 import com.what2see.model.tour.Report;
 import com.what2see.model.tour.Review;
 import com.what2see.model.tour.Tour;
@@ -51,6 +53,8 @@ public class TourController {
 
     private final TouristService touristService;
 
+    private final TouristDTOMapper touristMapper;
+
 
 
     @GetMapping("/{tourId}")
@@ -60,6 +64,17 @@ public class TourController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a visualizzare questo tour");
         }
         return ResponseEntity.ok(tourMapper.convertResponse(t));
+    }
+
+    @PatchMapping("/{tourId}")
+    public ResponseEntity<TourResponseDTO> editById(@RequestBody @Valid TourCreateDTO t, @PathVariable Long tourId, @RequestHeader(value="Authentication") Long guideId) {
+        Tour existingTour = tourService.findById(tourId);
+        Guide g = guideService.findById(guideId);
+        if(!existingTour.getAuthor().equals(g)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a modificre questo tour");
+        }
+        tourService.update(existingTour, tourMapper.convertCreate(t, guideId));
+        return ResponseEntity.ok(tourMapper.convertResponse(existingTour));
     }
 
     @DeleteMapping("/{tourId}")
@@ -85,8 +100,18 @@ public class TourController {
         return ResponseEntity.ok(tourMapper.convertResponse(tourService.search(s)));
     }
 
+    @GetMapping("/{tourId}/shared")
+    public ResponseEntity<List<TouristResponseDTO>> getSharedTourists(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long guideId) {
+        Tour t = tourService.findById(tourId);
+        Guide g = guideService.findById(guideId);
+        if(!t.getAuthor().equals(g)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a visualizzare le condivisioni di questo tour");
+        }
+        return ResponseEntity.ok(touristMapper.convertResponse(t.getSharedTourists()));
+    }
+
     @GetMapping("/shared")
-    public ResponseEntity<List<TourResponseDTO>> getShared(@RequestHeader(value="Authentication") Long touristId) {
+    public ResponseEntity<List<TourResponseDTO>> getSharedWithMe(@RequestHeader(value="Authentication") Long touristId) {
         Tourist t = touristService.findById(touristId);
         return ResponseEntity.ok(tourMapper.convertResponse(t.getSharedTours()));
     }

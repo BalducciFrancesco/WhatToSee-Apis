@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -33,6 +35,10 @@ public class TouristDTOMapper {
                 .firstName(t.getFirstName())
                 .lastName(t.getLastName())
                 .build();
+    }
+
+    public List<TouristResponseDTO> convertResponse(List<Tourist> tourists) {
+        return tourists.stream().map(this::convertResponse).collect(Collectors.toList());
     }
 
 }

@@ -47,7 +47,7 @@ public class Tour {
     @JoinColumn(name = "guideId", nullable = false)
     private Guide author;
 
-    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Stop> stops;
 
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL)
@@ -88,5 +88,10 @@ public class Tour {
     )
     private List<Tourist> markedTourists;
 
-
+    public void setStops(List<Stop> stops) {
+        this.stops.clear();
+        if(stops != null) {
+            this.stops.addAll(stops);
+        }
+    }
 }

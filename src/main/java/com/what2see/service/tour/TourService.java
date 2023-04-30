@@ -34,6 +34,20 @@ public class TourService {
         return tourRepository.save(t);
     }
 
+    public void update(Tour oldTour, Tour newTour) {
+        oldTour.setTitle(newTour.getTitle());
+        oldTour.setDescription(newTour.getDescription());
+        oldTour.setPublic(newTour.isPublic());
+        oldTour.setCity(newTour.getCity());
+        oldTour.setTags(newTour.getTags());
+        oldTour.setTheme(newTour.getTheme());
+        oldTour.setApproxCost(newTour.getApproxCost());
+        oldTour.setApproxDuration(newTour.getApproxDuration());
+        newTour.getStops().forEach(s -> s.setTour(oldTour));
+        oldTour.setStops(newTour.getStops());
+        oldTour.setSharedTourists(newTour.getSharedTourists());
+    }
+
     public List<Tour> search(TourSearchDTO s) throws NoSuchElementException {
         // if search field ids are specified, they must match an existing entity
         City city = s.getCityId() != null ? cityService.findById(s.getCityId()) : null;
