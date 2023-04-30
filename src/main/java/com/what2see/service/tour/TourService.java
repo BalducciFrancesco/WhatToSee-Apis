@@ -7,6 +7,7 @@ import com.what2see.model.tour.Theme;
 import com.what2see.model.tour.Tour;
 import com.what2see.model.user.Tourist;
 import com.what2see.repository.tour.TourRepository;
+import com.what2see.service.user.AdministratorService;
 import com.what2see.utils.TourSearchResultComparator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,8 @@ public class TourService {
     private final TagService tagService;
 
     private final ThemeService themeService;
+
+    private final AdministratorService administratorService;
 
 
     public Tour create(Tour t) {
@@ -68,9 +71,25 @@ public class TourService {
         return tourRepository.findById(tourId).orElseThrow();
     }
 
+    public List<Tour> findAllByReported(boolean isReported) {
+        return tourRepository.findAllByReported(isReported);
+    }
+
     // if is public or is author or is one of the shared tourists
     public boolean checkVisibility(Tour t, Long userId) {
-        return t.isPublic() || (t.getAuthor().getId().equals(userId) || t.getSharedTourists().stream().anyMatch(tt -> tt.getId().equals(userId)));
+        try {
+            return t.isPublic() || (t.getAuthor().getId().equals(userId) || t.getSharedTourists().stream().anyMatch(tt -> tt.getId().equals(userId))) || administratorService.findById(userId) != null;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    public boolean checkDeletability(Tour t, Long userId) {
+        try {
+            return t.getAuthor().getId().equals(userId) || administratorService.findById(userId) != null;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
     }
 
     public void markAsCompleted(Tour t, Tourist tt) {

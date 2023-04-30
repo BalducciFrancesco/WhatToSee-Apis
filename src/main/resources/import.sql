@@ -14,6 +14,8 @@ INSERT INTO stop(cost, description, duration, title, transfer_cost, transfer_det
 INSERT INTO tour_tags(tour_id, tag_id) VALUES (1, 1), (1, 2);
 INSERT INTO review(description, stars, timestamp, tourist_id, tour_id) VALUES ('Molto suggestivo', 5, NOW(), 1, 1);
 INSERT INTO completes(tour_id, tourist_id) VALUES (1, 1);
+INSERT INTO report(description, tourist_id, tour_id) VALUES ('Potrebbe essere pericoloso per i bambini', 1, 1);
+
 
 INSERT INTO tour(approx_cost, approx_duration, description, creation_date, is_public, title, guide_id, city_id, theme_id) VALUES (5.5, '02:30', 'Ho provato a fare del mio meglio', NOW(), TRUE, 'Si fa quel che si può', 2, 3, 3);
 INSERT INTO stop(cost, description, duration, title, transfer_cost, transfer_details, transfer_duration, transfer_other_options, transfer_type, tour_id) VALUES (5.50, 'Vedi un pò tu cosa fare', '09:30', 'Visita a quello che che si trova', 20.5, 'Prendere la linea retta e proseguire dopo la curva', '20:05', 'In astronave', 'Astronave', 2);

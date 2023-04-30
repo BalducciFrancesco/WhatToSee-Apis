@@ -21,4 +21,9 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
             "(:approxDuration IS NULL OR t.approxDuration <= :approxDuration)")
     List<Tour> search(City city, Theme theme, String approxDuration);
 
+    @Query("SELECT t from Tour t LEFT JOIN t.reports r WHERE " +
+            "(:isReported = TRUE AND r.id <> NULL) OR " +
+            "(:isReported = FALSE AND r.id = NULL)")
+    List<Tour> findAllByReported(boolean isReported);
+
 }

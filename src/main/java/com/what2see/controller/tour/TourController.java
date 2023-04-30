@@ -11,12 +11,14 @@ import com.what2see.mapper.user.TouristDTOMapper;
 import com.what2see.model.tour.Report;
 import com.what2see.model.tour.Review;
 import com.what2see.model.tour.Tour;
+import com.what2see.model.user.Administrator;
 import com.what2see.model.user.Guide;
 import com.what2see.model.user.Tourist;
 import com.what2see.service.tour.ReportService;
 import com.what2see.service.tour.ReviewService;
 import com.what2see.service.tour.TagService;
 import com.what2see.service.tour.TourService;
+import com.what2see.service.user.AdministratorService;
 import com.what2see.service.user.GuideService;
 import com.what2see.service.user.TouristService;
 import jakarta.validation.Valid;
@@ -55,6 +57,7 @@ public class TourController {
 
     private final TouristDTOMapper touristMapper;
 
+    private final AdministratorService administratorService;
 
 
     @GetMapping("/{tourId}")
@@ -70,6 +73,7 @@ public class TourController {
     public ResponseEntity<TourResponseDTO> editById(@RequestBody @Valid TourCreateDTO t, @PathVariable Long tourId, @RequestHeader(value="Authentication") Long guideId) {
         Tour existingTour = tourService.findById(tourId);
         Guide g = guideService.findById(guideId);
+        // FIXME using workaround for allowing multiple roles for deletion
         if(!existingTour.getAuthor().equals(g)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a modificre questo tour");
         }
@@ -78,10 +82,10 @@ public class TourController {
     }
 
     @DeleteMapping("/{tourId}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long guideId) {
+    public ResponseEntity<Void> deleteById(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long userId) {
         Tour t = tourService.findById(tourId);
-        Guide g = guideService.findById(guideId);
-        if(!t.getAuthor().equals(g)) {
+        // FIXME using workaround for allowing multiple roles for deletion
+        if(!tourService.checkDeletability(t, userId)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a eliminare questo tour");
         }
         tourService.delete(t);
@@ -116,6 +120,12 @@ public class TourController {
         return ResponseEntity.ok(tourMapper.convertResponse(t.getSharedTours()));
     }
 
+    @GetMapping("/reported")
+    public ResponseEntity<List<TourResponseDTO>> getReported(@RequestHeader(value="Authentication") Long administratorId) {
+        Administrator a = administratorService.findById(administratorId);
+        return ResponseEntity.ok(tourMapper.convertResponse(tourService.findAllByReported(true)));
+    }
+
     @GetMapping("/created")
     public ResponseEntity<List<TourResponseDTO>> getCreated(@RequestHeader(value="Authentication") Long guideId) {
         Guide g = guideService.findById(guideId);
@@ -130,6 +140,13 @@ public class TourController {
         } catch (TourNotMarkedException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Non è possibile recensire tour che non sono stati segnati come percorsi");
         }
+    }
+
+    @GetMapping("/{tourId}/report")
+    public ResponseEntity<List<ReportResponseDTO>> getReports(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long administratorId) {
+        Administrator a = administratorService.findById(administratorId);
+        Tour t = tourService.findById(tourId);
+        return ResponseEntity.ok(reportMapper.convertResponse(t.getReports()));
     }
 
     @PostMapping("/{tourId}/report")
