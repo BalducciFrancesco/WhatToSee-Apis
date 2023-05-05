@@ -26,3 +26,5 @@ INSERT INTO tour_tags(tour_id, tag_id) VALUES (3, 3);
 INSERT INTO shares(tour_id, tourist_id) VALUES (3, 1);
 
 INSERT INTO conversation(guide_id, tourist_id) VALUES (2, 1);
+INSERT INTO message(content, direction, timestamp, conversation_id) VALUES ('Ciao, mi puoi dare più info su questo tour?', false, NOW(), 1);
+INSERT INTO message(content, direction, timestamp, conversation_id) VALUES ('Certo, chiedi pure!', true, NOW(), 1);

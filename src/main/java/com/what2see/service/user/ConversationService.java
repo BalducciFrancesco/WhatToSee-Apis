@@ -17,4 +17,11 @@ public class ConversationService {
         return this.conversationRepository.findAll();
     }
 
+    public Conversation findById(Long conversationId) {
+        return this.conversationRepository.findById(conversationId).orElseThrow();
+    }
+
+    public boolean checkVisibility(Conversation c, Long userId) {
+        return c.getGuide().getId().equals(userId) || c.getTourist().getId().equals(userId);
+    }
 }

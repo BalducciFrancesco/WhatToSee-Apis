@@ -27,7 +27,7 @@ public class Message {
 
     // true if from guide to user
     @Column(nullable = false)
-    private boolean direction;
+    private Boolean direction;
 
 
     @CreationTimestamp

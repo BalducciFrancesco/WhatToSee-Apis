@@ -9,11 +9,10 @@ import com.what2see.service.user.ConversationService;
 import com.what2see.service.user.GuideService;
 import com.what2see.service.user.TouristService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -44,6 +43,15 @@ public class ConversationController {
             c = g.getConversations();
         }
         return ResponseEntity.ok(conversationMapper.convertResponseLight(c));
+    }
+
+    @GetMapping("/{conversationId}")
+    public ResponseEntity<ConversationResponseDTO> getById(@PathVariable Long conversationId, @RequestHeader(value="Authentication") Long userId) {
+        Conversation c = conversationService.findById(conversationId);
+        if(!conversationService.checkVisibility(c, userId)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a visualizzare questa conversazione");
+        }
+        return ResponseEntity.ok(conversationMapper.convertResponse(c));
     }
 
 }

@@ -16,12 +16,15 @@ public class ConversationDTOMapper {
 
     private final TouristDTOMapper touristMapper;
 
+    private final MessageDTOMapper messageMapper;
+
+
     public ConversationResponseDTO convertResponse(Conversation c) {
         return ConversationResponseDTO.builder()
                 .id(c.getId())
                 .tourist(touristMapper.convertResponse(c.getTourist()))
                 .guide(guideMapper.convertResponse(c.getGuide()))
-                .messages(c.getMessages())
+                .messages(messageMapper.convertResponse(c.getMessages()))
                 .build();
     }
 
