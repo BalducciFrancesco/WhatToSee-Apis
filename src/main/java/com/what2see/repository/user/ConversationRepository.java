@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ConversationRepository extends JpaRepository<Conversation, Long> {
+    Conversation findByTouristIdAndGuideId(Long touristId, Long guideId);
 }
