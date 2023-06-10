@@ -38,7 +38,7 @@ public class TouristDTOMapper {
     }
 
     public List<TouristResponseDTO> convertResponse(List<Tourist> tourists) {
-        return tourists.stream().map(this::convertResponse).collect(Collectors.toList());
+        return tourists.stream().map(this::convertResponse).toList();
     }
 
 }

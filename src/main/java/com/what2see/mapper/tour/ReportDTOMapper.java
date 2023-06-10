@@ -31,7 +31,7 @@ public class ReportDTOMapper {
     }
 
     public List<ReportResponseDTO> convertResponse(List<Report> reviews) {
-        return reviews.stream().map(this::convertResponse).collect(Collectors.toList());
+        return reviews.stream().map(this::convertResponse).toList();
     }
 
     public Report convertCreate(ReportCreateDTO r, Long tourId, Long touristAuthorId) {

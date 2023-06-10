@@ -28,7 +28,7 @@ public class TouristController {
 
     @GetMapping()
     public ResponseEntity<List<TouristResponseDTO>> getAll() {
-        return ResponseEntity.ok(this.touristService.getAll().stream().map(touristMapper::convertResponse).collect(Collectors.toList()));
+        return ResponseEntity.ok(this.touristService.getAll().stream().map(touristMapper::convertResponse).toList());
     }
 
     @PostMapping("/login")

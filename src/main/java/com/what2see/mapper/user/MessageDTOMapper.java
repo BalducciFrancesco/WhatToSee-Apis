@@ -35,7 +35,7 @@ public class MessageDTOMapper {
     }
 
     public List<MessageResponseDTO> convertResponse(List<Message> m) {
-        return m.stream().map(this::convertResponse).collect(Collectors.toList());
+        return m.stream().map(this::convertResponse).toList();
     }
 
 }

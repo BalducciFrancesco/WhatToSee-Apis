@@ -52,19 +52,19 @@ public class TourDTOMapper {
                 .description(tour.getDescription())
                 .isPublic(tour.isPublic())
                 .city(cityMapper.convertResponse(tour.getCity()))
-                .tags(tour.getTags().stream().map(tagMapper::convertResponse).collect(Collectors.toList()))
+                .tags(tour.getTags().stream().map(tagMapper::convertResponse).toList())
                 .theme(themeMapper.convertResponse(tour.getTheme()))
                 .approxCost(tour.getApproxCost())
                 .approxDuration(tour.getApproxDuration())
                 .creationDate(tour.getCreationDate())
-                .stops(tour.getStops().stream().map(stopMapper::convertResponse).collect(Collectors.toList()))
-                .reviews(tour.getReviews().stream().map(reviewMapper::convertResponse).collect(Collectors.toList()))
+                .stops(tour.getStops().stream().map(stopMapper::convertResponse).toList())
+                .reviews(tour.getReviews().stream().map(reviewMapper::convertResponse).toList())
                 .markedAsCompletedCount((long) tour.getMarkedTourists().size())
                 .build();
     }
 
     public List<TourResponseDTO> convertResponse(List<Tour> tour) {
-        return tour.stream().map(this::convertResponse).collect(Collectors.toList());
+        return tour.stream().map(this::convertResponse).toList();
     }
 
     public Tour convertCreate(TourCreateDTO t, Long guideAuthorId) {
@@ -76,13 +76,13 @@ public class TourDTOMapper {
                 .creationDate(new Date())
                 .isPublic(t.getIsPublic())
                 .author(guideService.findById(guideAuthorId))
-                .stops(t.getStops().stream().map(stopMapper::convertCreate).collect(Collectors.toList()))
+                .stops(t.getStops().stream().map(stopMapper::convertCreate).toList())
                 .reports(new ArrayList<>())
                 .reviews(new ArrayList<>())
                 .city(cityService.findById(t.getCityId()))
                 .theme(themeService.findById(t.getThemeId()))
                 .tags(t.getTagNames() != null ? tagService.findAllByNames(t.getTagNames()) : new ArrayList<>())
-                .sharedTourists(t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(touristService::findById).collect(Collectors.toList()) : new ArrayList<>())
+                .sharedTourists(t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(touristService::findById).toList() : new ArrayList<>())
                 .markedTourists(new ArrayList<>())
                 .build();
         tour.getStops().forEach(s -> s.setTour(tour));

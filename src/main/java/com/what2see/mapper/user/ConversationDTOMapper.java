@@ -60,7 +60,7 @@ public class ConversationDTOMapper {
     }
 
     public List<ConversationResponseDTO> convertResponseLight(List<Conversation> c) {
-        return c.stream().map(this::convertResponseLight).collect(Collectors.toList());
+        return c.stream().map(this::convertResponseLight).toList();
     }
 
 }

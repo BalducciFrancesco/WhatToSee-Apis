@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,7 +22,7 @@ public class CityController {
 
     @GetMapping()
     public ResponseEntity<List<CityResponseDTO>> getAll() {
-        return ResponseEntity.ok(cityService.getAll().stream().map(cityMapper::convertResponse).collect(Collectors.toList()));
+        return ResponseEntity.ok(cityService.getAll().stream().map(cityMapper::convertResponse).toList());
     }
 
 }
