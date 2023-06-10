@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class TouristResponseDTO {
+public class UserResponseDTO {
 
     private @NotBlank Long id;
 
@@ -18,5 +18,5 @@ public class TouristResponseDTO {
 
     private @NotBlank String lastName;
 
-    private @Builder.Default @NotBlank int role = UserRole.TOURIST.ordinal();
+    private @NotBlank int role;
 }

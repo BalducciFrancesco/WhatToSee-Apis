@@ -21,7 +21,7 @@ public class TourCreateDTO {
 
     private @NotNull Long cityId;
 
-    private List<String> tagNames;    // can be empty and created if not existing
+    private @NotNull List<String> tagNames;    // can be empty and created if not existing
 
     private @NotNull Long themeId;
 
@@ -31,7 +31,7 @@ public class TourCreateDTO {
 
     private @NotNull Boolean isPublic;
 
-    private List<Long> sharedTouristIds;
+    private @NotNull List<Long> sharedTouristIds;
 
     private @NotEmpty List<StopCreateDTO> stops;
 

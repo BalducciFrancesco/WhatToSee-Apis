@@ -1,10 +1,10 @@
 package com.what2see.controller.user;
 
-import com.what2see.dto.user.AdministratorLoginDTO;
-import com.what2see.dto.user.AdministratorResponseDTO;
-import com.what2see.mapper.user.AdministratorDTOMapper;
+import com.what2see.dto.user.UserLoginDTO;
+import com.what2see.dto.user.UserResponseDTO;
+import com.what2see.mapper.user.UserDTOMapper;
 import com.what2see.model.user.Administrator;
-import com.what2see.service.user.AdministratorService;
+import com.what2see.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,15 +20,16 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/administrator")
 public class AdministratorController {
 
-    private final AdministratorService administratorService;
+    private final UserService<Administrator> administratorService;
 
-    private final AdministratorDTOMapper administratorMapper;
+    private final UserDTOMapper userMapper;
+
 
     @PostMapping("/login")
-    public ResponseEntity<AdministratorResponseDTO> login(@RequestBody @Valid AdministratorLoginDTO t) {
+    public ResponseEntity<UserResponseDTO> login(@RequestBody @Valid UserLoginDTO t) {
         Administrator loggedAdministrator = administratorService.login(t);
         if(loggedAdministrator != null) {
-            return ResponseEntity.ok(administratorMapper.convertResponse(loggedAdministrator));
+            return ResponseEntity.ok(userMapper.convertResponse(loggedAdministrator));
         } else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Credenziali non valide");
     }
 

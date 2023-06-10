@@ -14,11 +14,11 @@ public class ConversationResponseDTO {
 
     private @NotNull Long id;
 
-    private @NotNull TouristResponseDTO tourist;
+    private @NotNull UserResponseDTO tourist;
 
-    private @NotNull GuideResponseDTO guide;
+    private @NotNull UserResponseDTO guide;
 
-    private List<MessageResponseDTO> messages; // can be null in summary page
+    private @NotNull List<MessageResponseDTO> messages; // can be null in summary page
 
 
 }

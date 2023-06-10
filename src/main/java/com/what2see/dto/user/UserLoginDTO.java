@@ -4,14 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class TouristRegisterDTO {
+public class UserLoginDTO {
 
     private @NotBlank String username;
 
     private @NotBlank String password;
-
-    private @NotBlank String firstName;
-
-    private @NotBlank String lastName;
 
 }

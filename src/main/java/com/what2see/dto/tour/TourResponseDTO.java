@@ -1,6 +1,6 @@
 package com.what2see.dto.tour;
 
-import com.what2see.dto.user.GuideResponseDTO;
+import com.what2see.dto.user.UserResponseDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +19,7 @@ public class TourResponseDTO {
 
     private @NotNull Long id;
 
-    private @NotNull GuideResponseDTO author;
+    private @NotNull UserResponseDTO author;    // guide
 
     private @NotBlank String title;
 

@@ -1,11 +1,12 @@
 package com.what2see.controller.user;
 
-import com.what2see.dto.user.TouristLoginDTO;
-import com.what2see.dto.user.TouristRegisterDTO;
-import com.what2see.dto.user.TouristResponseDTO;
+import com.what2see.dto.user.UserLoginDTO;
+import com.what2see.dto.user.UserRegisterDTO;
+import com.what2see.dto.user.UserResponseDTO;
 import com.what2see.mapper.user.TouristDTOMapper;
+import com.what2see.mapper.user.UserDTOMapper;
 import com.what2see.model.user.Tourist;
-import com.what2see.service.user.TouristService;
+import com.what2see.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,35 +16,37 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/tourist")
 public class TouristController {
 
-    private final TouristService touristService;
+    private final UserService<Tourist> touristService;
+
+    private final UserDTOMapper userMapper;
 
     private final TouristDTOMapper touristMapper;
 
+
     @GetMapping()
-    public ResponseEntity<List<TouristResponseDTO>> getAll() {
-        return ResponseEntity.ok(this.touristService.getAll().stream().map(touristMapper::convertResponse).toList());
+    public ResponseEntity<List<UserResponseDTO>> getAll() {
+        return ResponseEntity.ok(this.touristService.getAll().stream().map(userMapper::convertResponse).toList());
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TouristResponseDTO> login(@RequestBody @Valid TouristLoginDTO t) {
+    public ResponseEntity<UserResponseDTO> login(@RequestBody @Valid UserLoginDTO t) {
         Tourist loggedTourist = touristService.login(t);
         if(loggedTourist != null) {
-            return ResponseEntity.ok(touristMapper.convertResponse(loggedTourist));
+            return ResponseEntity.ok(userMapper.convertResponse(loggedTourist));
         } else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Credenziali non valide");
     }
 
     @PostMapping("/register")
-    public ResponseEntity<TouristResponseDTO> register(@RequestBody @Valid TouristRegisterDTO t) {
+    public ResponseEntity<UserResponseDTO> register(@RequestBody @Valid UserRegisterDTO t) {
         try {
             Tourist createdTourist = touristService.register(touristMapper.convertRegister(t));
-            return ResponseEntity.ok(touristMapper.convertResponse(createdTourist));
+            return ResponseEntity.ok(userMapper.convertResponse(createdTourist));
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username già esistente");
         }

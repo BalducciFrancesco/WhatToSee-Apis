@@ -2,12 +2,12 @@ package com.what2see.controller.tour;
 
 
 import com.what2see.dto.tour.*;
-import com.what2see.dto.user.TouristResponseDTO;
+import com.what2see.dto.user.UserResponseDTO;
 import com.what2see.exception.TourNotMarkedException;
 import com.what2see.mapper.tour.ReportDTOMapper;
 import com.what2see.mapper.tour.ReviewDTOMapper;
 import com.what2see.mapper.tour.TourDTOMapper;
-import com.what2see.mapper.user.TouristDTOMapper;
+import com.what2see.mapper.user.UserDTOMapper;
 import com.what2see.model.tour.Report;
 import com.what2see.model.tour.Review;
 import com.what2see.model.tour.Tour;
@@ -18,9 +18,7 @@ import com.what2see.service.tour.ReportService;
 import com.what2see.service.tour.ReviewService;
 import com.what2see.service.tour.TagService;
 import com.what2see.service.tour.TourService;
-import com.what2see.service.user.AdministratorService;
-import com.what2see.service.user.GuideService;
-import com.what2see.service.user.TouristService;
+import com.what2see.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -51,13 +49,13 @@ public class TourController {
 
     private final ReportDTOMapper reportMapper;
 
-    private final GuideService guideService;
+    private final UserDTOMapper userMapper;
 
-    private final TouristService touristService;
+    private final UserService<Guide> guideService;
 
-    private final TouristDTOMapper touristMapper;
+    private final UserService<Tourist> touristService;
 
-    private final AdministratorService administratorService;
+    private final UserService<Administrator> administratorService;
 
 
     @GetMapping("/{tourId}")
@@ -72,7 +70,7 @@ public class TourController {
     @PatchMapping("/{tourId}")
     public ResponseEntity<TourResponseDTO> editById(@RequestBody @Valid TourCreateDTO t, @PathVariable Long tourId, @RequestHeader(value="Authentication") Long guideId) {
         Tour existingTour = tourService.findById(tourId);
-        Guide g = guideService.findById(guideId);
+        Guide g = guideService.findById(guideId).orElseThrow();
         // FIXME using workaround for allowing multiple roles for deletion
         if(!existingTour.getAuthor().equals(g)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a modificre questo tour");
@@ -105,30 +103,30 @@ public class TourController {
     }
 
     @GetMapping("/{tourId}/shared")
-    public ResponseEntity<List<TouristResponseDTO>> getSharedTourists(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long guideId) {
+    public ResponseEntity<List<UserResponseDTO>> getSharedTourists(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long guideId) {
         Tour t = tourService.findById(tourId);
-        Guide g = guideService.findById(guideId);
+        Guide g = guideService.findById(guideId).orElseThrow();
         if(!t.getAuthor().equals(g)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a visualizzare le condivisioni di questo tour");
         }
-        return ResponseEntity.ok(touristMapper.convertResponse(t.getSharedTourists()));
+        return ResponseEntity.ok(t.getSharedTourists().stream().map(userMapper::convertResponse).toList());
     }
 
     @GetMapping("/shared")
     public ResponseEntity<List<TourResponseDTO>> getSharedWithMe(@RequestHeader(value="Authentication") Long touristId) {
-        Tourist t = touristService.findById(touristId);
+        Tourist t = touristService.findById(touristId).orElseThrow();
         return ResponseEntity.ok(tourMapper.convertResponse(t.getSharedTours()));
     }
 
     @GetMapping("/reported")
     public ResponseEntity<List<TourResponseDTO>> getReported(@RequestHeader(value="Authentication") Long administratorId) {
-        Administrator a = administratorService.findById(administratorId);
+        Administrator a = administratorService.findById(administratorId).orElseThrow();
         return ResponseEntity.ok(tourMapper.convertResponse(tourService.findAllByReported(true)));
     }
 
     @GetMapping("/created")
     public ResponseEntity<List<TourResponseDTO>> getCreated(@RequestHeader(value="Authentication") Long guideId) {
-        Guide g = guideService.findById(guideId);
+        Guide g = guideService.findById(guideId).orElseThrow();
         return ResponseEntity.ok(tourMapper.convertResponse(g.getCreatedTours()));
     }
 
@@ -144,7 +142,7 @@ public class TourController {
 
     @GetMapping("/{tourId}/report")
     public ResponseEntity<List<ReportResponseDTO>> getReports(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long administratorId) {
-        Administrator a = administratorService.findById(administratorId);
+        Administrator a = administratorService.findById(administratorId).orElseThrow();
         Tour t = tourService.findById(tourId);
         return ResponseEntity.ok(reportMapper.convertResponse(t.getReports()));
     }
@@ -157,14 +155,14 @@ public class TourController {
 
     @GetMapping("/completed")
     public ResponseEntity<List<TourResponseDTO>> getCompleted(@RequestHeader(value="Authentication") Long touristId) {
-        Tourist t = touristService.findById(touristId);
+        Tourist t = touristService.findById(touristId).orElseThrow();
         return ResponseEntity.ok(tourMapper.convertResponse(t.getMarkedTours()));
     }
 
     @PostMapping("/{tourId}/completed")
     public ResponseEntity<Void> markAsCompleted(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long touristId) {
         Tour t = tourService.findById(tourId);
-        Tourist tt = touristService.findById(touristId);
+        Tourist tt = touristService.findById(touristId).orElseThrow();
         tourService.markAsCompleted(t, tt);
         return ResponseEntity.ok().build();
     }

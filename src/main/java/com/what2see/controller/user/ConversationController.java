@@ -12,9 +12,8 @@ import com.what2see.model.user.Guide;
 import com.what2see.model.user.Message;
 import com.what2see.model.user.Tourist;
 import com.what2see.service.user.ConversationService;
-import com.what2see.service.user.GuideService;
 import com.what2see.service.user.MessageService;
-import com.what2see.service.user.TouristService;
+import com.what2see.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,9 +36,9 @@ public class ConversationController {
 
     private final MessageDTOMapper messageMapper;
 
-    private final TouristService touristService;
+    private final UserService<Tourist> touristService;
 
-    private final GuideService guideService;
+    private final UserService<Guide> guideService;
 
 
     @GetMapping()// can return a list (getAll), a specific converstation (getById) or null if not existing yet
@@ -61,10 +60,10 @@ public class ConversationController {
             // FIXME using workaround for allowing multiple roles
             List<Conversation> c;
             try {
-                Tourist t = touristService.findById(userId);
+                Tourist t = touristService.findById(userId).orElseThrow();
                 c = t.getConversations();
             } catch (NoSuchElementException e) {
-                Guide g = guideService.findById(userId);
+                Guide g = guideService.findById(userId).orElseThrow();
                 c = g.getConversations();
             }
             return ResponseEntity.ok(conversationMapper.convertResponseLight(c));
@@ -94,10 +93,10 @@ public class ConversationController {
         }
         boolean direction;
         try {
-            Tourist t = touristService.findById(userId);
+            Tourist t = touristService.findById(userId).orElseThrow();
             direction = false;
         } catch (NoSuchElementException e) {
-            Guide g = guideService.findById(userId);
+            Guide g = guideService.findById(userId).orElseThrow();
             direction = true;
         }
         Message m = messageService.sendMessage(messageMapper.convertCreate(MessageCreateDTO.builder()
