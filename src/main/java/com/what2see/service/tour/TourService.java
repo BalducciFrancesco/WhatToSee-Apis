@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -60,7 +61,7 @@ public class TourService {
         List<Tour> result = tourRepository.search(city, theme, s.getApproxDuration());
         if(tags != null && !tags.isEmpty()) {
             // filter the tags for those who contain at least one of the requested filters
-            result = result.stream().filter(tour -> tour.getTags().stream().anyMatch(tags::contains)).toList();
+            result = result.stream().filter(tour -> tour.getTags().stream().anyMatch(tags::contains)).collect(Collectors.toList());
         }
 
         result.sort(new TourSearchResultComparator());  // sort primarily by reviews count and secondarily for marked count

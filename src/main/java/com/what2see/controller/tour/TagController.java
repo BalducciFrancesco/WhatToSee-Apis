@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,7 +23,7 @@ public class TagController {
 
     @GetMapping()
     public ResponseEntity<List<TagResponseDTO>> getAll() {
-        return ResponseEntity.ok(tagService.findAll().stream().map(tagMapper::convertResponse).toList());
+        return ResponseEntity.ok(tagService.findAll().stream().map(tagMapper::convertResponse).collect(Collectors.toList()));
     }
 
 }

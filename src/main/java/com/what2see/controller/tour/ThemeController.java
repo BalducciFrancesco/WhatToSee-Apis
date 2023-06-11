@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,7 +23,7 @@ public class ThemeController {
 
     @GetMapping()
     public ResponseEntity<List<ThemeResponseDTO>> getAll() {
-        return ResponseEntity.ok(themeService.findAll().stream().map(themeMapper::convertResponse).toList());
+        return ResponseEntity.ok(themeService.findAll().stream().map(themeMapper::convertResponse).collect(Collectors.toList()));
     }
 
 }

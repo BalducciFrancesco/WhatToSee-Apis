@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -34,7 +35,7 @@ public class MessageDTOMapper {
     }
 
     public List<MessageResponseDTO> convertResponse(List<Message> m) {
-        return m.stream().map(this::convertResponse).toList();
+        return m.stream().map(this::convertResponse).collect(Collectors.toList());
     }
 
 }

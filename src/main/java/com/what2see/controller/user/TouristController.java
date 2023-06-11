@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -31,7 +32,7 @@ public class TouristController {
 
     @GetMapping()
     public ResponseEntity<List<UserResponseDTO>> getAll() {
-        return ResponseEntity.ok(this.touristService.getAll().stream().map(userMapper::convertResponse).toList());
+        return ResponseEntity.ok(this.touristService.getAll().stream().map(userMapper::convertResponse).collect(Collectors.toList()));
     }
 
     @PostMapping("/login")

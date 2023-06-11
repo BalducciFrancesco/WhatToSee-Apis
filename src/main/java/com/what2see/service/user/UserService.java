@@ -22,7 +22,7 @@ public abstract class UserService<T extends User> {
     }
 
     public T login(UserLoginDTO dto) {
-        return getRepository().authenticate(dto.getUsername(), dto.getPassword()).orElseThrow();
+        return getRepository().authenticate(dto.getUsername(), dto.getPassword()).orElse(null);
     }
 
     public T findById(Long userId) {

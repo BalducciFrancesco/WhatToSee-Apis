@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -77,7 +78,7 @@ public class TourController {
         if(!t.getAuthor().equals(g)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a visualizzare le condivisioni di questo tour");
         }
-        return ResponseEntity.ok(t.getSharedTourists().stream().map(userMapper::convertResponse).toList());
+        return ResponseEntity.ok(t.getSharedTourists().stream().map(userMapper::convertResponse).collect(Collectors.toList()));
     }
 
     @GetMapping("/shared")
@@ -102,7 +103,7 @@ public class TourController {
     public ResponseEntity<List<ReportResponseDTO>> getReportsById(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long administratorId) {
         administratorService.findById(administratorId);
         List<Report> reports = tourService.findById(tourId).getReports();
-        return ResponseEntity.ok(reports.stream().map(reportMapper::convertResponse).toList());
+        return ResponseEntity.ok(reports.stream().map(reportMapper::convertResponse).collect(Collectors.toList()));
     }
 
     @GetMapping("/completed")
