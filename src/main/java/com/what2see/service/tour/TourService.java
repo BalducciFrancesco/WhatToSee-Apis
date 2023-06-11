@@ -76,7 +76,7 @@ public class TourService {
     }
 
     // if is public or is author or is one of the shared tourists
-    public boolean checkVisibility(Tour t, Long userId) {
+    public boolean isVisible(Tour t, Long userId) {
         try {
             return t.isPublic() || (t.getAuthor().getId().equals(userId) || t.getSharedTourists().stream().anyMatch(tt -> tt.getId().equals(userId))) || administratorService.findById(userId) != null;
         } catch (NoSuchElementException e) {
@@ -84,7 +84,12 @@ public class TourService {
         }
     }
 
-    public boolean checkDeletability(Tour t, Long userId) {
+    // if is public or is author or is one of the shared tourists
+    public boolean isEditable(Tour t, Long userId) {
+        return t.getAuthor().getId().equals(userId);
+    }
+
+    public boolean isDeletable(Tour t, Long userId) {
         try {
             return t.getAuthor().getId().equals(userId) || administratorService.findById(userId) != null;
         } catch (NoSuchElementException e) {

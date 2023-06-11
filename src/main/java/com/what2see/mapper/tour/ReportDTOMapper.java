@@ -10,8 +10,6 @@ import com.what2see.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @Service
 public class ReportDTOMapper {
@@ -30,14 +28,10 @@ public class ReportDTOMapper {
                 .build();
     }
 
-    public List<ReportResponseDTO> convertResponse(List<Report> reviews) {
-        return reviews.stream().map(this::convertResponse).toList();
-    }
-
     public Report convertCreate(ReportCreateDTO r, Long tourId, Long touristAuthorId) {
         return Report.builder()
                 .tour(tourService.findById(tourId))
-                .author(touristService.findById(touristAuthorId).orElseThrow())
+                .author(touristService.findById(touristAuthorId))
                 .description(r.getDescription())
                 .build();
     }

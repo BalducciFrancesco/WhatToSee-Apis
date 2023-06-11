@@ -38,7 +38,7 @@ public class ReviewDTOMapper {
                 .stars(r.getStars())
                 .description(r.getDescription())
                 .tour(tourService.findById(tourId))
-                .author(touristService.findById(touristAuthorId).orElseThrow())
+                .author(touristService.findById(touristAuthorId))
                 .build();
     }
 }

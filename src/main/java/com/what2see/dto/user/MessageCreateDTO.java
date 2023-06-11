@@ -4,16 +4,18 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class MessageCreateDTO {
+
+    // implicitly is from current user (direction = true if is guide, false if is tourist)
 
     private @NotNull String content;
 
-    private @NotNull Boolean direction;
-
-    private Long conversationId;    // can be null while creating contextually with conversation
+    private @NotNull Long conversationId;
 
 }

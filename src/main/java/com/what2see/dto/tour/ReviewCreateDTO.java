@@ -5,11 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ReviewCreateDTO {
 
     // implicitly is current user in current timestamp in tour context

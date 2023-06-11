@@ -2,6 +2,7 @@ package com.what2see.service.tour;
 
 import com.what2see.model.tour.Theme;
 import com.what2see.repository.tour.ThemeRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ThemeService {
 

@@ -2,12 +2,14 @@ package com.what2see.service.tour;
 
 import com.what2see.model.tour.Tag;
 import com.what2see.repository.tour.TagRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class TagService {
 
@@ -27,7 +29,7 @@ public class TagService {
 
     public void create(List<String> tagNames) { // if not exists already
         for(String tagName : tagNames) {
-            if(tagRepository.findByName(tagName) == null) {
+            if(tagRepository.findByName(tagName).isEmpty()) {
                 tagRepository.save(Tag.builder().name(tagName).build());
             }
         }

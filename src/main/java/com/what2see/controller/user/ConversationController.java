@@ -14,6 +14,7 @@ import com.what2see.model.user.Tourist;
 import com.what2see.service.user.ConversationService;
 import com.what2see.service.user.MessageService;
 import com.what2see.service.user.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,71 +41,83 @@ public class ConversationController {
 
     private final UserService<Guide> guideService;
 
+    // -------
+    // GET
+    // -------
 
-    @GetMapping()// can return a list (getAll), a specific converstation (getById) or null if not existing yet
-    public ResponseEntity<?> get(@RequestParam(required = false) Long conversationId, @RequestParam(required = false) Long guideId, @RequestHeader(value="Authentication") Long userId) {
-        if(conversationId != null) {    // is get by id
+    @GetMapping("/all")
+    public ResponseEntity<List<ConversationResponseDTO>> getAll(@RequestHeader(value="Authentication") Long userId) {
+        List<Conversation> c;
+        try {
+            Tourist t = touristService.findById(userId);
+            c = t.getConversations();
+        } catch (NoSuchElementException e) {
+            Guide g = guideService.findById(userId);
+            c = g.getConversations();
+        }
+        return ResponseEntity.ok(conversationMapper.convertResponseLight(c));
+    }
+
+    @GetMapping()// by conversation id or guide id, can return null if not existing yet
+    public ResponseEntity<ConversationResponseDTO> getById(@RequestParam(required = false) Long conversationId, @RequestParam(required = false) Long guideId, @RequestHeader(value="Authentication") Long userId) {
+        try {
+            touristService.findById(userId);
+        } catch (NoSuchElementException e) {
+            guideService.findById(userId);
+        }
+
+        if(conversationId != null) {
             Conversation c = conversationService.findById(conversationId);
-            if(!conversationService.checkVisibility(c, userId)) {
+            if(!conversationService.isVisible(c, userId)) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a visualizzare questa conversazione");
             }
             return ResponseEntity.ok(conversationMapper.convertResponse(c));
         } else if(guideId != null) {    // is tourist get by guide id, if exists
-            Conversation c = conversationService.findByParticipants(userId, guideId);
-            if(c != null) {
+            try {
+                Conversation c = conversationService.findByParticipants(userId, guideId);
                 return ResponseEntity.ok(conversationMapper.convertResponse(c));
-            } else {
+            } catch (NoSuchElementException e) {
                 return ResponseEntity.noContent().build();
             }
-        } else {    // is get all
-            // FIXME using workaround for allowing multiple roles
-            List<Conversation> c;
-            try {
-                Tourist t = touristService.findById(userId).orElseThrow();
-                c = t.getConversations();
-            } catch (NoSuchElementException e) {
-                Guide g = guideService.findById(userId).orElseThrow();
-                c = g.getConversations();
-            }
-            return ResponseEntity.ok(conversationMapper.convertResponseLight(c));
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
+
+    // -------
+    // POST
+    // -------
 
     @PostMapping()
-    public ResponseEntity<ConversationResponseDTO> startConversation(@RequestParam Long guideId, @RequestBody String message, @RequestHeader(value="Authentication") Long userId) {
-        Conversation c;
+    public ResponseEntity<ConversationResponseDTO> startConversation(@RequestBody @Valid ConversationCreateDTO c, @RequestHeader(value="Authentication") Long touristId) {
+        touristService.findById(touristId);
+        Conversation createdConversation;
         try {
-            c = conversationService.startConversation(conversationMapper.convertCreate(ConversationCreateDTO.builder()
-                .guideId(guideId)
-                .touristId(userId)
-                .message(message)
-                .build()));
+            createdConversation = conversationService.startConversation(conversationMapper.convertCreate(c, touristId));
         } catch (ConversationAlreadyStartedException e) {
-            c = conversationService.findByParticipants(userId, guideId);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Esiste già una conversazione con questa guida");
         }
-        return ResponseEntity.ok(conversationMapper.convertResponse(c));
+        return ResponseEntity.ok(conversationMapper.convertResponse(createdConversation));
     }
 
-    @PostMapping("/{conversationId}/message")
-    public ResponseEntity<MessageResponseDTO> sendMessage(@PathVariable Long conversationId, @RequestBody String message, @RequestHeader(value="Authentication") Long userId) {
-        Conversation c = conversationService.findById(conversationId);
-        if(!conversationService.checkVisibility(c, userId)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a inviare un messaggio in questa conversazione");
-        }
+    @PostMapping("/message")
+    public ResponseEntity<MessageResponseDTO> sendMessage(@RequestBody @Valid MessageCreateDTO m, @RequestHeader(value="Authentication") Long userId) {
         boolean direction;
         try {
-            Tourist t = touristService.findById(userId).orElseThrow();
+            touristService.findById(userId);
             direction = false;
         } catch (NoSuchElementException e) {
-            Guide g = guideService.findById(userId).orElseThrow();
+            guideService.findById(userId);
             direction = true;
         }
-        Message m = messageService.sendMessage(messageMapper.convertCreate(MessageCreateDTO.builder()
-            .direction(direction)
-            .content(message)
-            .conversationId(conversationId)
-            .build()));
-        return ResponseEntity.ok(messageMapper.convertResponse(m));
+
+        Conversation c = conversationService.findById(m.getConversationId());
+        if(!conversationService.isVisible(c, userId)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a inviare un messaggio in questa conversazione");
+        }
+
+        Message createdMessage = messageService.sendMessage(messageMapper.convertCreate(m, direction));
+        return ResponseEntity.ok(messageMapper.convertResponse(createdMessage));
     }
 
 }

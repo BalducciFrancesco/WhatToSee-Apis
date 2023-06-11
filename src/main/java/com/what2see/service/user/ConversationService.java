@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -26,18 +27,19 @@ public class ConversationService {
     }
 
     public Conversation findByParticipants(Long touristId, Long guideId) {
-        return this.conversationRepository.findByTouristIdAndGuideId(touristId, guideId);   // can be null if not existing yet
+        return this.conversationRepository.findByTouristIdAndGuideId(touristId, guideId).orElseThrow();   // can be null if not existing yet
     }
 
-    public boolean checkVisibility(Conversation c, Long userId) {
+    public boolean isVisible(Conversation c, Long userId) {
         return c.getGuide().getId().equals(userId) || c.getTourist().getId().equals(userId);
     }
 
     // tries to create a new conversation with an initial message from tourist to guide
-    public Conversation startConversation(Conversation c) throws ConversationAlreadyStartedException {
-        if(conversationRepository.findByTouristIdAndGuideId(c.getTourist().getId(), c.getGuide().getId()) != null)
-            throw new ConversationAlreadyStartedException();    // TODO add indication of existing id for more lightweight queries
-        return conversationRepository.save(c);
+    public Conversation startConversation(Conversation newConversation) throws ConversationAlreadyStartedException {
+        Optional<Conversation> checkExisting = conversationRepository.findByTouristIdAndGuideId(newConversation.getTourist().getId(), newConversation.getGuide().getId());
+        if(checkExisting.isPresent())
+            throw new ConversationAlreadyStartedException(checkExisting.get());
+        return conversationRepository.save(newConversation);
     }
 
 }

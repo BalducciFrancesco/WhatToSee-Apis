@@ -75,14 +75,14 @@ public class TourDTOMapper {
                 .approxDuration(t.getApproxDuration())
                 .creationDate(new Date())
                 .isPublic(t.getIsPublic())
-                .author(guideService.findById(guideAuthorId).orElseThrow())
+                .author(guideService.findById(guideAuthorId))
                 .stops(t.getStops().stream().map(stopMapper::convertCreate).toList())
                 .reports(new ArrayList<>())
                 .reviews(new ArrayList<>())
                 .city(cityService.findById(t.getCityId()))
                 .theme(themeService.findById(t.getThemeId()))
                 .tags(t.getTagNames() != null ? tagService.findAllByNames(t.getTagNames()) : new ArrayList<>())
-                .sharedTourists(t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(tt -> touristService.findById(tt).orElseThrow()).toList() : new ArrayList<>())
+                .sharedTourists(t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(touristService::findById).toList() : new ArrayList<>())
                 .markedTourists(new ArrayList<>())
                 .build();
         tour.getStops().forEach(s -> s.setTour(tour));

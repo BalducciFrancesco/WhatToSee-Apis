@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -17,11 +16,11 @@ public class MessageDTOMapper {
     private final ConversationService conversationService;
 
 
-    public Message convertCreate(MessageCreateDTO m) {
+    public Message convertCreate(MessageCreateDTO m, boolean direction) {
         return Message.builder()
                 .content(m.getContent())
-                .direction(m.getDirection())
-                .conversation(m.getConversationId() != null ? conversationService.findById(m.getConversationId()) : null)
+                .direction(direction)
+                .conversation(conversationService.findById(m.getConversationId()))
                 .build();
     }
 

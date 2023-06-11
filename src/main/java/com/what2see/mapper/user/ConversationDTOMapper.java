@@ -2,7 +2,6 @@ package com.what2see.mapper.user;
 
 import com.what2see.dto.user.ConversationCreateDTO;
 import com.what2see.dto.user.ConversationResponseDTO;
-import com.what2see.dto.user.MessageCreateDTO;
 import com.what2see.model.user.Conversation;
 import com.what2see.model.user.Guide;
 import com.what2see.model.user.Message;
@@ -26,15 +25,15 @@ public class ConversationDTOMapper {
     private final MessageDTOMapper messageMapper;
 
 
-    public Conversation convertCreate(ConversationCreateDTO c) {
+    public Conversation convertCreate(ConversationCreateDTO c, Long touristId) {
         Conversation conversation = Conversation.builder()
-                .guide(guideService.findById(c.getGuideId()).orElseThrow())
-                .tourist(touristService.findById(c.getTouristId()).orElseThrow())
+                .guide(guideService.findById(c.getGuideId()))
+                .tourist(touristService.findById(touristId))
                 .build();
-        Message m = messageMapper.convertCreate(MessageCreateDTO.builder()
+        Message m = Message.builder()
                 .content(c.getMessage())
                 .direction(false)
-                .build());
+                .build();
         m.setConversation(conversation);
         conversation.setMessages(List.of(m));
         return conversation;
