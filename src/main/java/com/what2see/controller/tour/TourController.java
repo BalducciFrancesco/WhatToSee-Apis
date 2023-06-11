@@ -11,14 +11,15 @@ import com.what2see.mapper.user.UserDTOMapper;
 import com.what2see.model.tour.Report;
 import com.what2see.model.tour.Review;
 import com.what2see.model.tour.Tour;
-import com.what2see.model.user.Administrator;
 import com.what2see.model.user.Guide;
 import com.what2see.model.user.Tourist;
 import com.what2see.service.tour.ReportService;
 import com.what2see.service.tour.ReviewService;
 import com.what2see.service.tour.TagService;
 import com.what2see.service.tour.TourService;
-import com.what2see.service.user.UserService;
+import com.what2see.service.user.AdministratorService;
+import com.what2see.service.user.GuideService;
+import com.what2see.service.user.TouristService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -46,9 +47,9 @@ public class TourController {
     private final ReportDTOMapper reportMapper;
 
     private final UserDTOMapper userMapper;
-    private final UserService<Guide> guideService;
-    private final UserService<Tourist> touristService;
-    private final UserService<Administrator> administratorService;
+    private final GuideService guideService;
+    private final TouristService touristService;
+    private final AdministratorService administratorService;
 
 
     // -------

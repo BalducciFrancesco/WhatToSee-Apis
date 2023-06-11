@@ -4,9 +4,8 @@ import com.what2see.dto.tour.ReviewCreateDTO;
 import com.what2see.dto.tour.ReviewResponseDTO;
 import com.what2see.mapper.user.UserDTOMapper;
 import com.what2see.model.tour.Review;
-import com.what2see.model.user.Tourist;
 import com.what2see.service.tour.TourService;
-import com.what2see.service.user.UserService;
+import com.what2see.service.user.TouristService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,7 @@ public class ReviewDTOMapper {
 
     private final UserDTOMapper userMapper;
 
-    private final UserService<Tourist> touristService;
+    private final TouristService touristService;
 
     private final TourService tourService;
 

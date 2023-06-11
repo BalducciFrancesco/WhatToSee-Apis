@@ -4,12 +4,11 @@ import com.what2see.dto.tour.TourCreateDTO;
 import com.what2see.dto.tour.TourResponseDTO;
 import com.what2see.mapper.user.UserDTOMapper;
 import com.what2see.model.tour.Tour;
-import com.what2see.model.user.Guide;
-import com.what2see.model.user.Tourist;
 import com.what2see.service.tour.CityService;
 import com.what2see.service.tour.TagService;
 import com.what2see.service.tour.ThemeService;
-import com.what2see.service.user.UserService;
+import com.what2see.service.user.GuideService;
+import com.what2see.service.user.TouristService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +20,9 @@ import java.util.List;
 @Service
 public class TourDTOMapper {
 
-    private final UserService<Tourist> touristService;
+    private final TouristService touristService;
 
-    private final UserService<Guide> guideService;
+    private final GuideService guideService;
 
     private final UserDTOMapper userMapper;
 

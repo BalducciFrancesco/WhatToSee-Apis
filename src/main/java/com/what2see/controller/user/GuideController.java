@@ -6,7 +6,7 @@ import com.what2see.dto.user.UserResponseDTO;
 import com.what2see.mapper.user.GuideDTOMapper;
 import com.what2see.mapper.user.UserDTOMapper;
 import com.what2see.model.user.Guide;
-import com.what2see.service.user.UserService;
+import com.what2see.service.user.GuideService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,7 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/guide")
 public class GuideController {
 
-    private final UserService<Guide> guideService;
+    private final GuideService guideService;
 
     private final UserDTOMapper userMapper;
 
