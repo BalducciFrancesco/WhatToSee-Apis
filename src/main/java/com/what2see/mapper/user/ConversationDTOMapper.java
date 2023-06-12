@@ -3,9 +3,10 @@ package com.what2see.mapper.user;
 import com.what2see.dto.user.ConversationCreateDTO;
 import com.what2see.dto.user.ConversationResponseDTO;
 import com.what2see.model.user.Conversation;
+import com.what2see.model.user.Guide;
 import com.what2see.model.user.Message;
-import com.what2see.service.user.GuideService;
-import com.what2see.service.user.TouristService;
+import com.what2see.model.user.Tourist;
+import com.what2see.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +17,9 @@ import java.util.stream.Collectors;
 @Service
 public class ConversationDTOMapper {
 
-    private final GuideService guideService;
+    private final UserService<Guide> guideService;
 
-    private final TouristService touristService;
+    private final UserService<Tourist> touristService;
 
     private final UserDTOMapper userMapper;
 

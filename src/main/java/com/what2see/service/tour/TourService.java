@@ -3,17 +3,17 @@ package com.what2see.service.tour;
 import com.what2see.dto.tour.TourActionsResponseDTO;
 import com.what2see.dto.tour.TourSearchDTO;
 import com.what2see.dto.user.UserRole;
+import com.what2see.mapper.user.UserRoleMapper;
 import com.what2see.model.tour.City;
 import com.what2see.model.tour.Tag;
 import com.what2see.model.tour.Theme;
 import com.what2see.model.tour.Tour;
-import com.what2see.model.user.Guide;
+import com.what2see.model.user.Administrator;
 import com.what2see.model.user.Tourist;
 import com.what2see.model.user.User;
 import com.what2see.repository.tour.TourRepository;
 import com.what2see.service.user.UserService;
 import com.what2see.utils.TourSearchResultComparator;
-import com.what2see.mapper.user.UserRoleMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class TourService {
 
     private final ThemeService themeService;
 
-    private final UserService<Guide> administratorService;
+    private final UserService<Administrator> administratorService;
 
     private final UserService<User> userService;
 

@@ -4,7 +4,7 @@ import com.what2see.dto.user.UserLoginDTO;
 import com.what2see.dto.user.UserResponseDTO;
 import com.what2see.mapper.user.UserDTOMapper;
 import com.what2see.model.user.Administrator;
-import com.what2see.service.user.AdministratorService;
+import com.what2see.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/administrator")
 public class AdministratorController {
 
-    private final AdministratorService administratorService;
+    private final UserService<Administrator> administratorService;
 
     private final UserDTOMapper userMapper;
 

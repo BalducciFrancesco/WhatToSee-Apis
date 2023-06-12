@@ -12,9 +12,9 @@ import com.what2see.model.user.Guide;
 import com.what2see.model.user.Message;
 import com.what2see.model.user.Tourist;
 import com.what2see.service.user.ConversationService;
-import com.what2see.service.user.GuideService;
 import com.what2see.service.user.MessageService;
 import com.what2see.service.user.TouristService;
+import com.what2see.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,9 +38,9 @@ public class ConversationController {
 
     private final MessageDTOMapper messageMapper;
 
-    private final TouristService touristService;
+    private final UserService<Tourist> touristService;
 
-    private final GuideService guideService;
+    private final UserService<Guide> guideService;
 
     // -------
     // GET

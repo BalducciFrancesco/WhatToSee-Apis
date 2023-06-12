@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface AdministratorRepository extends UserRepository<Administrator> {
 
-    @Query("select t from Guide t where t.username = :username and t.password = :password")
+    @Query("select t from Administrator t where t.username = :username and t.password = :password")
     Optional<Administrator> authenticate(String username, String password);
 
 }
