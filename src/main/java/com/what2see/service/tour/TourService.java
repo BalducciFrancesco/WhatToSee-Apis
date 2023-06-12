@@ -1,15 +1,19 @@
 package com.what2see.service.tour;
 
+import com.what2see.dto.tour.TourActionsResponseDTO;
 import com.what2see.dto.tour.TourSearchDTO;
+import com.what2see.dto.user.UserRole;
 import com.what2see.model.tour.City;
 import com.what2see.model.tour.Tag;
 import com.what2see.model.tour.Theme;
 import com.what2see.model.tour.Tour;
 import com.what2see.model.user.Guide;
 import com.what2see.model.user.Tourist;
+import com.what2see.model.user.User;
 import com.what2see.repository.tour.TourRepository;
 import com.what2see.service.user.UserService;
 import com.what2see.utils.TourSearchResultComparator;
+import com.what2see.mapper.user.UserRoleMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +37,7 @@ public class TourService {
 
     private final UserService<Guide> administratorService;
 
+    private final UserService<User> userService;
 
     public Tour create(Tour t) {
         return tourRepository.save(t);
@@ -107,6 +112,19 @@ public class TourService {
 
     public void delete(Tour t) {
         tourRepository.delete(t);
+    }
+
+    public TourActionsResponseDTO getAvailableActions(Tour t, Long userId) {
+        UserRole role = UserRoleMapper.mapUserToRole(userService.findById(userId));
+        return TourActionsResponseDTO.builder()
+                .createReport(role == UserRole.TOURIST && t.getReports().stream().noneMatch(r -> r.getAuthor().getId().equals(userId)))
+                .markAsCompleted(role == UserRole.TOURIST && t.getMarkedTourists().stream().noneMatch(tt -> tt.getId().equals(userId)))
+                .review(role == UserRole.TOURIST && t.getReviews().stream().noneMatch(r -> r.getAuthor().getId().equals(userId)))
+                .sendMessage(role == UserRole.TOURIST)
+                .edit(role == UserRole.GUIDE && t.getAuthor().getId().equals(userId))
+                .viewReports(role == UserRole.ADMINISTRATOR)
+                .delete(role == UserRole.ADMINISTRATOR || (role == UserRole.GUIDE && t.getAuthor().getId().equals(userId)))
+                .build();
     }
 
 }

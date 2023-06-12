@@ -71,6 +71,12 @@ public class TourController {
         return ResponseEntity.ok(tourMapper.convertResponse(tourService.search(s)));
     }
 
+    @GetMapping("/{tourId}/availableActions")
+    public ResponseEntity<TourActionsResponseDTO> getAvailableActions(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long userId) {
+        Tour t = tourService.findById(tourId);
+        return ResponseEntity.ok(this.tourService.getAvailableActions(t, userId));
+    }
+
     @GetMapping("/{tourId}/shared")
     public ResponseEntity<List<UserResponseDTO>> getSharedTourists(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long guideId) {
         Tour t = tourService.findById(tourId);
