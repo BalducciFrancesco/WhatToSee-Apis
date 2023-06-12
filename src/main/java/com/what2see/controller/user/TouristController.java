@@ -35,6 +35,7 @@ public class TouristController {
         return ResponseEntity.ok(this.touristService.getAll().stream().map(userMapper::convertResponse).collect(Collectors.toList()));
     }
 
+    // username is trimmed and case-insensitive
     @PostMapping("/login")
     public ResponseEntity<UserResponseDTO> login(@RequestBody @Valid UserLoginDTO t) {
         Tourist loggedTourist = touristService.login(t);
@@ -43,6 +44,8 @@ public class TouristController {
         } else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Credenziali non valide");
     }
 
+    // username is trimmed and case-insensitive
+    // first name and last name are trimmed
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> register(@RequestBody @Valid UserRegisterDTO t) {
         try {

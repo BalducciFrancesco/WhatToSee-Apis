@@ -3,6 +3,7 @@ package com.what2see.service.user;
 import com.what2see.dto.user.UserLoginDTO;
 import com.what2see.model.user.User;
 import com.what2see.repository.user.UserRepository;
+import com.what2see.utils.PasswordManager;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
@@ -17,16 +18,24 @@ public abstract class UserService<T extends User> {
         return this.getRepository().findAll();
     }
 
-    public T register(T t) throws DataIntegrityViolationException {
-        return getRepository().save(t);
+    // modifies password with its respective
+    public T register(T user) throws DataIntegrityViolationException {
+        user.setPassword(PasswordManager.hashPassword(user.getPassword()));   // FIXME side-effect
+        return getRepository().save(user);
     }
 
-    public T login(UserLoginDTO dto) {
-        return getRepository().authenticate(dto.getUsername(), dto.getPassword()).orElse(null);
+    public T login(UserLoginDTO login) {
+        login.setUsername(normalize(login.getUsername()));
+        login.setPassword(PasswordManager.hashPassword(login.getPassword()));   // FIXME side-effect
+        return getRepository().authenticate(login.getUsername(), login.getPassword()).orElse(null);
     }
 
     public T findById(Long userId) {
         return getRepository().findById(userId).orElseThrow();
+    }
+
+    private String normalize(String s) {
+        return s.trim().toLowerCase();
     }
 
 }

@@ -13,10 +13,10 @@ public class GuideDTOMapper {
 
     public Guide convertRegister(UserRegisterDTO conv) {
         return Guide.builder()
-                .username(conv.getUsername())
+                .username(conv.getUsername().trim().toLowerCase())
                 .password(conv.getPassword())
-                .firstName(conv.getFirstName())
-                .lastName(conv.getLastName())
+                .firstName(conv.getFirstName().trim())
+                .lastName(conv.getLastName().trim())
                 .conversations(new ArrayList<>())
                 .createdTours(new ArrayList<>())
                 .build();

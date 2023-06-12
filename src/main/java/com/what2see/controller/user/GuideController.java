@@ -30,6 +30,7 @@ public class GuideController {
     private final GuideDTOMapper guideMapper;
 
 
+    // username is trimmed and case-insensitive
     @PostMapping("/login")
     public ResponseEntity<UserResponseDTO> login(@RequestBody @Valid UserLoginDTO g) {
         Guide loggedGuide = guideService.login(g);
@@ -38,6 +39,8 @@ public class GuideController {
         } else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Credenziali non valide");
     }
 
+    // username is trimmed and case-insensitive
+    // first name and last name are trimmed
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> register(@RequestBody @Valid UserRegisterDTO g) {
         try {

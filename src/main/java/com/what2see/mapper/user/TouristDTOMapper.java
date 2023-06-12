@@ -13,10 +13,10 @@ public class TouristDTOMapper {
 
     public Tourist convertRegister(UserRegisterDTO conv) {
         return Tourist.builder()
-                .username(conv.getUsername())
+                .username(conv.getUsername().trim().toLowerCase())
                 .password(conv.getPassword())
-                .firstName(conv.getFirstName())
-                .lastName(conv.getLastName())
+                .firstName(conv.getFirstName().trim())
+                .lastName(conv.getLastName().trim())
                 .conversations(new ArrayList<>())
                 .markedTours(new ArrayList<>())
                 .reviewedTours(new ArrayList<>())

@@ -25,6 +25,7 @@ public class AdministratorController {
     private final UserDTOMapper userMapper;
 
 
+    // username is trimmed and case-insensitive
     @PostMapping("/login")
     public ResponseEntity<UserResponseDTO> login(@RequestBody @Valid UserLoginDTO t) {
         Administrator loggedAdministrator = administratorService.login(t);
