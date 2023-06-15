@@ -23,7 +23,7 @@ public class CityController {
 
     @GetMapping()
     public ResponseEntity<List<CityResponseDTO>> getAll() {
-        return ResponseEntity.ok(cityService.getAll().stream().map(cityMapper::convertResponse).collect(Collectors.toList()));
+        return ResponseEntity.ok(cityService.findAll().stream().map(cityMapper::convertResponse).collect(Collectors.toList()));
     }
 
 }

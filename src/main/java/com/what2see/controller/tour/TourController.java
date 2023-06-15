@@ -3,6 +3,7 @@ package com.what2see.controller.tour;
 
 import com.what2see.dto.tour.*;
 import com.what2see.dto.user.UserResponseDTO;
+import com.what2see.exception.InteractionAlreadyPerformedException;
 import com.what2see.exception.TourNotMarkedException;
 import com.what2see.mapper.tour.ReportDTOMapper;
 import com.what2see.mapper.tour.ReviewDTOMapper;
@@ -18,8 +19,6 @@ import com.what2see.service.tour.ReportService;
 import com.what2see.service.tour.ReviewService;
 import com.what2see.service.tour.TagService;
 import com.what2see.service.tour.TourService;
-import com.what2see.service.user.GuideService;
-import com.what2see.service.user.TouristService;
 import com.what2see.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -154,7 +153,7 @@ public class TourController {
     @PostMapping()
     public ResponseEntity<TourResponseDTO> create(@RequestBody @Valid TourCreateDTO t, @RequestHeader(value="Authentication") Long guideId) {
         guideService.findById(guideId);
-        tagService.create(t.getTagNames()); // create tags if not already existing
+        tagService.createByNames(t.getTagNames()); // create tags if not already existing
         Tour createdTour = tourService.create(tourMapper.convertCreate(t, guideId));
         return ResponseEntity.ok(tourMapper.convertResponse(createdTour));
     }
@@ -167,6 +166,8 @@ public class TourController {
             createdReview = reviewService.create(reviewMapper.convertCreate(r, tourId, touristId));
         } catch (TourNotMarkedException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Non è possibile recensire tour che non sono stati segnati come percorsi");
+        } catch (InteractionAlreadyPerformedException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Hai già recensito questo tour");
         }
         return ResponseEntity.ok(reviewMapper.convertResponse(createdReview));
     }
@@ -183,7 +184,11 @@ public class TourController {
     public ResponseEntity<Void> markAsCompletedByMe(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long touristId) {
         Tour t = tourService.findById(tourId);
         Tourist tt = touristService.findById(touristId);
-        tourService.markAsCompleted(t, tt);
+        try {
+            tourService.markAsCompleted(t, tt);
+        } catch (InteractionAlreadyPerformedException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Hai già segnato come percorso questo tour");
+        }
         return ResponseEntity.ok().build();
     }
 

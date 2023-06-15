@@ -16,7 +16,7 @@ public class CityService {
 
     private final CityRepository cityRepository;
 
-    public List<City> getAll() {
+    public List<City> findAll() {
         return this.cityRepository.findAll();
     }
 

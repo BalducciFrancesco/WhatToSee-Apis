@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,11 +28,15 @@ public class TagService {
         return tagRepository.findAllById(tagIds);
     }
 
-    public void create(List<String> tagNames) { // if not exists already
+    public List<Tag> createByNames(List<String> tagNames) { // if not exists already
+        List<Tag> result = new ArrayList<>();
         for(String tagName : tagNames) {
-            if(tagRepository.findByName(tagName).isEmpty()) {
-                tagRepository.save(Tag.builder().name(tagName).build());
+            Tag t = tagRepository.findByName(tagName).orElse(null);
+            if(t == null) {
+                t = tagRepository.save(Tag.builder().name(tagName).build());
             }
+            result.add(t);
         }
+        return result;
     }
 }

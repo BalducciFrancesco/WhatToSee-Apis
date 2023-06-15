@@ -3,6 +3,7 @@ package com.what2see.service.tour;
 import com.what2see.dto.tour.TourActionsResponseDTO;
 import com.what2see.dto.tour.TourSearchDTO;
 import com.what2see.dto.user.UserRole;
+import com.what2see.exception.InteractionAlreadyPerformedException;
 import com.what2see.mapper.user.UserRoleMapper;
 import com.what2see.model.tour.City;
 import com.what2see.model.tour.Tag;
@@ -90,7 +91,6 @@ public class TourService {
         }
     }
 
-    // if is public or is author or is one of the shared tourists
     public boolean isEditable(Tour t, Long userId) {
         return t.getAuthor().getId().equals(userId);
     }
@@ -105,9 +105,9 @@ public class TourService {
 
     public void markAsCompleted(Tour t, Tourist tt) {
         List<Tourist> completes = t.getMarkedTourists();
-        if(!completes.contains(tt)) {
-            completes.add(tt);
-        }
+        if(completes.contains(tt))
+            throw new InteractionAlreadyPerformedException(t, tt);
+        completes.add(tt);
     }
 
     public void delete(Tour t) {
