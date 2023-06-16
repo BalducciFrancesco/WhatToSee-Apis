@@ -1,10 +1,9 @@
 package com.what2see;
 
 import com.what2see.model.tour.*;
-import com.what2see.model.user.Administrator;
-import com.what2see.model.user.Guide;
-import com.what2see.model.user.Tourist;
+import com.what2see.model.user.*;
 import com.what2see.repository.tour.*;
+import com.what2see.repository.user.ConversationRepository;
 import com.what2see.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -26,11 +25,16 @@ public class EntityMock {
     private final TourRepository tourRepository;
 
 
+    private final UserRepository<User> userRepository;
+
     private final UserRepository<Tourist> touristRepository;
 
     private final UserRepository<Guide> guideRepository;
 
     private final UserRepository<Administrator> administratorRepository;
+
+    private final ConversationRepository conversationRepository;
+
 
     // -----------
     // TOUR
@@ -80,6 +84,10 @@ public class EntityMock {
     // USER
     // -----------
 
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
     public List<Tourist> getAllTourists() {
         return touristRepository.findAll();
     }
@@ -96,8 +104,20 @@ public class EntityMock {
         return guideRepository.findById(3L).orElseThrow();
     }
 
+    public List<Administrator> getAllAdministrators() {
+        return administratorRepository.findAll();
+    }
+
     public Administrator getAdministrator() {
         return administratorRepository.findById(5L).orElseThrow();
+    }
+
+    public List<Conversation> getAllConversations() {
+        return conversationRepository.findAll();
+    }
+
+    public Conversation getConversation() {
+        return conversationRepository.findById(1L).orElseThrow();
     }
 
 }
