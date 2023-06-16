@@ -5,6 +5,7 @@ import com.what2see.exception.InteractionAlreadyPerformedException;
 import com.what2see.exception.TourNotMarkedException;
 import com.what2see.model.tour.Review;
 import com.what2see.model.tour.Tour;
+import com.what2see.model.user.Tourist;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
@@ -32,14 +33,15 @@ class ReviewServiceTest {
     @Test
     void create() {
         // setup
-        Tour unreviewedTour;
-        List<Tour> markedTours = mock.getTourist().getMarkedTours();
-        List<Tour> reviewedTours = mock.getTourist().getReviewedTours().stream().map(Review::getTour).toList();
-        unreviewedTour = markedTours.stream().filter(t -> !reviewedTours.contains(t)).findFirst().orElseThrow();
+        Tourist subject = mock.getTourist();
+        List<Long> subjectReviewedToursIds = subject.getReviewedTours().stream().map(Review::getTour).map(Tour::getId).toList();
+        List<Long> subjectMarkedToursIds = subject.getMarkedTours().stream().map(Tour::getId).toList();
+        Tour unreviewedMarkedTour = mock.getTourist().getMarkedTours().stream().filter(t -> !subjectReviewedToursIds.contains(t.getId()) && subjectMarkedToursIds.contains(t.getId())).findAny().orElseThrow();
+        String expectedDescription = "Review1";
         Review expected = Review.builder()
                 .author(mock.getTourist())
-                .description("Review1")
-                .tour(unreviewedTour)
+                .description(expectedDescription)
+                .tour(unreviewedMarkedTour)
                 .stars(5)
                 .build();
         // under test
@@ -52,11 +54,15 @@ class ReviewServiceTest {
     @Test
     void noUnmarkedTourReview() {
         // setup
-        Tour unmarkedTour = mock.getAllTours().stream().filter(t -> !t.getMarkedTourists().contains(mock.getTourist())).findFirst().orElseThrow();
+        Tourist subject = mock.getTourist();
+        List<Long> subjectReviewedToursIds = subject.getReviewedTours().stream().map(Review::getTour).map(Tour::getId).toList();
+        List<Long> subjectMarkedToursIds = subject.getMarkedTours().stream().map(Tour::getId).toList();
+        Tour unreviewedUnmarkedTour = mock.getAllTours().stream().filter(t -> !subjectReviewedToursIds.contains(t.getId()) && !subjectMarkedToursIds.contains(t.getId())).findAny().orElseThrow();
+        String expectedDescription = "Review2";
         Review expected = Review.builder()
-                .author(mock.getTourist())
-                .description("Review1")
-                .tour(unmarkedTour)
+                .author(subject)
+                .description(expectedDescription)
+                .tour(unreviewedUnmarkedTour)
                 .stars(5)
                 .build();
         // under test and assertion
@@ -66,14 +72,15 @@ class ReviewServiceTest {
     @Test
     void noInvalidRating() {
         // setup
-        Tour unreviewedTour;
-        List<Tour> markedTours = mock.getTourist().getMarkedTours();
-        List<Tour> reviewedTours = mock.getTourist().getReviewedTours().stream().map(Review::getTour).toList();
-        unreviewedTour = markedTours.stream().filter(t -> !reviewedTours.contains(t)).findFirst().orElseThrow();
+        Tourist subject = mock.getTourist();
+        List<Long> subjectReviewedToursIds = subject.getReviewedTours().stream().map(Review::getTour).map(Tour::getId).toList();
+        List<Long> subjectMarkedToursIds = subject.getMarkedTours().stream().map(Tour::getId).toList();
+        Tour unreviewedMarkedTour = mock.getAllTours().stream().filter(t -> !subjectReviewedToursIds.contains(t.getId()) && subjectMarkedToursIds.contains(t.getId())).findAny().orElseThrow();
+        String expectedDescription = "Review3";
         Review expected = Review.builder()
                 .author(mock.getTourist())
-                .description("Review1")
-                .tour(unreviewedTour)
+                .description(expectedDescription)
+                .tour(unreviewedMarkedTour)
                 .stars(6)
                 .build();
         // under test and assertion
@@ -83,9 +90,14 @@ class ReviewServiceTest {
     @Test
     void noMultipleReviews() {
         // setup
+        Tourist subject = mock.getTourist();
+        List<Long> subjectReviewedToursIds = subject.getReviewedTours().stream().map(Review::getTour).map(Tour::getId).toList();
+        List<Long> subjectMarkedToursIds = subject.getMarkedTours().stream().map(Tour::getId).toList();
+        Tour reviewedMarkedTour = mock.getAllTours().stream().filter(t -> subjectReviewedToursIds.contains(t.getId()) && subjectMarkedToursIds.contains(t.getId())).findAny().orElseThrow();
+        String expectedDescription = "Review4";
         Review expected = Review.builder()
                 .author(mock.getTourist())
-                .description("Review1")
+                .description(expectedDescription)
                 .tour(mock.getTour())
                 .stars(5)
                 .build();

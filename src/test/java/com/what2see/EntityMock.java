@@ -14,6 +14,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EntityMock {
 
+    // -----------
+    // TOUR
+    // -----------
+
     private final CityRepository cityRepository;
 
     private final TagRepository tagRepository;
@@ -24,21 +28,6 @@ public class EntityMock {
 
     private final TourRepository tourRepository;
 
-
-    private final UserRepository<User> userRepository;
-
-    private final UserRepository<Tourist> touristRepository;
-
-    private final UserRepository<Guide> guideRepository;
-
-    private final UserRepository<Administrator> administratorRepository;
-
-    private final ConversationRepository conversationRepository;
-
-
-    // -----------
-    // TOUR
-    // -----------
 
     public List<City> getAllCities() {
         return cityRepository.findAll();
@@ -83,6 +72,17 @@ public class EntityMock {
     // -----------
     // USER
     // -----------
+
+    private final UserRepository<User> userRepository;
+
+    private final UserRepository<Tourist> touristRepository;
+
+    private final UserRepository<Guide> guideRepository;
+
+    private final UserRepository<Administrator> administratorRepository;
+
+    private final ConversationRepository conversationRepository;
+
 
     public List<User> getAllUsers() {
         return userRepository.findAll();

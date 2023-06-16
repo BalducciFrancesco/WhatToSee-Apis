@@ -5,10 +5,12 @@ import com.what2see.dto.tour.TourActionsResponseDTO;
 import com.what2see.dto.tour.TourSearchDTO;
 import com.what2see.exception.InteractionAlreadyPerformedException;
 import com.what2see.model.tour.Stop;
+import com.what2see.model.tour.Tag;
 import com.what2see.model.tour.Tour;
 import com.what2see.model.user.Administrator;
 import com.what2see.model.user.Guide;
 import com.what2see.model.user.Tourist;
+import com.what2see.model.user.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -125,13 +127,13 @@ class TourServiceTest {
     @Test
     void searchSingleResult() {
         // setup
-        TourSearchDTO searchParams = TourSearchDTO.builder()
-                .themeId(1L)
-                .approxDuration("08:00")
-                .cityId(1L)
-                .tagIds(List.of(1L))
-                .build();
         Tour expected = mock.getTour();
+        TourSearchDTO searchParams = TourSearchDTO.builder()
+                .themeId(expected.getTheme().getId())
+                .approxDuration(expected.getApproxDuration())
+                .cityId(expected.getCity().getId())
+                .tagIds(expected.getTags().stream().map(Tag::getId).toList())
+                .build();
         // under test
         List<Tour> underTest = tourService.search(searchParams);
         // assertion
@@ -146,11 +148,11 @@ class TourServiceTest {
         TourSearchDTO searchParams = TourSearchDTO.builder()
                 .approxDuration(expectedDuration)
                 .build();
-        List<Long> expectedIds = mock.getAllTours().stream().filter(t -> t.getApproxDuration().compareTo(expectedDuration) < 0).map(Tour::getId).toList();
+        List<Long> expectedIds = mock.getAllTours().stream().filter(t -> t.isPublic() && t.getApproxDuration().compareTo(expectedDuration) < 0).map(Tour::getId).toList();
         // under test
         List<Tour> underTest = tourService.search(searchParams);
         // assertion
-        assertEquals(2, underTest.size());
+        assertEquals(expectedIds.size(), underTest.size()); // pn
         assertTrue(underTest.stream().map(Tour::getId).allMatch(expectedIds::contains));
     }
 
@@ -172,7 +174,7 @@ class TourServiceTest {
         // setup
         Tour expected = mock.getTour();
         // under test
-        Tour underTest = tourService.findById(1L);
+        Tour underTest = tourService.findById(expected.getId());
         // assertion
         assertEquals(expected.getId(), underTest.getId());
         assertEquals(expected.getTitle(), underTest.getTitle());
@@ -219,7 +221,7 @@ class TourServiceTest {
     void isVisibleAsShared() {
         // setup
         Tour isNotPublic = mock.getAllTours().stream().filter(t -> !t.isPublic() && t.getSharedTourists().size() > 0).findAny().orElseThrow();
-        List<Long> sharedTouristsIds = isNotPublic.getSharedTourists().stream().map(Tourist::getId).toList();
+        List<Long> sharedTouristsIds = isNotPublic.getSharedTourists().stream().map(User::getId).toList();
         Tourist expectedVisible = mock.getAllTourists().stream().filter(t -> sharedTouristsIds.contains(t.getId())).findAny().orElseThrow();
         Tourist expectedNotVisible = mock.getAllTourists().stream().filter(t -> !sharedTouristsIds.contains(t.getId())).findAny().orElseThrow();
         // under test
@@ -251,8 +253,8 @@ class TourServiceTest {
         Guide expectedEditable = isNotPublic.getAuthor();
         Guide expectedNotEditable = mock.getAllGuides().stream().filter(g -> !g.getId().equals(expectedEditable.getId())).findAny().orElseThrow();
         // under test
-        boolean underTestEditable = tourService.isVisible(isNotPublic, expectedEditable.getId());
-        boolean underTestNotEditable = tourService.isVisible(isNotPublic, expectedNotEditable.getId());
+        boolean underTestEditable = tourService.isEditable(isNotPublic, expectedEditable.getId());
+        boolean underTestNotEditable = tourService.isEditable(isNotPublic, expectedNotEditable.getId());
         // assertion
         assertTrue(underTestEditable);
         assertFalse(underTestNotEditable);
@@ -265,8 +267,8 @@ class TourServiceTest {
         Guide expectedDeletable = isNotPublic.getAuthor();
         Guide expectedNotDeletable = mock.getAllGuides().stream().filter(g -> !g.getId().equals(expectedDeletable.getId())).findAny().orElseThrow();
         // under test
-        boolean underTestDeletable = tourService.isVisible(isNotPublic, expectedDeletable.getId());
-        boolean underTestNotDeletable = tourService.isVisible(isNotPublic, expectedNotDeletable.getId());
+        boolean underTestDeletable = tourService.isDeletable(isNotPublic, expectedDeletable.getId());
+        boolean underTestNotDeletable = tourService.isDeletable(isNotPublic, expectedNotDeletable.getId());
         // assertion
         assertTrue(underTestDeletable);
         assertFalse(underTestNotDeletable);
@@ -292,7 +294,7 @@ class TourServiceTest {
         // under test
         tourService.markAsCompleted(expectedNotMarked, subject);
         // assertion
-        assertTrue(expectedNotMarked.getMarkedTourists().stream().map(Tourist::getId).anyMatch(t -> t.equals(subject.getId())));
+        assertTrue(expectedNotMarked.getMarkedTourists().stream().map(User::getId).anyMatch(t -> t.equals(subject.getId())));
     }
 
     @Test

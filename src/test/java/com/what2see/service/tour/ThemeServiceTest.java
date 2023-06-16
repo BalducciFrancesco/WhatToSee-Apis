@@ -27,14 +27,12 @@ class ThemeServiceTest {
     @Test
     void findAll() {
         // setup
-        List<Theme> expected = mock.getAllThemes();
+        List<Long> expectedIds = mock.getAllThemes().stream().map(Theme::getId).toList();
         // under test
         List<Theme> underTest = themeService.findAll();
         // assertions
-        assertEquals(expected.size(), underTest.size());
-        assertTrue(underTest.stream().anyMatch(c -> c.getName().equals("Montagna")));
-        assertTrue(underTest.stream().anyMatch(c -> c.getName().equals("Panoramico")));
-        assertTrue(underTest.stream().anyMatch(c -> c.getName().equals("Musei")));
+        assertEquals(expectedIds.size(), underTest.size());
+        assertTrue(underTest.stream().map(Theme::getId).allMatch(expectedIds::contains));
     }
 
     @Test
@@ -42,7 +40,7 @@ class ThemeServiceTest {
         // setup
         Theme expected = mock.getTheme();
         // under test
-        Theme underTest = themeService.findById(1L);
+        Theme underTest = themeService.findById(expected.getId());
         // assertions
         assertEquals(expected.getId(), underTest.getId());
         assertEquals(expected.getName(), underTest.getName());

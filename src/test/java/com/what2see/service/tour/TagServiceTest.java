@@ -36,45 +36,43 @@ class TagServiceTest {
     @Test
     void findAll() {
         // setup
-        List<Tag> expected = mock.getAllTags();
+        List<Long> expectedIds = mock.getAllTags().stream().map(Tag::getId).toList();
         // under test
         List<Tag> underTest = tagService.findAll();
         // assertions
-        assertEquals(expected.size(), underTest.size());
-        assertTrue(underTest.stream().anyMatch(c -> c.getName().equals("Divertente")));
-        assertTrue(underTest.stream().anyMatch(c -> c.getName().equals("Gratuito")));
-        assertTrue(underTest.stream().anyMatch(c -> c.getName().equals("Accessibile")));
-        assertTrue(underTest.stream().anyMatch(c -> c.getName().equals("Breve")));
+        assertEquals(expectedIds.size(), underTest.size());
+        assertTrue(underTest.stream().map(Tag::getId).allMatch(expectedIds::contains));
     }
 
     @Test
     void findAllByNames() {
         // setup
-        List<String> names = List.of("Divertente", "Breve");
-        List<Tag> expected = mock.getAllTags().stream().filter(t -> names.contains(t.getName())).toList();
+        List<Tag> expected = mock.getAllTags().stream().limit(2).toList();
+        List<Long> expectedIds = expected.stream().map(Tag::getId).toList();
+        List<String> expectedNames = expected.stream().map(Tag::getName).toList();
         // under test
-        List<Tag> underTest = tagService.findAllByNames(names);
+        List<Tag> underTest = tagService.findAllByNames(expectedNames);
         // assertions
-        assertEquals(expected.size(), underTest.size());
-        assertTrue(underTest.stream().anyMatch(c -> c.getName().equals("Divertente")));
-        assertTrue(underTest.stream().anyMatch(c -> c.getName().equals("Breve")));
+        assertEquals(expectedIds.size(), underTest.size());
+        assertTrue(underTest.stream().map(Tag::getId).allMatch(expectedIds::contains));
+        assertTrue(underTest.stream().map(Tag::getName).allMatch(expectedNames::contains));
     }
 
     @Test
     void findAllById() {
         // setup
-        List<Long> expected = mock.getAllTags().stream().map(Tag::getId).toList();
+        List<Long> expectedIds = mock.getAllTags().stream().map(Tag::getId).limit(2).toList();
         // under test
-        List<Tag> underTest = tagService.findAllById(expected);
+        List<Tag> underTest = tagService.findAllById(expectedIds);
         // assertions
-        assertEquals(expected.size(), underTest.size());
-        assertTrue(underTest.stream().map(Tag::getId).allMatch(expected::contains));
+        assertEquals(expectedIds.size(), underTest.size());
+        assertTrue(underTest.stream().map(Tag::getId).allMatch(expectedIds::contains));
     }
 
     @Test
     void create() {
         // setup
-        List<String> names = List.of("Tag1", "Divertente", "Tag2");
+        List<String> names = List.of("Tag1", mock.getTag().getName(), "Tag2");
         List<Tag> expected = names.stream().map(n -> Tag.builder().name(n).build()).toList();
         // under test
         List<Tag> underTest = tagService.createByNames(names);

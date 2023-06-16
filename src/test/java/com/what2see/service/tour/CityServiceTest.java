@@ -2,7 +2,6 @@ package com.what2see.service.tour;
 
 import com.what2see.EntityMock;
 import com.what2see.model.tour.City;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +14,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Transactional
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -29,14 +27,12 @@ public class CityServiceTest {
     @Test
     void findAll() {
         // setup
-        List<City> expected = mock.getAllCities();
+        List<Long> expectedIds = mock.getAllCities().stream().map(City::getId).toList();
         // under test
         List<City> underTest = cityService.findAll();
         // assertions
-        assertEquals(expected.size(), underTest.size());
-        assertTrue(underTest.stream().anyMatch(c -> c.getName().equals("Milano")));
-        assertTrue(underTest.stream().anyMatch(c -> c.getName().equals("Roma")));
-        assertTrue(underTest.stream().anyMatch(c -> c.getName().equals("Napoli")));
+        assertEquals(expectedIds.size(), underTest.size());
+        assertTrue(underTest.stream().map(City::getId).allMatch(expectedIds::contains));
     }
 
     @Test
@@ -44,7 +40,7 @@ public class CityServiceTest {
         // setup
         City expected = mock.getCity();
         // under test
-        City underTest = cityService.findById(1L);
+        City underTest = cityService.findById(expected.getId());
         // assertions
         assertEquals(expected.getId(), underTest.getId());
         assertEquals(expected.getName(), underTest.getName());
