@@ -32,7 +32,7 @@ public class TouristController {
 
     @GetMapping()
     public ResponseEntity<List<UserResponseDTO>> getAll() {
-        return ResponseEntity.ok(this.touristService.getAll().stream().map(userMapper::convertResponse).collect(Collectors.toList()));
+        return ResponseEntity.ok(this.touristService.findAll().stream().map(userMapper::convertResponse).collect(Collectors.toList()));
     }
 
     // username is trimmed and case-insensitive

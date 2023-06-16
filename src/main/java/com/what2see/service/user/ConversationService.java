@@ -18,7 +18,7 @@ public class ConversationService {
     private final ConversationRepository conversationRepository;
 
 
-    public List<Conversation> getAll() {
+    public List<Conversation> findAll() {
         return this.conversationRepository.findAll();
     }
 
@@ -35,6 +35,7 @@ public class ConversationService {
     }
 
     // tries to create a new conversation with an initial message from tourist to guide
+    // this method doesn't throw error if conversation is started with multiple messages or from guide to tourist
     public Conversation startConversation(Conversation newConversation) throws ConversationAlreadyStartedException {
         Optional<Conversation> checkExisting = conversationRepository.findByTouristIdAndGuideId(newConversation.getTourist().getId(), newConversation.getGuide().getId());
         if(checkExisting.isPresent())

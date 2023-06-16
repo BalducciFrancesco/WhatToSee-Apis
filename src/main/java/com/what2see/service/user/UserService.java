@@ -14,19 +14,23 @@ public abstract class UserService<T extends User> {
 
     public abstract UserRepository<T> getRepository();
 
-    public List<T> getAll() {
+    public List<T> findAll() {
         return this.getRepository().findAll();
     }
 
-    // modifies password with its respective
+    // FIXME side-effect
     public T register(T user) throws DataIntegrityViolationException {
-        user.setPassword(PasswordManager.hashPassword(user.getPassword()));   // FIXME side-effect
+        user.setUsername(normalize(user.getUsername()));
+        user.setFirstName(user.getFirstName().trim());
+        user.setLastName(user.getLastName().trim());
+        user.setPassword(PasswordManager.hashPassword(user.getPassword()));
         return getRepository().save(user);
     }
 
+    // FIXME side-effect
     public T login(UserLoginDTO login) {
         login.setUsername(normalize(login.getUsername()));
-        login.setPassword(PasswordManager.hashPassword(login.getPassword()));   // FIXME side-effect
+        login.setPassword(PasswordManager.hashPassword(login.getPassword()));
         return getRepository().authenticate(login.getUsername(), login.getPassword()).orElse(null);
     }
 
