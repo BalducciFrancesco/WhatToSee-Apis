@@ -2,15 +2,17 @@ package com.what2see.controller.tour;
 
 import com.what2see.dto.tour.TagResponseDTO;
 import com.what2see.mapper.tour.TagDTOMapper;
+import com.what2see.model.user.User;
 import com.what2see.service.tour.TagService;
+import com.what2see.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,9 +23,12 @@ public class TagController {
 
     private final TagDTOMapper tagMapper;
 
+    private final UserService<User> userService;
+
     @GetMapping()
-    public ResponseEntity<List<TagResponseDTO>> getAll() {
-        return ResponseEntity.ok(tagService.findAll().stream().map(tagMapper::convertResponse).collect(Collectors.toList()));
+    public ResponseEntity<List<TagResponseDTO>> getAll(@RequestHeader(value="Authentication") Long userId) {
+        userService.findById(userId);
+        return ResponseEntity.ok(tagService.findAll().stream().map(tagMapper::convertResponse).toList());
     }
 
 }

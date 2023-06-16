@@ -62,6 +62,7 @@ public class TourController {
     @GetMapping("/{tourId}")
     public ResponseEntity<TourResponseDTO> getById(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long userId) {
         Tour t = tourService.findById(tourId);
+        userService.findById(userId);
         if(!tourService.isVisible(t, userId)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a visualizzare questo tour");
         }
@@ -77,6 +78,7 @@ public class TourController {
     @GetMapping("/{tourId}/availableActions")
     public ResponseEntity<TourActionsResponseDTO> getAvailableActions(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long userId) {
         Tour t = tourService.findById(tourId);
+        userService.findById(userId);
         return ResponseEntity.ok(this.tourService.getAvailableActions(t, userId));
     }
 
@@ -128,6 +130,7 @@ public class TourController {
     @PatchMapping("/{tourId}")
     public ResponseEntity<TourResponseDTO> editById(@RequestBody @Valid TourCreateDTO editedTour, @PathVariable Long tourId, @RequestHeader(value="Authentication") Long guideId) {
         Tour oldTour = tourService.findById(tourId);
+        guideService.findById(guideId);
         if(!tourService.isEditable(oldTour, guideId)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a modificre questo tour");
         }
@@ -142,6 +145,7 @@ public class TourController {
     @DeleteMapping("/{tourId}")
     public ResponseEntity<Void> deleteById(@PathVariable Long tourId, @RequestHeader(value="Authentication") Long userId) {
         Tour t = tourService.findById(tourId);
+        userService.findById(userId);
         if(!tourService.isDeletable(t, userId)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non sei autorizzato a eliminare questo tour");
         }
