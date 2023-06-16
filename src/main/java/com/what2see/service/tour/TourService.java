@@ -13,15 +13,14 @@ import com.what2see.model.user.Administrator;
 import com.what2see.model.user.Tourist;
 import com.what2see.model.user.User;
 import com.what2see.repository.tour.TourRepository;
+import com.what2see.service.tour.search.*;
 import com.what2see.service.user.UserService;
-import com.what2see.utils.TourSearchResultComparator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -58,20 +57,19 @@ public class TourService {
         oldTour.setSharedTourists(newTour.getSharedTourists());
     }
 
-    public List<Tour> search(TourSearchDTO s) throws NoSuchElementException {
+    public List<Tour> search(User u, TourSearchDTO s) throws NoSuchElementException {
         // if search field ids are specified, they must match an existing entity
-        City city = s.getCityId() != null ? cityService.findById(s.getCityId()) : null;
-        Theme theme = s.getThemeId() != null ? themeService.findById(s.getThemeId()) : null;
-        List<Tag> tags = s.getTagIds() != null ? tagService.findAllById(s.getTagIds()) : null;
+        City cityFilter = s.getCityId() != null ? cityService.findById(s.getCityId()) : null;
+        Theme themeFilter = s.getThemeId() != null ? themeService.findById(s.getThemeId()) : null;
+        List<Tag> tagsFilter = s.getTagIds() != null ? tagService.findAllById(s.getTagIds()) : null;
 
-        List<Tour> result = tourRepository.search(city, theme, s.getApproxDuration());
-        if(tags != null && !tags.isEmpty()) {
-            // filter the tags for those who contain at least one of the requested filters
-            result = result.stream().filter(tour -> tour.getTags().stream().anyMatch(tags::contains)).collect(Collectors.toList());
-        }
-
-        result.sort(new TourSearchResultComparator());  // sort primarily by reviews count and secondarily for marked count
-        return result;
+        TourSearchStrategy strategy = switch(UserRoleMapper.mapUserToRole(u)) {
+            case TOURIST -> new TourSearchStrategyTourist();
+            case GUIDE -> new TourSearchStrategyGuide();
+            case ADMINISTRATOR -> new TourSearchStrategyAdministrator();
+        };
+        TourSearch searcher = new TourSearch(strategy, tourRepository);
+        return searcher.searchWithStrategy(u, cityFilter, themeFilter, s.getApproxDuration(), tagsFilter);
     }
 
     public Tour findById(Long tourId) throws NoSuchElementException {

@@ -15,6 +15,7 @@ import com.what2see.model.tour.Tour;
 import com.what2see.model.user.Administrator;
 import com.what2see.model.user.Guide;
 import com.what2see.model.user.Tourist;
+import com.what2see.model.user.User;
 import com.what2see.service.tour.ReportService;
 import com.what2see.service.tour.ReviewService;
 import com.what2see.service.tour.TagService;
@@ -48,8 +49,9 @@ public class TourController {
     private final ReportDTOMapper reportMapper;
 
     private final UserDTOMapper userMapper;
-    private final UserService<Guide> guideService;
+    private final UserService<User> userService;
     private final UserService<Tourist> touristService;
+    private final UserService<Guide> guideService;
     private final UserService<Administrator> administratorService;
 
 
@@ -68,7 +70,8 @@ public class TourController {
 
     @GetMapping("/search")
     public ResponseEntity<List<TourResponseDTO>> search(@Valid TourSearchDTO s, @RequestHeader(value="Authentication") Long userId) {
-        return ResponseEntity.ok(tourMapper.convertResponse(tourService.search(s)));
+        User u = userService.findById(userId);
+        return ResponseEntity.ok(tourMapper.convertResponse(tourService.search(u, s)));
     }
 
     @GetMapping("/{tourId}/availableActions")
