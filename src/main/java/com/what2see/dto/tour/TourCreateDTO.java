@@ -33,7 +33,7 @@ public class TourCreateDTO {
 
     private @NotNull Boolean isPublic;
 
-    private @NotNull List<Long> sharedTouristIds;
+    private List<Long> sharedTouristIds;    // can be null only if public (ignored anyway)
 
     private @NotEmpty List<StopCreateDTO> stops;
 

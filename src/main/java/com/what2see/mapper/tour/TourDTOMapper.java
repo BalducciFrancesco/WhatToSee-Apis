@@ -83,7 +83,7 @@ public class TourDTOMapper {
                 .city(cityService.findById(t.getCityId()))
                 .theme(themeService.findById(t.getThemeId()))
                 .tags(t.getTagNames() != null ? tagService.findAllByNames(t.getTagNames()) : new ArrayList<>())
-                .sharedTourists(t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(touristService::findById).collect(Collectors.toList()) : new ArrayList<>())
+                .sharedTourists(!t.getIsPublic() && t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(touristService::findById).collect(Collectors.toList()) : new ArrayList<>())
                 .markedTourists(new ArrayList<>())
                 .build();
         tour.getStops().forEach(s -> s.setTour(tour));
