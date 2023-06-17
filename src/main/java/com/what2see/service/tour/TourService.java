@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -44,6 +45,7 @@ public class TourService {
     }
 
     public void update(Tour oldTour, Tour newTour) {
+        // doesn't update creationDate, reviews, reports and sharedTourists
         oldTour.setTitle(newTour.getTitle());
         oldTour.setDescription(newTour.getDescription());
         oldTour.setPublic(newTour.isPublic());
@@ -125,4 +127,7 @@ public class TourService {
                 .build();
     }
 
+    public List<Tour> getCompletedTours(Tourist tt) {   // excludes no longer visible
+        return tt.getMarkedTours().stream().filter(t -> t.isPublic() || t.getSharedTourists().contains(tt)).collect(Collectors.toList());
+    }
 }

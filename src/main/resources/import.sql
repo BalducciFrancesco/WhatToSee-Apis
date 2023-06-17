@@ -32,6 +32,7 @@ INSERT INTO stop(cost, description, duration, title, transfer_cost, transfer_det
 INSERT INTO tour_tags(tour_id, tag_id) VALUES (3, 3);
 INSERT INTO shares(tour_id, tourist_id) VALUES (3, 1);
 INSERT INTO completes(tour_id, tourist_id) VALUES (3, 1);
+INSERT INTO completes(tour_id, tourist_id) VALUES (3, 2);   # should not appear in completions as it's not visible to him
 
 
 INSERT INTO conversation(guide_id, tourist_id) VALUES (3, 1);

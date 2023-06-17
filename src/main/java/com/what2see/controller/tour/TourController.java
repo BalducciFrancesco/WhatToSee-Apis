@@ -120,7 +120,7 @@ public class TourController {
     @GetMapping("/completed")
     public ResponseEntity<List<TourResponseDTO>> getCompletedByMe(@RequestHeader(value="Authentication") Long touristId) {
         Tourist t = touristService.findById(touristId);
-        return ResponseEntity.ok(tourMapper.convertResponse(t.getMarkedTours()));
+        return ResponseEntity.ok(tourMapper.convertResponse(tourService.getCompletedTours(t)));
     }
 
     // -------

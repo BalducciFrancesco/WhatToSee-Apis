@@ -393,5 +393,21 @@ class TourServiceTest {
                 !underTest.getReview() && !underTest.getSendMessage() && underTest.getViewReports());
     }
 
+    @Test
+    void getMarkedTours() {
+        // setup
+        Tourist subject = mock.getAllTourists().stream()
+                .filter(t -> t.getMarkedTours().size() > 0 && t.getMarkedTours().stream()
+                        .anyMatch(tt -> !tt.isPublic() && !tt.getSharedTourists().contains(t)))
+                .findAny().orElseThrow();   // tourist that has at least one marked tour no longer visible
+        List<Tour> expectedNotVisible = new ArrayList<>(subject.getMarkedTours());
+        expectedNotVisible.removeIf(t -> t.getSharedTourists().contains(subject));  // tours that are no longer visibile
+        // under test
+        List<Tour> underTest = tourService.getCompletedTours(subject);
+        // assertion
+        assertEquals(subject.getMarkedTours().size() - expectedNotVisible.size(), underTest.size());    // all marked except those expected not visible
+        assertTrue(underTest.stream().noneMatch(expectedNotVisible::contains));
+    }
+
 
 }
