@@ -119,7 +119,7 @@ public class TourService {
         return TourActionsResponseDTO.builder()
                 .createReport(role == UserRole.TOURIST && t.getReports().stream().noneMatch(r -> r.getAuthor().getId().equals(userId)))
                 .markAsCompleted(role == UserRole.TOURIST && t.getMarkedTourists().stream().noneMatch(tt -> tt.getId().equals(userId)))
-                .review(role == UserRole.TOURIST && t.getReviews().stream().noneMatch(r -> r.getAuthor().getId().equals(userId)))
+                .review(role == UserRole.TOURIST && t.getReviews().stream().noneMatch(r -> r.getAuthor().getId().equals(userId)) && t.getMarkedTourists().stream().map(User::getId).anyMatch(userId::equals))
                 .sendMessage(role == UserRole.TOURIST)
                 .edit(role == UserRole.GUIDE && t.getAuthor().getId().equals(userId))
                 .viewReports(role == UserRole.ADMINISTRATOR)
