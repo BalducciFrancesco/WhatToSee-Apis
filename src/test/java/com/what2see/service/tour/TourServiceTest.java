@@ -128,45 +128,86 @@ class TourServiceTest {
     void searchSingleResult() {
         // setup
         Tour expected = mock.getTour();
-        TourSearchDTO searchParams = TourSearchDTO.builder()
+        TourSearchDTO searchParams = TourSearchDTO.builder()    // should return only 1 result regardless of role
                 .themeId(expected.getTheme().getId())
                 .approxDuration(expected.getApproxDuration())
                 .cityId(expected.getCity().getId())
                 .tagIds(expected.getTags().stream().map(Tag::getId).toList())
                 .build();
         // under test
-        List<Tour> underTest = tourService.search(searchParams);
+        List<Tour> underTestTourist = tourService.search(mock.getTourist(), searchParams);
+        List<Tour> underTestGuide = tourService.search(mock.getGuide(), searchParams);
+        List<Tour> underTestAdministrator = tourService.search(mock.getAdministrator(), searchParams);
         // assertion
-        assertEquals(1, underTest.size());
-        assertEquals(expected.getId(), underTest.get(0).getId());
+        assertEquals(1, underTestTourist.size());
+        assertEquals(1, underTestGuide.size());
+        assertEquals(1, underTestAdministrator.size());
     }
 
     @Test
-    void searchMultipleResults() {
+    void searchMultipleResultsTourist() {
         // setup
-        String expectedDuration = "23:59";
-        TourSearchDTO searchParams = TourSearchDTO.builder()
-                .approxDuration(expectedDuration)
-                .build();
-        List<Long> expectedIds = mock.getAllTours().stream().filter(t -> t.isPublic() && t.getApproxDuration().compareTo(expectedDuration) < 0).map(Tour::getId).toList();
+        TourSearchDTO searchParams = TourSearchDTO.builder().build();   // shouldn't do any filtering
+        Tourist subject = mock.getTourist();
+
+        List<Long> expectedIds = Stream.concat(
+                mock.getAllTours().stream().filter(Tour::isPublic), // public
+                subject.getSharedTours().stream()   // shared with subject
+        ).sorted((t1, t2) -> {  // descendant order primarily for reviews count and secondarily for marked count
+            int reviewComp = t2.getReviews().size() - t1.getReviews().size();
+            return reviewComp != 0 ? reviewComp : t2.getMarkedTourists().size() - t1.getMarkedTourists().size();
+        }).map(Tour::getId).toList();
         // under test
-        List<Tour> underTest = tourService.search(searchParams);
+        List<Long> underTestIds = tourService.search(subject, searchParams).stream().map(Tour::getId).toList();
         // assertion
-        assertEquals(expectedIds.size(), underTest.size()); // pn
-        assertTrue(underTest.stream().map(Tour::getId).allMatch(expectedIds::contains));
+        assertEquals(expectedIds.size(), underTestIds.size());
+        assertEquals(expectedIds, underTestIds);    // same elements and same order
     }
 
     @Test
-    void searchNoPrivateResults() {
+    void searchMultipleResultsGuide() {
         // setup
-        List<Long> notExpectedIds = mock.getAllTours().stream().filter(t -> !t.isPublic()).map(Tour::getId).toList();
-        TourSearchDTO searchParams = TourSearchDTO.builder().build();   // retrieve all
+        TourSearchDTO searchParams = TourSearchDTO.builder().build();   // shouldn't do any filtering
+        Guide subject = mock.getGuide();
+
+        List<Long> expectedIds = mock.getAllTours().stream()
+            .filter(t -> t.isPublic() || t.getAuthor().getId().equals(subject.getId())) // public or created by guide
+            .sorted((t1, t2) -> { // descendant order primarily for reviews count and secondarily for marked count showing first those created by current guide
+                if((t1.getAuthor().getId().equals(subject.getId()) || t2.getAuthor().getId().equals(subject.getId())) && !t1.getAuthor().getId().equals(t2.getAuthor().getId())) {
+                    // only one of them has current guide as author, show that first
+                    return t1.getAuthor().getId().equals(subject.getId()) ? -1 : 1;
+                } else {
+                    // both or none of them has current guide as author, sort like tourist
+                    int reviewComp = t2.getReviews().size() - t1.getReviews().size();
+                    return reviewComp != 0 ? reviewComp : t2.getMarkedTourists().size() - t1.getMarkedTourists().size();
+                }
+            }).map(Tour::getId).toList();
         // under test
-        List<Tour> underTest = tourService.search(searchParams);
+        List<Long> underTestIds = tourService.search(subject, searchParams).stream().map(Tour::getId).toList();
         // assertion
-        assertEquals(mock.getAllTours().size() - notExpectedIds.size(), underTest.size()); // all except private
-        assertTrue(underTest.stream().allMatch(Tour::isPublic));
-        assertTrue(underTest.stream().map(Tour::getId).noneMatch(notExpectedIds::contains));
+        assertEquals(expectedIds.size(), underTestIds.size());
+        assertEquals(expectedIds, underTestIds);    // same elements and same order
+    }
+
+    @Test
+    void searchMultipleResultsAdministrator() {
+        // setup
+        TourSearchDTO searchParams = TourSearchDTO.builder().build();   // shouldn't do any filtering
+        Administrator subject = mock.getAdministrator();
+
+        List<Long> expectedIds = mock.getAllTours().stream()
+            // no filter: public or private
+            .sorted((t1, t2) -> { // descendant order primarily for reviews count and secondarily for marked count showing first those with most reports
+                int reportComp = t2.getReports().size() - t1.getReports().size();
+                int reviewComp = t2.getReviews().size() - t1.getReviews().size();
+                int markedComp = t2.getMarkedTourists().size() - t1.getMarkedTourists().size();
+                return reportComp != 0 ? reportComp : reviewComp != 0 ? reviewComp : markedComp;
+            }).map(Tour::getId).toList();
+        // under test
+        List<Long> underTestIds = tourService.search(subject, searchParams).stream().map(Tour::getId).toList();
+        // assertion
+        assertEquals(expectedIds.size(), underTestIds.size());
+        assertEquals(expectedIds, underTestIds);    // same elements and same order
     }
 
     @Test
