@@ -96,9 +96,9 @@ class ReviewServiceTest {
         Tour reviewedMarkedTour = mock.getAllTours().stream().filter(t -> subjectReviewedToursIds.contains(t.getId()) && subjectMarkedToursIds.contains(t.getId())).findAny().orElseThrow();
         String expectedDescription = "Review4";
         Review expected = Review.builder()
-                .author(mock.getTourist())
+                .author(subject)
                 .description(expectedDescription)
-                .tour(mock.getTour())
+                .tour(reviewedMarkedTour)
                 .stars(5)
                 .build();
         // under test and assertion

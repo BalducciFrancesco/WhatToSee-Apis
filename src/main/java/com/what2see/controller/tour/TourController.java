@@ -183,7 +183,12 @@ public class TourController {
     @PostMapping("/{tourId}/report")
     public ResponseEntity<ReportResponseDTO> createReport(@PathVariable Long tourId, @RequestBody @Valid ReportCreateDTO r, @RequestHeader(value="Authentication") Long touristId) {
         touristService.findById(touristId);
-        Report createdReport = reportService.create(reportMapper.convertCreate(r, tourId, touristId));
+        Report createdReport;
+        try {
+            createdReport = reportService.create(reportMapper.convertCreate(r, tourId, touristId));
+        } catch (InteractionAlreadyPerformedException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Hai già segnalato questo tour");
+        }
         return ResponseEntity.ok(reportMapper.convertResponse(createdReport));
     }
 
