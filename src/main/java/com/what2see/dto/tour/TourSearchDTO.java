@@ -7,13 +7,16 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Implementation of <b>DTO</b> pattern for <i>searching</i> tours in the <b>incoming</b> body.<br>
+ * Note that all fields are optional.
+ * @see com.what2see.model.tour.Tour
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class TourSearchDTO {
-
-    // all fields are optional
 
     private Long cityId;
 

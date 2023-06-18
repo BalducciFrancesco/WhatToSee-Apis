@@ -11,6 +11,10 @@ import org.hibernate.validator.constraints.Range;
 
 import java.util.Date;
 
+/**
+ * Implementation of <b>DTO</b> pattern for <i>returning</i> reviews in the <b>outgoing</b> body
+ * @see com.what2see.model.tour.Review
+ */
 @Data
 @Builder
 @AllArgsConstructor

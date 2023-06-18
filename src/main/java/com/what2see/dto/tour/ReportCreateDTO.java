@@ -6,13 +6,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Implementation of <b>DTO</b> pattern for <i>creating</i> reports in the <b>incoming</b> body.<br>
+ * Information about the author is implicitly obtained from other request parameters
+ * @see com.what2see.model.tour.Report
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReportCreateDTO {
-
-    // implicitly is current user in tour context
 
     private @NotBlank String description;
 

@@ -11,6 +11,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Implementation of <b>DTO</b> pattern for <i>creating or editing</i> tours in the <b>incoming</b> body.<br>
+ * Information about the author is implicitly obtained from other request parameters.
+ * @see com.what2see.model.tour.Tour
+ */
 @Data
 @Builder
 @AllArgsConstructor
@@ -33,7 +38,7 @@ public class TourCreateDTO {
 
     private @NotNull Boolean isPublic;
 
-    private List<Long> sharedTouristIds;    // can be null only if public (ignored anyway)
+    private List<Long> sharedTouristIds;    // can be null only if public (would be ignored anyway)
 
     private @NotEmpty List<StopCreateDTO> stops;
 

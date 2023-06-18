@@ -6,6 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Implementation of <b>DTO</b> pattern for <i>returning</i> tour available interactions in the <b>outgoing</b> body.<br>
+ * Its purpose is to provide the client a way to dynamically show or hide UI elements based on actually performable actions.<br>
+ * Each property name is an action that could be performed on a tour. Its value is whether the action is available or not.
+ */
 @Data
 @Builder
 @AllArgsConstructor

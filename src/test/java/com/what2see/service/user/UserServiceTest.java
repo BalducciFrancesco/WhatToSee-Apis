@@ -22,10 +22,15 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for {@link UserService} and its implementations.
+ */
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 class UserServiceTest {
+
+    // dependencies autowired by spring boot
 
     private final EntityMock mock;
 
@@ -37,7 +42,10 @@ class UserServiceTest {
 
     private final UserService<Administrator> administratorService;
 
-
+    /**
+     * Tests {@link UserService#getRepository()} for each available role.<br>
+     * Ensures that the expected repository is returned.
+     */
     @Test
     void getRepository() {
         assertTrue(userService.getRepository() instanceof UserRepositoryImpl && userService.getRepository() != null);
@@ -46,6 +54,10 @@ class UserServiceTest {
         assertTrue(administratorService.getRepository() instanceof AdministratorRepository && administratorService.getRepository() != null);
     }
 
+    /**
+     * Tests all {@link UserService#findAll()} (for each available role) in the successful case.<br>
+     * Ensures that all expected users (by id) are returned.
+     */
     @Test
     void getAll() {
         // setup
@@ -69,6 +81,10 @@ class UserServiceTest {
         assertTrue(underTestAdministrators.stream().map(User::getId).allMatch(expectedAdministratorsIds::contains));
     }
 
+    /**
+     * Tests all {@link UserService#register(User)} (for each available role) in the successful case.<br>
+     * Ensures that all expected users (with all normalizations and hashing) are returned.
+     */
     @Test
     void register() {
         // setup
@@ -102,6 +118,10 @@ class UserServiceTest {
         assertEquals(guideString.trim(), underTestGuide.getLastName());
     }
 
+    /**
+     * Tests all {@link UserService#login(UserLoginDTO)} (for each available role) in the successful case.<br>
+     * Ensures that all expected users (with all normalizations and hashing) are returned.
+     */
     @Test
     void login() {
         // setup
@@ -135,6 +155,10 @@ class UserServiceTest {
         assertEquals(expectedAdministrator.getId(), underTestAdministrator.getId());
     }
 
+    /**
+     * Tests all {@link UserService#findById(Long)} (for each available role) in the successful and failing case.<br>
+     * Ensures that all expected users (by id and username) are returned and that a {@link NoSuchElementException} is thrown when the user is not found.
+     */
     @Test
     void findById() {
         // setup

@@ -6,6 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity that represents a tour stop in the database.<br>
+ * Usually is used as a part of a tour.
+ * @see Tour
+ */
 @Data
 @Entity
 @Builder
@@ -47,19 +52,4 @@ public class Stop {
     @JoinColumn(name = "tourId", nullable = false)
     private Tour tour;
 
-    @Override
-    public String toString() {
-        return "Stop{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", cost=" + cost +
-                ", duration='" + duration + '\'' +
-                ", transferCost=" + transferCost +
-                ", transferDuration='" + transferDuration + '\'' +
-                ", transferType='" + transferType + '\'' +
-                ", transferDetails='" + transferDetails + '\'' +
-                ", transferOtherOptions='" + transferOtherOptions + '\'' +
-                '}';
-    }
 }

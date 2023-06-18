@@ -11,6 +11,10 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
+/**
+ * Entity that represents a guide in the database.
+ * @see User
+ */
 @Data
 @Entity
 @SuperBuilder
@@ -24,8 +28,4 @@ public class Guide extends User {
     @OneToMany(mappedBy = "guide", cascade = CascadeType.ALL)
     private List<Conversation> conversations;
 
-    @Override
-    public String toString() {
-        return "Guide{} " + super.toString();
-    }
 }

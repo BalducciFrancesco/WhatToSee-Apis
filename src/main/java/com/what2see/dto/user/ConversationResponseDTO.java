@@ -8,6 +8,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Implementation of <b>DTO</b> pattern for <i>returning</i> conversations in the <b>outgoing</b> body.<br>
+ * Note that the messages field can be null ({@link com.what2see.controller.user.ConversationController#getAll see example}) for performance reasons.
+ * @see com.what2see.model.user.Conversation
+ */
 @Data
 @Builder
 @AllArgsConstructor
@@ -20,7 +25,6 @@ public class ConversationResponseDTO {
 
     private @NotNull UserResponseDTO guide;
 
-    private @NotNull List<MessageResponseDTO> messages; // can be null in summary page
-
+    private List<MessageResponseDTO> messages;
 
 }

@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity that represents a report in the database.
+ */
 @Data
 @Entity
 @Builder

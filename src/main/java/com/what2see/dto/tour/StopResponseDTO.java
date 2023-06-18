@@ -7,6 +7,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Implementation of <b>DTO</b> pattern for <i>returning</i> stops in the <b>outgoing</b> body.<br>
+ * Usually is used as a part of a tour response.
+ * @see com.what2see.model.tour.Stop
+ */
 @Data
 @Builder
 @AllArgsConstructor

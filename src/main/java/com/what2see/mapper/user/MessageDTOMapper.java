@@ -10,13 +10,25 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service that converts {@link Message} entities from and to DTOs.<br>
+ * Is usually used in controller to communicate with client side.
+ */
 @RequiredArgsConstructor
 @Service
 public class MessageDTOMapper {
 
+    // dependencies autowired by spring boot
+
     private final ConversationService conversationService;
 
-
+    /**
+     * Converts a {@link MessageCreateDTO DTO} to a {@link Message entity} that can be persisted
+     * @param m DTO to be converted
+     * @param direction direction of the message
+     * @return entity that can be persisted
+     * @see Message#direction
+     */
     public Message convertCreate(MessageCreateDTO m, boolean direction) {
         return Message.builder()
                 .content(m.getContent())
@@ -25,6 +37,12 @@ public class MessageDTOMapper {
                 .build();
     }
 
+    /**
+     * Converts a {@link Message entity} to a {@link MessageResponseDTO DTO} that can be sent to client
+     * @param m entity to be converted
+     * @return DTO that can be sent to client
+     * @see Message#direction
+     */
     public MessageResponseDTO convertResponse(Message m) {
         return MessageResponseDTO.builder()
                 .id(m.getId())
@@ -34,6 +52,12 @@ public class MessageDTOMapper {
                 .build();
     }
 
+    /**
+     * Converts a list of {@link Message entity} to a list of {@link MessageResponseDTO DTO} that can be sent to client
+     * @param m list of entities to be converted
+     * @return list of DTOs that can be sent to client
+     * @see Message#direction
+     */
     public List<MessageResponseDTO> convertResponse(List<Message> m) {
         return m.stream().map(this::convertResponse).collect(Collectors.toList());
     }

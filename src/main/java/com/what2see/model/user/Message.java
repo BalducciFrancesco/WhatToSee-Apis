@@ -1,6 +1,5 @@
 package com.what2see.model.user;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +9,11 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
+/**
+ * Entity that represents a message in the database.<br>
+ * Usually is used as a part of a conversation.
+ * @see Conversation
+ */
 @Data
 @Entity
 @Builder
@@ -25,9 +29,8 @@ public class Message {
     @Column(nullable = false)
     private String content;
 
-    // true if from guide to user
     @Column(nullable = false)
-    private Boolean direction;
+    private Boolean direction;  // true if from guide to user
 
 
     @CreationTimestamp
@@ -37,4 +40,5 @@ public class Message {
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "conversationId", nullable = false)
     private Conversation conversation;
+
 }

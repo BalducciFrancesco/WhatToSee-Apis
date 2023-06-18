@@ -6,6 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Entity that represents a user in the database.<br>
+ * All subclasses are mapped to the same table but managed by different repositories.
+ */
 @Data
 @Entity
 @SuperBuilder

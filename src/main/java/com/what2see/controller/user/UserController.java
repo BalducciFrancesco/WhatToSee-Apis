@@ -23,10 +23,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Controller for user endpoints
+ * @see UserRole
+ */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+    // dependencies autowired by spring boot
 
     private final UserService<User> userService;
 
@@ -41,6 +47,18 @@ public class UserController {
     private final GuideDTOMapper guideMapper;
 
 
+    /*
+     * Some validations are not explicitly performed with try/catch's since RuntimeExceptions are expected to
+     * be called and managed from the Spring Boot container in case of failed validation or user not found.
+     */
+
+    /**
+     * Get all users of the specified role.<br>
+     * It is intended to only be used for tourists or guides, since administrators are not supposed to be known.
+     * @param roleId the role of the users to get
+     * @return list of users of the specified role
+     * @exception ResponseStatusException {@link HttpStatus#BAD_REQUEST} if the role is administrator
+     */
     @GetMapping("/{roleId}")
     public ResponseEntity<List<UserResponseDTO>> getAll(@PathVariable int roleId) {
         UserRole role = UserRole.values()[roleId];
@@ -52,15 +70,31 @@ public class UserController {
         return ResponseEntity.ok(response.map(userMapper::convertResponse).collect(Collectors.toList()));
     }
 
-    // username is trimmed and case-insensitive
+    /**
+     * Attempts to log in a user with the specified credentials.<br>
+     * Note that the {@link UserLoginDTO#username} field is trimmed and case-insensitive.
+     * @param l the credentials of the user to log in
+     * @return the logged user <i>or</i>
+     * @exception ResponseStatusException {@link HttpStatus#BAD_REQUEST} if no user is found with the specified credentials
+     */
     @PostMapping("/login")
     public ResponseEntity<UserResponseDTO> login(@RequestBody @Valid UserLoginDTO l) {
-        User logged = userService.login(l);
+        User logged = userService.login(l); // used generic user service in order to not have to check the role (username is unique)
         if(logged != null) {
             return ResponseEntity.ok(userMapper.convertResponse(logged));
         } else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Credenziali non valide");
     }
 
+    /**
+     * Attempts to register a new user with the specified credentials.<br>
+     * It is intended to only be used for tourists or guides, since administrators are not supposed to be registered from outside the database.<br>
+     * Note that the {@link UserRegisterDTO#username} field is trimmed and case-insensitive while
+     * {@link UserRegisterDTO#firstName} and {@link UserRegisterDTO#lastName} fields are trimmed only.
+     * @param roleId the role of the user to register
+     * @param r the credentials and personal info of the user to register
+     * @return the registered user
+     * @exception ResponseStatusException {@link HttpStatus#BAD_REQUEST} if the username is already taken or if attempting to register an administrator
+     */
     // username is trimmed and case-insensitive
     // first name and last name are trimmed
     @PostMapping("/{roleId}/register")

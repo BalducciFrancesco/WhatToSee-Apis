@@ -14,6 +14,10 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
+/**
+ * Entity that represents a tourist in the database.
+ * @see User
+ */
 @Data
 @Entity
 @SuperBuilder
@@ -35,10 +39,5 @@ public class Tourist extends User {
 
     @OneToMany(mappedBy = "tourist", cascade = CascadeType.ALL)
     private List<Conversation> conversations;
-
-    @Override
-    public String toString() {
-        return "Tourist{} " + super.toString();
-    }
 
 }

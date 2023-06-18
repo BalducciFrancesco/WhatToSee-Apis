@@ -13,6 +13,10 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Implementation of <b>DTO</b> pattern for <i>returning</i> tours in the <b>outgoing</b> body
+ * @see com.what2see.model.tour.Tour
+ */
 @Data
 @Builder
 @AllArgsConstructor
@@ -31,7 +35,7 @@ public class TourResponseDTO {
 
     private @NotNull CityResponseDTO city;
 
-    private @NotNull List<TagResponseDTO> tags;     // can be empty
+    private @NotNull List<TagResponseDTO> tags;
 
     private @NotNull ThemeResponseDTO theme;
 
@@ -43,7 +47,7 @@ public class TourResponseDTO {
 
     private @NotEmpty List<StopResponseDTO> stops;
 
-    private @NotNull List<ReviewResponseDTO> reviews;   // can be empty
+    private @NotNull List<ReviewResponseDTO> reviews;
 
     private @NotNull Long markedAsCompletedCount;   // how many tourists tagged as completed
 

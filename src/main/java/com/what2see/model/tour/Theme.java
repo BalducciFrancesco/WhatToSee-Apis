@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Entity that represents a tag in the database.
+ */
 @Data
 @Entity
 @Builder
@@ -25,11 +28,4 @@ public class Theme {
     @OneToMany(mappedBy = "theme", cascade = CascadeType.ALL)
     private List<Tour> tours;
 
-    @Override
-    public String toString() {
-        return "Theme{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
 }

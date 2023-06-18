@@ -6,10 +6,19 @@ import com.what2see.model.tour.Stop;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service that converts {@link Stop} entities from and to DTOs.<br>
+ * Is usually used in controller to communicate with client side.
+ */
 @RequiredArgsConstructor
 @Service
 public class StopDTOMapper {
 
+    /**
+     * Converts a {@link Stop} entity to a {@link StopResponseDTO DTO} that can be sent to client
+     * @param stop entity to be converted
+     * @return DTO that can be sent to client
+     */
     public StopResponseDTO convertResponse(Stop stop) {
         return StopResponseDTO.builder()
                 .id(stop.getId())
@@ -25,6 +34,11 @@ public class StopDTOMapper {
                 .build();
     }
 
+    /**
+     * Converts a client-sent {@link StopCreateDTO DTO} to a {@link Stop} entity that can be persisted
+     * @param t DTO to be converted
+     * @return entity that can be persisted
+     */
     public Stop convertCreate(StopCreateDTO t) {
         return Stop.builder()
                 .title(t.getTitle())

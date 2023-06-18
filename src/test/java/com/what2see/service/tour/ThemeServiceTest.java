@@ -14,16 +14,24 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Test class for {@link ThemeService}.
+ */
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 class ThemeServiceTest {
 
+    // dependencies autowired by spring boot
+
     private final EntityMock mock;
 
     private final ThemeService themeService;
 
-
+    /**
+     * Tests {@link ThemeService#findAll()}.<br>
+     * Ensures that all expected themes (by id) are returned.
+     */
     @Test
     void findAll() {
         // setup
@@ -35,6 +43,10 @@ class ThemeServiceTest {
         assertTrue(underTest.stream().map(Theme::getId).allMatch(expectedIds::contains));
     }
 
+    /**
+     * Tests {@link ThemeService#findById(Long)}.<br>
+     * Ensures that the expected theme (by id and name) is returned.
+     */
     @Test
     void findById() {
         // setup

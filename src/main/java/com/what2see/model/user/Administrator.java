@@ -6,6 +6,10 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Entity that represents an administrator in the database.
+ * @see User
+ */
 @Data
 @Entity
 @SuperBuilder

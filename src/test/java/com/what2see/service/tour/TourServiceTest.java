@@ -28,20 +28,32 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for {@link TourService}.
+ */
 @Transactional
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 class TourServiceTest {
 
+    // dependencies autowired by spring boot
+
     private final EntityMock mock;
 
     private final TourService tourService;
 
+    /**
+     * Using the entity manager to avoid updating the database after editing an entity's fields.
+     * @see TourServiceTest#update()
+     */
     @PersistenceContext
     private EntityManager entityManager;
 
-
+    /**
+     * Tests {@link TourService#create(Tour)} in the successful case.<br>
+     * Ensures that a new tour (with a new id and the same title and stops count) is created.
+     */
     @Test
     void create() {
         // setup
@@ -67,7 +79,7 @@ class TourServiceTest {
                 .city(mock.getCity())
                 .theme(mock.getTheme())
                 .build();
-        stop.setTour(expected);
+        stop.setTour(expected); // important because of single-side relation ownership
         // under test
         Tour underTest = tourService.create(expected);
         // assertion
@@ -76,11 +88,17 @@ class TourServiceTest {
         assertEquals(1, underTest.getStops().size());
     }
 
+    /**
+     * Tests {@link TourService#update(Tour, Tour)} in the successful case.<br>
+     * Ensures that the tour is updated with the new values (title, visibility, stops, shared tourists) while others didn't change.<br>
+     * Note that the tour is detached from the entity manager to avoid the database to be updated upon setting the new values.
+     * @see TourServiceTest#entityManager
+     */
     @Test
     void update() {
         // setup
         Tour expected = mock.getTour();
-        entityManager.detach(expected);
+        entityManager.detach(expected); // detach to avoid updating the database after setting the new values
 
         expected.setTitle("Tour2");
         expected.setPublic(false);
@@ -124,11 +142,16 @@ class TourServiceTest {
         assertEquals(expected.getSharedTourists().size(), underTest.getSharedTourists().size());
     }
 
+    /**
+     * Tests {@link TourService#search(User, TourSearchDTO)} in the successful case with all filters and a single expected result.<br>
+     * Ensures that the search returns the expected results for each role.
+     * @see com.what2see.service.tour.search.TourSearchStrategy
+     */
     @Test
     void searchSingleResult() {
         // setup
         Tour expected = mock.getTour();
-        TourSearchDTO searchParams = TourSearchDTO.builder()    // should return only 1 result regardless of role
+        TourSearchDTO searchParams = TourSearchDTO.builder()    // very specific filters: should return only 1 result regardless of role
                 .themeId(expected.getTheme().getId())
                 .approxDuration(expected.getApproxDuration())
                 .cityId(expected.getCity().getId())
@@ -144,12 +167,19 @@ class TourServiceTest {
         assertEquals(1, underTestAdministrator.size());
     }
 
+    /**
+     * Tests {@link TourService#search(User, TourSearchDTO)} in the successful case with no filters and multiple expected results.<br>
+     * Ensures that the search returns the expected results for the {@link com.what2see.service.tour.search.TourSearchStrategyTourist tourist strategy}.
+     * @see com.what2see.service.tour.search.TourSearch
+     * @see com.what2see.service.tour.search.TourSearchStrategyTourist
+     */
     @Test
     void searchMultipleResultsTourist() {
         // setup
-        TourSearchDTO searchParams = TourSearchDTO.builder().build();   // shouldn't do any filtering
+        TourSearchDTO searchParams = TourSearchDTO.builder().build();   // shouldn't do any further filtering except for role
         Tourist subject = mock.getTourist();
 
+        // simulating the tourist search and sort strategy
         List<Long> expectedIds = Stream.concat(
                 mock.getAllTours().stream().filter(Tour::isPublic), // public
                 subject.getSharedTours().stream()   // shared with subject
@@ -164,12 +194,19 @@ class TourServiceTest {
         assertEquals(expectedIds, underTestIds);    // same elements and same order
     }
 
+    /**
+     * Tests {@link TourService#search(User, TourSearchDTO)} in the successful case with no filters and multiple expected results.<br>
+     * Ensures that the search returns the expected results for the {@link com.what2see.service.tour.search.TourSearchStrategyGuide guide strategy}.
+     * @see com.what2see.service.tour.search.TourSearch
+     * @see com.what2see.service.tour.search.TourSearchStrategyGuide
+     */
     @Test
     void searchMultipleResultsGuide() {
         // setup
-        TourSearchDTO searchParams = TourSearchDTO.builder().build();   // shouldn't do any filtering
+        TourSearchDTO searchParams = TourSearchDTO.builder().build();   // shouldn't do any further filtering except for role
         Guide subject = mock.getGuide();
 
+        // simulating the guide search and sort strategy
         List<Long> expectedIds = mock.getAllTours().stream()
             .filter(t -> t.isPublic() || t.getAuthor().getId().equals(subject.getId())) // public or created by guide
             .sorted((t1, t2) -> { // descendant order primarily for reviews count and secondarily for marked count showing first those created by current guide
@@ -189,12 +226,19 @@ class TourServiceTest {
         assertEquals(expectedIds, underTestIds);    // same elements and same order
     }
 
+    /**
+     * Tests {@link TourService#search(User, TourSearchDTO)} in the successful case with no filters and multiple expected results.<br>
+     * Ensures that the search returns the expected results for the {@link com.what2see.service.tour.search.TourSearchStrategyAdministrator administrator strategy}.
+     * @see com.what2see.service.tour.search.TourSearch
+     * @see com.what2see.service.tour.search.TourSearchStrategyAdministrator
+     */
     @Test
     void searchMultipleResultsAdministrator() {
         // setup
-        TourSearchDTO searchParams = TourSearchDTO.builder().build();   // shouldn't do any filtering
+        TourSearchDTO searchParams = TourSearchDTO.builder().build();   // shouldn't do any further filtering except for role
         Administrator subject = mock.getAdministrator();
 
+        // simulating the administrator search and sort strategy
         List<Long> expectedIds = mock.getAllTours().stream()
             // no filter: public or private
             .sorted((t1, t2) -> { // descendant order primarily for reviews count and secondarily for marked count showing first those with most reports
@@ -210,6 +254,10 @@ class TourServiceTest {
         assertEquals(expectedIds, underTestIds);    // same elements and same order
     }
 
+    /**
+     * Tests {@link TourService#findById(Long)}.<br>
+     * Ensures that the expected tour (by id and title) is returned.
+     */
     @Test
     void findById() {
         // setup
@@ -221,6 +269,10 @@ class TourServiceTest {
         assertEquals(expected.getTitle(), underTest.getTitle());
     }
 
+    /**
+     * Tests {@link TourService#findAllByReported(boolean)}.<br>
+     * Ensures that the expected tours (by id) are returned.
+     */
     @Test
     void findAllByReported() {
         // setup
@@ -236,9 +288,14 @@ class TourServiceTest {
         assertTrue(underTest2.stream().map(Tour::getId).allMatch(expectedIds2::contains));
     }
 
+    /**
+     * Tests {@link TourService#isVisible(Tour, Long)} in the successful case with a public tour and a tourist.<br>
+     * Ensures that the tour is visible to the expected tourist.
+     */
     @Test
     void isVisibleAsPublic() {
         // setup
+        // find a tour that is public (otherwise the test would fail)
         Tour isPublic = mock.getAllTours().stream().filter(Tour::isPublic).findAny().orElseThrow();
         Tourist expectedVisible = mock.getTourist();
         // under test
@@ -247,9 +304,14 @@ class TourServiceTest {
         assertTrue(underTestVisible);
     }
 
+    /**
+     * Tests {@link TourService#isVisible(Tour, Long)} in the successful case with a private tour and an administrator.<br>
+     * Ensures that the tour is visible to the expected administrator.
+     */
     @Test
     void isVisibleAsAdministrator() {
         // setup
+        // find a tour that is private (otherwise the test would fail)
         Tour isNotPublic = mock.getAllTours().stream().filter(t -> !t.isPublic() && t.getSharedTourists().size() > 0).findAny().orElseThrow();
         Administrator expectedVisible = mock.getAdministrator();
         // under test
@@ -258,9 +320,14 @@ class TourServiceTest {
         assertTrue(underTestVisible);
     }
 
+    /**
+     * Tests {@link TourService#isVisible(Tour, Long)} in the successful case with a private tour and a tourist that is among the shared ones.<br>
+     * Ensures that the tour is visible to the expected tourist.
+     */
     @Test
     void isVisibleAsShared() {
         // setup
+        // find a tour that is private and one of its shared tourists (otherwise the test would fail)
         Tour isNotPublic = mock.getAllTours().stream().filter(t -> !t.isPublic() && t.getSharedTourists().size() > 0).findAny().orElseThrow();
         List<Long> sharedTouristsIds = isNotPublic.getSharedTourists().stream().map(User::getId).toList();
         Tourist expectedVisible = mock.getAllTourists().stream().filter(t -> sharedTouristsIds.contains(t.getId())).findAny().orElseThrow();
@@ -273,9 +340,14 @@ class TourServiceTest {
         assertFalse(underTestNotVisible);
     }
 
+    /**
+     * Tests {@link TourService#isVisible(Tour, Long)} in the successful case with a private tour and its author guide.<br>
+     * Ensures that the tour is visible to the expected author.
+     */
     @Test
     void isVisibleAsAuthor() {
         // setup
+        // find a tour that is private and its author guide (otherwise the test would fail)
         Tour isNotPublic = mock.getAllTours().stream().filter(t -> !t.isPublic() && t.getSharedTourists().size() > 0).findAny().orElseThrow();
         Guide expectedVisible = isNotPublic.getAuthor();
         Guide expectedNotVisible = mock.getAllGuides().stream().filter(g -> !g.getId().equals(expectedVisible.getId())).findAny().orElseThrow();
@@ -287,49 +359,49 @@ class TourServiceTest {
         assertFalse(underTestNotVisible);
     }
 
-    @Test
-    void isEditableAsAuthor() {
-        // setup
-        Tour isNotPublic = mock.getAllTours().stream().filter(t -> !t.isPublic() && t.getSharedTourists().size() > 0).findAny().orElseThrow();
-        Guide expectedEditable = isNotPublic.getAuthor();
-        Guide expectedNotEditable = mock.getAllGuides().stream().filter(g -> !g.getId().equals(expectedEditable.getId())).findAny().orElseThrow();
-        // under test
-        boolean underTestEditable = tourService.isEditable(isNotPublic, expectedEditable.getId());
-        boolean underTestNotEditable = tourService.isEditable(isNotPublic, expectedNotEditable.getId());
-        // assertion
-        assertTrue(underTestEditable);
-        assertFalse(underTestNotEditable);
-    }
-
+    /**
+     * Tests {@link TourService#isDeletable(Tour, Long)} in the successful and failing case.<br>
+     * Ensures that the tour is deletable by its author guide but not from others.
+     */
     @Test
     void isDeletableAsAuthor() {
         // setup
-        Tour isNotPublic = mock.getAllTours().stream().filter(t -> !t.isPublic() && t.getSharedTourists().size() > 0).findAny().orElseThrow();
-        Guide expectedDeletable = isNotPublic.getAuthor();
+        Tour subject = mock.getTour();
+        // find its author guide and another one (otherwise the test would fail)
+        Guide expectedDeletable = subject.getAuthor();
         Guide expectedNotDeletable = mock.getAllGuides().stream().filter(g -> !g.getId().equals(expectedDeletable.getId())).findAny().orElseThrow();
         // under test
-        boolean underTestDeletable = tourService.isDeletable(isNotPublic, expectedDeletable.getId());
-        boolean underTestNotDeletable = tourService.isDeletable(isNotPublic, expectedNotDeletable.getId());
+        boolean underTestDeletable = tourService.isDeletable(subject, expectedDeletable.getId());
+        boolean underTestNotDeletable = tourService.isDeletable(subject, expectedNotDeletable.getId());
         // assertion
         assertTrue(underTestDeletable);
         assertFalse(underTestNotDeletable);
     }
 
+    /**
+     * Tests {@link TourService#isDeletable(Tour, Long)} in the successful case.<br>
+     * Ensures that the tour is deletable by an administrator.
+     */
     @Test
     void isDeletableAsAdministrator() {
         // setup
-        Tour isNotPublic = mock.getAllTours().stream().filter(t -> !t.isPublic() && t.getSharedTourists().size() > 0).findAny().orElseThrow();
+        Tour subject = mock.getTour();
         Administrator expectedDeletable = mock.getAdministrator();
         // under test
-        boolean underTestDeletable = tourService.isVisible(isNotPublic, expectedDeletable.getId());
+        boolean underTestDeletable = tourService.isDeletable(subject, expectedDeletable.getId());
         // assertion
         assertTrue(underTestDeletable);
     }
 
+    /**
+     * Tests {@link TourService#markAsCompleted(Tour, Tourist)} in the successful case.<br>
+     * Ensures that the tour is marked as completed by the expected tourist.
+     */
     @Test
     void markAsCompleted() {
         // setup
         Tourist subject = mock.getTourist();
+        // find a tour that is not already marked by the subject (otherwise the test would fail)
         List<Long> expectedMarkedIds = subject.getMarkedTours().stream().map(Tour::getId).toList();
         Tour expectedNotMarked = mock.getAllTours().stream().filter(t -> !expectedMarkedIds.contains(t.getId())).findAny().orElseThrow();
         // under test
@@ -338,15 +410,24 @@ class TourServiceTest {
         assertTrue(expectedNotMarked.getMarkedTourists().stream().map(User::getId).anyMatch(t -> t.equals(subject.getId())));
     }
 
+    /**
+     * Tests {@link TourService#markAsCompleted(Tour, Tourist)} in the failing case because the tourist has already marked the tour as completed.<br>
+     * Ensures that a {@link InteractionAlreadyPerformedException} is thrown.
+     */
     @Test
     void noMultipleMarkAsCompleted() {
         // setup
+        // find a tour that is already marked and one of those tourists (otherwise the test would fail)
         Tour expectedMarked = mock.getAllTours().stream().filter(t ->  t.getMarkedTourists().size() > 0).findAny().orElseThrow();
         Tourist subject = expectedMarked.getMarkedTourists().stream().findAny().orElseThrow();
         // under test and assertion
         assertThrows(InteractionAlreadyPerformedException.class, () -> tourService.markAsCompleted(expectedMarked, subject));
     }
 
+    /**
+     * Tests {@link TourService#delete(Tour)} in the successful case.<br>
+     * Ensures that the tour is deleted.
+     */
     @Test
     void delete() {
         // setup
@@ -357,6 +438,10 @@ class TourServiceTest {
         assertThrows(NoSuchElementException.class, mock::getTour);
     }
 
+    /**
+     * Tests {@link TourService#getAvailableActions(Tour, Long)} in the successful case with an expected pair of tour and tourist.<br>
+     * Ensures that the available actions are correct.
+     */
     @Test
     void getAvailableActionsTourist() {
         // setup
@@ -369,6 +454,10 @@ class TourServiceTest {
                 !underTest.getReview() && underTest.getSendMessage() && !underTest.getViewReports());
     }
 
+    /**
+     * Tests {@link TourService#getAvailableActions(Tour, Long)} in the successful case with an expected pair of tour and guide.<br>
+     * Ensures that the available actions are correct.
+     */
     @Test
     void getAvailableActionsGuide() {
         // setup
@@ -381,6 +470,10 @@ class TourServiceTest {
                 !underTest.getReview() && !underTest.getSendMessage() && !underTest.getViewReports());
     }
 
+    /**
+     * Tests {@link TourService#getAvailableActions(Tour, Long)} in the successful case with an expected pair of tour and administrator.<br>
+     * Ensures that the available actions are correct.
+     */
     @Test
     void getAvailableActionsAdministrator() {
         // setup
@@ -393,15 +486,21 @@ class TourServiceTest {
                 !underTest.getReview() && !underTest.getSendMessage() && underTest.getViewReports());
     }
 
+    /**
+     * Tests {@link TourService#getCompletedTours(Tourist)} in the successful case.<br>
+     * Ensures that the completed tours are returned except those that are no longer visible.
+     */
     @Test
     void getMarkedTours() {
         // setup
+        // find a tourist that has at least one marked tour no longer visible (otherwise the test would fail)
         Tourist subject = mock.getAllTourists().stream()
                 .filter(t -> t.getMarkedTours().size() > 0 && t.getMarkedTours().stream()
                         .anyMatch(tt -> !tt.isPublic() && !tt.getSharedTourists().contains(t)))
-                .findAny().orElseThrow();   // tourist that has at least one marked tour no longer visible
+                .findAny().orElseThrow();
+        // find the marked tours that are no longer visible
         List<Tour> expectedNotVisible = new ArrayList<>(subject.getMarkedTours());
-        expectedNotVisible.removeIf(t -> t.getSharedTourists().contains(subject));  // tours that are no longer visibile
+        expectedNotVisible.removeIf(t -> t.getSharedTourists().contains(subject));
         // under test
         List<Tour> underTest = tourService.getCompletedTours(subject);
         // assertion

@@ -11,6 +11,9 @@ import org.hibernate.validator.constraints.Range;
 
 import java.util.Date;
 
+/**
+ * Entity that represents a review in the database.
+ */
 @Data
 @Entity
 @Builder
@@ -41,14 +44,4 @@ public class Review {
     @JoinColumn(name = "touristId", nullable = false)
     private Tourist author;
 
-    @Override
-    public String toString() {
-        return "Review{" +
-                "id=" + id +
-                ", timestamp=" + timestamp +
-                ", stars=" + stars +
-                ", description='" + description + '\'' +
-                ", author=" + author +
-                '}';
-    }
 }

@@ -6,13 +6,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Implementation of <b>DTO</b> pattern for <i>creating</i> messages in the <b>incoming</b> body.<br>
+ * Information about the author is implicitly obtained from other request parameters and mapped to the corresponding
+ * boolean direction field as indicated by {@link com.what2see.model.user.Message#direction} logic.
+ * @see com.what2see.model.user.Message
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageCreateDTO {
-
-    // implicitly is from current user (direction = true if is guide, false if is tourist)
 
     private @NotNull String content;
 

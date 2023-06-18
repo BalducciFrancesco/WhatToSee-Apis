@@ -3,6 +3,11 @@ package com.what2see.exception;
 import com.what2see.model.tour.Tour;
 import com.what2see.model.user.Tourist;
 
+/**
+ * Exception thrown when a user tries to interact with a tour when that interaction has already been performed and isn't expected to be repeatable.
+ * (e.g. tourist tries to mark / review / report a tour multiple times)
+ * @see com.what2see.service.tour.ReviewService#create
+ */
 public class InteractionAlreadyPerformedException extends RuntimeException {
 
     private Tour tour;

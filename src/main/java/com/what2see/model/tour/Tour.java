@@ -12,7 +12,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.util.Date;
 import java.util.List;
 
-
+/**
+ * Entity that represents a tour in the database.
+ */
 @Data
 @Entity
 @Builder
@@ -88,6 +90,7 @@ public class Tour {
     )
     private List<Tourist> markedTourists;
 
+    // custom created setter in order to not override the list reference
     public void setStops(List<Stop> stops) {
         this.stops.clear();
         if(stops != null) {

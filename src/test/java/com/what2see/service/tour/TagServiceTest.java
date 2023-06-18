@@ -20,19 +20,30 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+/**
+ * Test class for {@link TagService}.
+ */
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 class TagServiceTest {
 
+    // dependencies autowired by spring boot
+
     private final EntityMock mock;
 
     private final TagService tagService;
 
+    /**
+     * Mocked dependency just to verify that the service internally calls the repository an expected number of times.
+     */
     @SpyBean
     private final TagRepository tagRepository;
 
-
+    /**
+     * Tests {@link TagService#findAll()}.<br>
+     * Ensures that all expected tags (by id) are returned.
+     */
     @Test
     void findAll() {
         // setup
@@ -44,6 +55,10 @@ class TagServiceTest {
         assertTrue(underTest.stream().map(Tag::getId).allMatch(expectedIds::contains));
     }
 
+    /**
+     * Tests {@link TagService#findAllByNames(List)}.<br>
+     * Ensures that all expected tags (by id and name) are returned.
+     */
     @Test
     void findAllByNames() {
         // setup
@@ -58,6 +73,10 @@ class TagServiceTest {
         assertTrue(underTest.stream().map(Tag::getName).allMatch(expectedNames::contains));
     }
 
+    /**
+     * Tests {@link TagService#findAllById(List)}.<br>
+     * Ensures that all expected tags (by id) are returned.
+     */
     @Test
     void findAllById() {
         // setup
@@ -69,10 +88,14 @@ class TagServiceTest {
         assertTrue(underTest.stream().map(Tag::getId).allMatch(expectedIds::contains));
     }
 
+    /**
+     * Tests {@link TagService#createByNames(List)}.<br>
+     * Ensures that all expected tags (by id and name) are returned and that the repository is called only for the tags that don't exist yet.
+     */
     @Test
-    void create() {
+    void createByNames() {
         // setup
-        List<String> names = List.of("Tag1", mock.getTag().getName(), "Tag2");
+        List<String> names = List.of("Tag1", mock.getTag().getName(), "Tag2");  // note that the second tag is expected to exist
         List<Tag> expected = names.stream().map(n -> Tag.builder().name(n).build()).toList();
         // under test
         List<Tag> underTest = tagService.createByNames(names);

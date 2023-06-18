@@ -2,6 +2,10 @@ package com.what2see.exception;
 
 import com.what2see.model.user.Conversation;
 
+/**
+ * Exception thrown when a tourist tries to start a conversation with a guide when a conversation already exists.
+ * @see com.what2see.service.user.ConversationService#startConversation
+ */
 public class ConversationAlreadyStartedException extends RuntimeException {
 
     private Conversation existingConversation;

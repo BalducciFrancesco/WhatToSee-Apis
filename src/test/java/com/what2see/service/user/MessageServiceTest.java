@@ -12,16 +12,25 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for {@link MessageService}.
+ */
 @Transactional
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 class MessageServiceTest {
 
+    // dependencies autowired by spring boot
+
     private final EntityMock mock;
 
     private final MessageService messageService;
 
+    /**
+     * Tests {@link MessageService#sendMessage(Message)} in the successful case.<br>
+     * Ensures that the expected message (by content, direction and corresponding conversation) is returned.
+     */
     @Test
     void sendMessage() {
         // setup
@@ -37,7 +46,7 @@ class MessageServiceTest {
         assertNotNull(underTest.getId());
         assertEquals(expected.getContent(), underTest.getContent());
         assertEquals(expected.getDirection(), underTest.getDirection());
-        assertTrue(underTest.getConversation().getMessages().stream().map(Message::getContent).anyMatch(m -> m.equals(expectedContent)));
+        assertTrue(underTest.getConversation().getMessages().stream().map(Message::getContent).anyMatch(expectedContent::equals));
     }
 
 }

@@ -7,10 +7,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+/**
+ * Service that converts {@link Tourist} entities from and to DTOs.<br>
+ * Is usually used in controller to communicate with client side.
+ */
 @RequiredArgsConstructor
 @Service
 public class TouristDTOMapper {
 
+    /**
+     * Converts a {@link UserRegisterDTO DTO} to a {@link Tourist entity} that can be persisted
+     * @param conv DTO to be converted
+     * @return entity that can be persisted
+     */
     public Tourist convertRegister(UserRegisterDTO conv) {
         return Tourist.builder()
                 .username(conv.getUsername())

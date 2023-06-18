@@ -14,16 +14,25 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Test class for {@link CityService}.
+ */
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CityServiceTest {
+
+    // dependencies autowired by spring boot
 
     private final EntityMock mock;
 
     private final CityService cityService;
 
 
+    /**
+     * Tests {@link CityService#findAll()}.<br>
+     * Ensures that all expected cities (by id) are returned.
+     */
     @Test
     void findAll() {
         // setup
@@ -35,6 +44,10 @@ public class CityServiceTest {
         assertTrue(underTest.stream().map(City::getId).allMatch(expectedIds::contains));
     }
 
+    /**
+     * Tests {@link CityService#findById(Long)}.<br>
+     * Ensures that the expected city (by id and name) is returned.
+     */
     @Test
     void findById() {
         // setup

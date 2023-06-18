@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Entity that represents a conversation in the database.
+ */
 @Data
 @Entity
 @Builder

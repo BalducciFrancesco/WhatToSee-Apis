@@ -18,9 +18,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service that converts {@link Tour} entities from and to DTOs.<br>
+ * Is usually used in controller to communicate with client side.
+ */
 @RequiredArgsConstructor
 @Service
 public class TourDTOMapper {
+
+    // dependencies autowired by spring boot
 
     private final UserService<Tourist> touristService;
 
@@ -44,7 +50,11 @@ public class TourDTOMapper {
 
     private final ReviewDTOMapper reviewMapper;
 
-
+    /**
+     * Converts a {@link Tour} entity to a {@link TourResponseDTO DTO} that can be sent to client
+     * @param tour entity to be converted
+     * @return DTO that can be sent to client
+     */
     public TourResponseDTO convertResponse(Tour tour) {
         return TourResponseDTO.builder()
                 .id(tour.getId())
@@ -64,10 +74,21 @@ public class TourDTOMapper {
                 .build();
     }
 
+    /**
+     * Converts a list of {@link Tour} entities to a list of {@link TourResponseDTO DTOs} that can be sent to client
+     * @param tour list of entities to be converted
+     * @return list of DTOs that can be sent to client
+     */
     public List<TourResponseDTO> convertResponse(List<Tour> tour) {
         return tour.stream().map(this::convertResponse).collect(Collectors.toList());
     }
 
+    /**
+     * Converts a {@link TourCreateDTO DTO} to a {@link Tour entity} that can be persisted
+     * @param t DTO to be converted
+     * @param guideAuthorId id of the guide that created the tour
+     * @return entity that can be persisted
+     */
     public Tour convertCreate(TourCreateDTO t, Long guideAuthorId) {
         Tour tour = Tour.builder()
                 .title(t.getTitle())
@@ -82,11 +103,11 @@ public class TourDTOMapper {
                 .reviews(new ArrayList<>())
                 .city(cityService.findById(t.getCityId()))
                 .theme(themeService.findById(t.getThemeId()))
-                .tags(t.getTagNames() != null ? tagService.findAllByNames(t.getTagNames()) : new ArrayList<>())
-                .sharedTourists(!t.getIsPublic() && t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(touristService::findById).collect(Collectors.toList()) : new ArrayList<>())
+                .tags(t.getTagNames() != null ? tagService.findAllByNames(t.getTagNames()) : new ArrayList<>()) // ignoring ids as some tags may not exist yet
+                .sharedTourists(!t.getIsPublic() && t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(touristService::findById).collect(Collectors.toList()) : new ArrayList<>())  // if tour is private, consider shared tourists
                 .markedTourists(new ArrayList<>())
                 .build();
-        tour.getStops().forEach(s -> s.setTour(tour));
+        tour.getStops().forEach(s -> s.setTour(tour));  // important because of single-side relation ownership
         return tour;
     }
 

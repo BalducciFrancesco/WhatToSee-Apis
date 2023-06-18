@@ -10,6 +10,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Mock utility class for all entities.<br>
+ * Provides methods to get all or a specific entity for all available types.<br>
+ * Note that the returned entities are not mocked, but retrieved from the actual repository, that is assumed
+ * to be working and populated with testable data (see <code>import.sql</code> in <code>src/main/resources</code>).<br>
+ */
 @Component
 @RequiredArgsConstructor
 public class EntityMock {
@@ -17,6 +23,8 @@ public class EntityMock {
     // -----------
     // TOUR
     // -----------
+
+    // dependencies autowired by spring boot
 
     private final CityRepository cityRepository;
 
@@ -59,6 +67,7 @@ public class EntityMock {
 
     public Tour getTour() {
         Tour t = tourRepository.findById(1L).orElseThrow();
+        // force loading of all lazy-loaded collections
         t.getStops().size();
         t.getSharedTourists().size();
         t.getReviews().size();
@@ -72,6 +81,8 @@ public class EntityMock {
     // -----------
     // USER
     // -----------
+
+    // dependencies autowired by spring boot
 
     private final UserRepository<User> userRepository;
 
