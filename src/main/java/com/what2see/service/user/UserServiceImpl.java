@@ -2,6 +2,7 @@ package com.what2see.service.user;
 
 import com.what2see.model.user.User;
 import com.what2see.repository.user.UserRepository;
+import com.what2see.repository.user.UserRepositoryImpl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class UserServiceImpl extends UserService<User> {
 
     // dependencies autowired by spring boot
 
-    private final UserRepository<User> userRepository;
+    private final UserRepositoryImpl userRepository;
 
     /**
      * Returns the concrete instance of the {@link UserRepository} interface for {@link User} entities.
