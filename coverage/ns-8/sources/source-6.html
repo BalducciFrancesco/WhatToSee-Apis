@@ -1,0 +1,135 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > UserRoleMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.mapper.user</a>
+</div>
+
+<h1>Coverage Summary for Class: UserRoleMapper (com.what2see.mapper.user)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserRoleMapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (6/8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.mapper.user;
+&nbsp;
+&nbsp;import com.what2see.dto.user.UserRole;
+&nbsp;import com.what2see.model.user.Administrator;
+&nbsp;import com.what2see.model.user.Guide;
+&nbsp;import com.what2see.model.user.Tourist;
+&nbsp;import com.what2see.model.user.User;
+&nbsp;
+&nbsp;/**
+&nbsp; * Utility class that maps {@link User} entities to {@link UserRole} enums based on their subclass.&lt;br&gt;
+&nbsp; * Is usually used in controller to communicate with client side and let it be more flexible.
+&nbsp; */
+<b class="nc">&nbsp;public class UserRoleMapper {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps a {@link User} entity to a {@link UserRole} enum based on its concrete subclass
+&nbsp;     * @param user entity to be mapped
+&nbsp;     * @return mapped enum
+&nbsp;     * @see UserRole
+&nbsp;     */
+&nbsp;    public static UserRole mapUserToRole(User user) {
+<b class="fc">&nbsp;        if (user instanceof Tourist) {</b>
+<b class="fc">&nbsp;            return UserRole.TOURIST;</b>
+<b class="fc">&nbsp;        } else if (user instanceof Guide) {</b>
+<b class="fc">&nbsp;            return UserRole.GUIDE;</b>
+<b class="fc">&nbsp;        } else if (user instanceof Administrator) {</b>
+<b class="fc">&nbsp;            return UserRole.ADMINISTRATOR;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        throw new RuntimeException(&quot;Role not found!&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

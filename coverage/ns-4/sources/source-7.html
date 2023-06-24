@@ -1,0 +1,169 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > StopResponseDTO</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.dto.tour</a>
+</div>
+
+<h1>Coverage Summary for Class: StopResponseDTO (com.what2see.dto.tour)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StopResponseDTO</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">StopResponseDTO$StopResponseDTOBuilder</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/15)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.dto.tour;
+&nbsp;
+&nbsp;import jakarta.validation.constraints.NotBlank;
+&nbsp;import jakarta.validation.constraints.NotNull;
+&nbsp;import lombok.AllArgsConstructor;
+&nbsp;import lombok.Builder;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;
+&nbsp;/**
+&nbsp; * Implementation of &lt;b&gt;DTO&lt;/b&gt; pattern for &lt;i&gt;returning&lt;/i&gt; stops in the &lt;b&gt;outgoing&lt;/b&gt; body.&lt;br&gt;
+&nbsp; * Usually is used as a part of a tour response.
+&nbsp; * @see com.what2see.model.tour.Stop
+&nbsp; */
+<b class="nc">&nbsp;@Data</b>
+<b class="nc">&nbsp;@Builder</b>
+<b class="nc">&nbsp;@AllArgsConstructor</b>
+<b class="nc">&nbsp;@NoArgsConstructor</b>
+&nbsp;public class StopResponseDTO {
+&nbsp;
+<b class="nc">&nbsp;    private @NotNull Long id;</b>
+&nbsp;
+<b class="nc">&nbsp;    private @NotBlank String title;</b>
+&nbsp;
+<b class="nc">&nbsp;    private @NotBlank String description;</b>
+&nbsp;
+<b class="nc">&nbsp;    private @NotNull Double cost;</b>
+&nbsp;
+<b class="nc">&nbsp;    private @NotBlank String duration;</b>
+&nbsp;
+<b class="nc">&nbsp;    private @NotNull Double transferCost;</b>
+&nbsp;
+<b class="nc">&nbsp;    private @NotBlank String transferDuration;</b>
+&nbsp;
+<b class="nc">&nbsp;    private @NotBlank String transferType;</b>
+&nbsp;
+<b class="nc">&nbsp;    private @NotBlank String transferDetails;</b>
+&nbsp;
+<b class="nc">&nbsp;    private String transferOtherOptions;</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

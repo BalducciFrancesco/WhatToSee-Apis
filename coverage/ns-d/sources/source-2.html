@@ -1,0 +1,202 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ConversationService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.service.user</a>
+</div>
+
+<h1>Coverage Summary for Class: ConversationService (com.what2see.service.user)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ConversationService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/11)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ConversationService$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/11)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.service.user;
+&nbsp;
+&nbsp;import com.what2see.exception.ConversationAlreadyStartedException;
+&nbsp;import com.what2see.model.user.Conversation;
+&nbsp;import com.what2see.model.user.Guide;
+&nbsp;import com.what2see.model.user.Tourist;
+&nbsp;import com.what2see.model.user.User;
+&nbsp;import com.what2see.repository.user.ConversationRepository;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.NoSuchElementException;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;/**
+&nbsp; * Service class that handles the business logic for {@link Conversation} entities.
+&nbsp; */
+&nbsp;@Service
+&nbsp;@Transactional
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;public class ConversationService {
+&nbsp;
+&nbsp;    // dependencies autowired by spring boot
+&nbsp;
+&nbsp;    private final ConversationRepository conversationRepository;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns all {@link Conversation} entities.
+&nbsp;     * @return list of all conversations
+&nbsp;     */
+&nbsp;    public List&lt;Conversation&gt; findAll() {
+<b class="fc">&nbsp;        return this.conversationRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the {@link Conversation} entity with the given id.
+&nbsp;     * @param conversationId id of the conversation
+&nbsp;     * @return conversation with the given id
+&nbsp;     * @throws NoSuchElementException if no conversation with the given id exists
+&nbsp;     */
+&nbsp;    public Conversation findById(Long conversationId) throws NoSuchElementException {
+<b class="fc">&nbsp;        return this.conversationRepository.findById(conversationId).orElseThrow();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the {@link Conversation} entity with the given participants.
+&nbsp;     * @param touristId id of the tourist
+&nbsp;     * @param guideId id of the guide
+&nbsp;     * @return conversation with the given participants
+&nbsp;     * @throws NoSuchElementException if no conversation with the given participants exists
+&nbsp;     */
+&nbsp;    public Conversation findByParticipants(Long touristId, Long guideId) throws NoSuchElementException {
+<b class="fc">&nbsp;        return this.conversationRepository.findByTouristIdAndGuideId(touristId, guideId).orElseThrow();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns whether the given {@link Conversation} entity is visible to the given {@link User}.&lt;br&gt;
+&nbsp;     * A conversation is visible to a user if the user is either the tourist or the guide of the conversation.
+&nbsp;     * @param c conversation to check
+&nbsp;     * @param userId id of the user
+&nbsp;     * @return whether the conversation is visible to the user
+&nbsp;     */
+&nbsp;    public boolean isVisible(Conversation c, Long userId) {
+<b class="fc">&nbsp;        return c.getGuide().getId().equals(userId) || c.getTourist().getId().equals(userId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create a new {@link Conversation} entity with one or more messages from tourist to guide.&lt;br&gt;
+&nbsp;     * Note that doesn&#39;t throw error if conversation is started with multiple messages or from guide to tourist.
+&nbsp;     * However, this isn&#39;t allowed at controller-level.
+&nbsp;     * @param newConversation conversation to create
+&nbsp;     * @return created conversation
+&nbsp;     * @throws ConversationAlreadyStartedException if a conversation with the given participants already exists
+&nbsp;     */
+&nbsp;    public Conversation startConversation(Conversation newConversation) throws ConversationAlreadyStartedException {
+<b class="fc">&nbsp;        Tourist creatingTourist = newConversation.getTourist();</b>
+<b class="fc">&nbsp;        Guide creatingGuide = newConversation.getGuide();</b>
+&nbsp;
+&nbsp;        // check if conversation already exists
+<b class="fc">&nbsp;        Optional&lt;Conversation&gt; checkExisting = conversationRepository.findByTouristIdAndGuideId(creatingTourist.getId(), creatingGuide.getId());</b>
+<b class="fc">&nbsp;        if(checkExisting.isPresent())</b>
+<b class="fc">&nbsp;            throw new ConversationAlreadyStartedException(checkExisting.get());</b>
+&nbsp;
+<b class="fc">&nbsp;        return conversationRepository.save(newConversation);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,217 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > TourDTOMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.mapper.tour</a>
+</div>
+
+<h1>Coverage Summary for Class: TourDTOMapper (com.what2see.mapper.tour)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TourDTOMapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (1/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    2,7%
+  </span>
+  <span class="absValue">
+    (1/37)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.mapper.tour;
+&nbsp;
+&nbsp;import com.what2see.dto.tour.TourCreateDTO;
+&nbsp;import com.what2see.dto.tour.TourResponseDTO;
+&nbsp;import com.what2see.mapper.user.UserDTOMapper;
+&nbsp;import com.what2see.model.tour.Tour;
+&nbsp;import com.what2see.model.user.Guide;
+&nbsp;import com.what2see.model.user.Tourist;
+&nbsp;import com.what2see.service.tour.CityService;
+&nbsp;import com.what2see.service.tour.TagService;
+&nbsp;import com.what2see.service.tour.ThemeService;
+&nbsp;import com.what2see.service.user.UserService;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;/**
+&nbsp; * Service that converts {@link Tour} entities from and to DTOs.&lt;br&gt;
+&nbsp; * Is usually used in controller to communicate with client side.
+&nbsp; */
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;@Service
+&nbsp;public class TourDTOMapper {
+&nbsp;
+&nbsp;    // dependencies autowired by spring boot
+&nbsp;
+&nbsp;    private final UserService&lt;Tourist&gt; touristService;
+&nbsp;
+&nbsp;    private final UserService&lt;Guide&gt; guideService;
+&nbsp;
+&nbsp;    private final UserDTOMapper userMapper;
+&nbsp;
+&nbsp;    private final CityService cityService;
+&nbsp;
+&nbsp;    private final CityDTOMapper cityMapper;
+&nbsp;
+&nbsp;    private final TagService tagService;
+&nbsp;
+&nbsp;    private final TagDTOMapper tagMapper;
+&nbsp;
+&nbsp;    private final ThemeDTOMapper themeMapper;
+&nbsp;
+&nbsp;    private final ThemeService themeService;
+&nbsp;
+&nbsp;    private final StopDTOMapper stopMapper;
+&nbsp;
+&nbsp;    private final ReviewDTOMapper reviewMapper;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Converts a {@link Tour} entity to a {@link TourResponseDTO DTO} that can be sent to client
+&nbsp;     * @param tour entity to be converted
+&nbsp;     * @return DTO that can be sent to client
+&nbsp;     */
+&nbsp;    public TourResponseDTO convertResponse(Tour tour) {
+<b class="nc">&nbsp;        return TourResponseDTO.builder()</b>
+<b class="nc">&nbsp;                .id(tour.getId())</b>
+<b class="nc">&nbsp;                .author(userMapper.convertResponse(tour.getAuthor()))</b>
+<b class="nc">&nbsp;                .title(tour.getTitle())</b>
+<b class="nc">&nbsp;                .description(tour.getDescription())</b>
+<b class="nc">&nbsp;                .isPublic(tour.isPublic())</b>
+<b class="nc">&nbsp;                .city(cityMapper.convertResponse(tour.getCity()))</b>
+<b class="nc">&nbsp;                .tags(tour.getTags().stream().map(tagMapper::convertResponse).collect(Collectors.toList()))</b>
+<b class="nc">&nbsp;                .theme(themeMapper.convertResponse(tour.getTheme()))</b>
+<b class="nc">&nbsp;                .approxCost(tour.getApproxCost())</b>
+<b class="nc">&nbsp;                .approxDuration(tour.getApproxDuration())</b>
+<b class="nc">&nbsp;                .creationDate(tour.getCreationDate())</b>
+<b class="nc">&nbsp;                .stops(tour.getStops().stream().map(stopMapper::convertResponse).collect(Collectors.toList()))</b>
+<b class="nc">&nbsp;                .reviews(tour.getReviews().stream().map(reviewMapper::convertResponse).collect(Collectors.toList()))</b>
+<b class="nc">&nbsp;                .markedAsCompletedCount((long) tour.getMarkedTourists().size())</b>
+<b class="nc">&nbsp;                .build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Converts a list of {@link Tour} entities to a list of {@link TourResponseDTO DTOs} that can be sent to client
+&nbsp;     * @param tour list of entities to be converted
+&nbsp;     * @return list of DTOs that can be sent to client
+&nbsp;     */
+&nbsp;    public List&lt;TourResponseDTO&gt; convertResponse(List&lt;Tour&gt; tour) {
+<b class="nc">&nbsp;        return tour.stream().map(this::convertResponse).collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Converts a {@link TourCreateDTO DTO} to a {@link Tour entity} that can be persisted
+&nbsp;     * @param t DTO to be converted
+&nbsp;     * @param guideAuthorId id of the guide that created the tour
+&nbsp;     * @return entity that can be persisted
+&nbsp;     */
+&nbsp;    public Tour convertCreate(TourCreateDTO t, Long guideAuthorId) {
+<b class="nc">&nbsp;        Tour tour = Tour.builder()</b>
+<b class="nc">&nbsp;                .title(t.getTitle())</b>
+<b class="nc">&nbsp;                .description(t.getDescription())</b>
+<b class="nc">&nbsp;                .approxCost(t.getApproxCost())</b>
+<b class="nc">&nbsp;                .approxDuration(t.getApproxDuration())</b>
+<b class="nc">&nbsp;                .creationDate(new Date())</b>
+<b class="nc">&nbsp;                .isPublic(t.getIsPublic())</b>
+<b class="nc">&nbsp;                .author(guideService.findById(guideAuthorId))</b>
+<b class="nc">&nbsp;                .stops(t.getStops().stream().map(stopMapper::convertCreate).collect(Collectors.toList()))</b>
+<b class="nc">&nbsp;                .reports(new ArrayList&lt;&gt;())</b>
+<b class="nc">&nbsp;                .reviews(new ArrayList&lt;&gt;())</b>
+<b class="nc">&nbsp;                .city(cityService.findById(t.getCityId()))</b>
+<b class="nc">&nbsp;                .theme(themeService.findById(t.getThemeId()))</b>
+<b class="nc">&nbsp;                .tags(t.getTagNames() != null ? tagService.findAllByNames(t.getTagNames()) : new ArrayList&lt;&gt;()) // ignoring ids as some tags may not exist yet</b>
+<b class="nc">&nbsp;                .sharedTourists(!t.getIsPublic() &amp;&amp; t.getSharedTouristIds() != null ? t.getSharedTouristIds().stream().map(touristService::findById).collect(Collectors.toList()) : new ArrayList&lt;&gt;())  // if tour is private, consider shared tourists</b>
+<b class="nc">&nbsp;                .markedTourists(new ArrayList&lt;&gt;())</b>
+<b class="nc">&nbsp;                .build();</b>
+<b class="nc">&nbsp;        tour.getStops().forEach(s -&gt; s.setTour(tour));  // important because of single-side relation ownership</b>
+<b class="nc">&nbsp;        return tour;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

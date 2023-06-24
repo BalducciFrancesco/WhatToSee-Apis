@@ -1,0 +1,187 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > TourSearchStrategyGuide</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.service.tour.search</a>
+</div>
+
+<h1>Coverage Summary for Class: TourSearchStrategyGuide (com.what2see.service.tour.search)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TourSearchStrategyGuide</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.service.tour.search;
+&nbsp;
+&nbsp;import com.what2see.model.tour.City;
+&nbsp;import com.what2see.model.tour.Tag;
+&nbsp;import com.what2see.model.tour.Theme;
+&nbsp;import com.what2see.model.tour.Tour;
+&nbsp;import com.what2see.model.user.Guide;
+&nbsp;import com.what2see.model.user.User;
+&nbsp;import com.what2see.repository.tour.TourRepository;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;import java.util.stream.Stream;
+&nbsp;
+&nbsp;/**
+&nbsp; * Implementation of the &lt;b&gt;Strategy&lt;/b&gt; design pattern.&lt;br&gt;
+&nbsp; * This class represents a concrete strategy for searching tours that is suitable for &lt;b&gt;Guides&lt;/b&gt;.&lt;br&gt;
+&nbsp; * This strategy can look for &lt;b&gt;public and private (only if created by the current guide)&lt;/b&gt; tours and sort them by &lt;i&gt;descending&lt;/i&gt; order based on the following criteria (order of precedence):
+&nbsp; * &lt;ol&gt;&lt;li&gt;
+&nbsp; *     created by current guide
+&nbsp; * &lt;/li&gt;&lt;li&gt;
+&nbsp; *     reviews count
+&nbsp; * &lt;/li&gt;&lt;li&gt;
+&nbsp; *     marked count
+&nbsp; * &lt;/li&gt;&lt;/ol&gt;
+&nbsp; */
+<b class="fc">&nbsp;public class TourSearchStrategyGuide implements TourSearchStrategy {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Searches tours based on the given parameters among public tours and those private that are created by the current guide
+&nbsp;     * @param repository tour repository (should be autowired in the client class)
+&nbsp;     * @param requesting guide that is requesting the search
+&nbsp;     * @param city city filter (optional)
+&nbsp;     * @param theme theme filter (optional)
+&nbsp;     * @param approxDuration maximum duration filter (optional)
+&nbsp;     * @param tags tags filter (optional)
+&nbsp;     * @return list of tours that match the given criteria
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public List&lt;Tour&gt; executeSearch(TourRepository repository, User requesting, City city, Theme theme, String approxDuration, List&lt;Tag&gt; tags) {
+<b class="fc">&nbsp;        Stream&lt;Tour&gt; result = repository.searchPublicOrCreatedBy(city, theme, approxDuration, (Guide) requesting).stream(); // get all public tours and those private that are created by the current guide</b>
+<b class="fc">&nbsp;        if(tags != null &amp;&amp; !tags.isEmpty()) {</b>
+&nbsp;            // filter the tours for those who contain at least one of the requested tags
+<b class="fc">&nbsp;            result = result.filter(tour -&gt; tour.getTags().stream().anyMatch(tags::contains));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result.collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sorts the given list of tours by &lt;i&gt;descending&lt;/i&gt; order based on the following criteria (order of precedence):
+&nbsp;     * &lt;ol&gt;&lt;li&gt;
+&nbsp;     *     created by current guide
+&nbsp;     * &lt;/li&gt;&lt;li&gt;
+&nbsp;     *     reviews count
+&nbsp;     * &lt;/li&gt;&lt;li&gt;
+&nbsp;     *     marked count
+&nbsp;     * &lt;/li&gt;&lt;/ol&gt;
+&nbsp;     * @param toSort list of tours to sort
+&nbsp;     * @param repository tour repository (should be autowired in the client class)
+&nbsp;     * @param requesting guide that is requesting the ordering
+&nbsp;     * @param city city filter (optional)
+&nbsp;     * @param theme theme filter (optional)
+&nbsp;     * @param approxDuration maximum duration filter (optional)
+&nbsp;     * @param tags tags filter (optional)
+&nbsp;     * @return sorted list of tours passed as first parameter
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public List&lt;Tour&gt; executeSort(List&lt;Tour&gt; toSort, TourRepository repository, User requesting, City city, Theme theme, String approxDuration, List&lt;Tag&gt; tags) {
+<b class="fc">&nbsp;        List&lt;Tour&gt; sorted = new ArrayList&lt;&gt;(toSort);</b>
+<b class="fc">&nbsp;        sorted.sort((Tour t1, Tour t2) -&gt; {</b>
+<b class="fc">&nbsp;            if((t1.getAuthor() == requesting || t2.getAuthor() == requesting) &amp;&amp; t1.getAuthor() != t2.getAuthor()) {</b>
+&nbsp;                // only one of them has current guide as author, show that first
+<b class="fc">&nbsp;                return t1.getAuthor() == requesting ? -1 : 1;</b>
+&nbsp;            } else {
+&nbsp;                // both or none of them has current guide as author, sort like tourist
+<b class="fc">&nbsp;                int reviewComp = t2.getReviews().size() - t1.getReviews().size();</b>
+<b class="fc">&nbsp;                return reviewComp != 0 ? reviewComp : t2.getMarkedTourists().size() - t1.getMarkedTourists().size();</b>
+&nbsp;            }
+&nbsp;        });
+<b class="fc">&nbsp;        return sorted;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

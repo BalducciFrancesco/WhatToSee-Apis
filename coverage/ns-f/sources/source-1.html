@@ -1,0 +1,146 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > TourRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.repository.tour</a>
+</div>
+
+<h1>Coverage Summary for Class: TourRepository (com.what2see.repository.tour)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">TourRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.repository.tour;
+&nbsp;
+&nbsp;import com.what2see.model.tour.City;
+&nbsp;import com.what2see.model.tour.Theme;
+&nbsp;import com.what2see.model.tour.Tour;
+&nbsp;import com.what2see.model.user.Guide;
+&nbsp;import com.what2see.model.user.Tourist;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Repository that provides CRUD operations for {@link Tour} entities.
+&nbsp; */
+&nbsp;@Repository
+&nbsp;public interface TourRepository extends JpaRepository&lt;Tour, Long&gt; {
+&nbsp;
+&nbsp;    /*
+&nbsp;     * All search methods with city, theme and approxDuration filters allow them to be null, in which case they are considered.
+&nbsp;     * Note that here it&#39;s not filtering for tags, since it will be done service-side because of framework limitations.
+&nbsp;     */
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Searches for tours that are public or shared with the given tourist.
+&nbsp;     * @param city city filter (optional)
+&nbsp;     * @param theme theme filter (optional)
+&nbsp;     * @param approxDuration maximum duration filter (optional)
+&nbsp;     * @param sharedWith tourist to check if tour is shared with (NOT optional)
+&nbsp;     * @return list of tours that match the given criteria
+&nbsp;     */
+&nbsp;    @Query(&quot;SELECT t FROM Tour t LEFT JOIN t.tags tt LEFT JOIN t.sharedTourists ttt WHERE &quot; +
+&nbsp;            &quot;(t.isPublic = true OR ttt = :sharedWith) AND &quot; +
+&nbsp;            &quot;(:city IS NULL OR t.city = :city) AND &quot; +
+&nbsp;            &quot;(:theme IS NULL OR t.theme = :theme) AND &quot; +
+&nbsp;            &quot;(:approxDuration IS NULL OR t.approxDuration &lt;= :approxDuration)&quot;)
+&nbsp;    List&lt;Tour&gt; searchPublicOrSharedWith(City city, Theme theme, String approxDuration, Tourist sharedWith);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Searches for tours that are public or created by the given guide.
+&nbsp;     * @param city city filter (optional)
+&nbsp;     * @param theme theme filter (optional)
+&nbsp;     * @param approxDuration maximum duration filter (optional)
+&nbsp;     * @param author guide to check if tour is created by (NOT optional)
+&nbsp;     * @return list of tours that match the given criteria
+&nbsp;     */
+&nbsp;    @Query(&quot;SELECT t FROM Tour t LEFT JOIN t.tags tt WHERE &quot; +
+&nbsp;            &quot;(t.isPublic = TRUE OR t.author = :author) AND &quot; +
+&nbsp;            &quot;(:city IS NULL OR t.city = :city) AND &quot; +
+&nbsp;            &quot;(:theme IS NULL OR t.theme = :theme) AND &quot; +
+&nbsp;            &quot;(:approxDuration IS NULL OR t.approxDuration &lt;= :approxDuration)&quot;)
+&nbsp;    List&lt;Tour&gt; searchPublicOrCreatedBy(City city, Theme theme, String approxDuration, Guide author);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Searches for tours without considering their visibility status.&lt;br&gt;
+&nbsp;     * It is intended to only be used by administrators.
+&nbsp;     * @param city city filter (optional)
+&nbsp;     * @param theme theme filter (optional)
+&nbsp;     * @param approxDuration maximum duration filter (optional)
+&nbsp;     * @return list of tours that match the given criteria
+&nbsp;     */
+&nbsp;    @Query(&quot;SELECT t FROM Tour t LEFT JOIN t.tags tt WHERE &quot; +
+&nbsp;            &quot;(:city IS NULL OR t.city = :city) AND &quot; +
+&nbsp;            &quot;(:theme IS NULL OR t.theme = :theme) AND &quot; +
+&nbsp;            &quot;(:approxDuration IS NULL OR t.approxDuration &lt;= :approxDuration)&quot;)
+&nbsp;    List&lt;Tour&gt; searchAll(City city, Theme theme, String approxDuration);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Searched for tours that have at least one report or none.
+&nbsp;     * @param isReported whether to search for tours with reports or without
+&nbsp;     * @return list of tours that match the given criteria
+&nbsp;     */
+&nbsp;    @Query(&quot;SELECT t from Tour t LEFT JOIN t.reports r WHERE &quot; +
+&nbsp;            &quot;(:isReported = TRUE AND r.id &lt;&gt; NULL) OR &quot; +
+&nbsp;            &quot;(:isReported = FALSE AND r.id = NULL)&quot;)
+&nbsp;    List&lt;Tour&gt; findAllByReported(boolean isReported);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

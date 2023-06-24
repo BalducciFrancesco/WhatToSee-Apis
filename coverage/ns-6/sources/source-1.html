@@ -1,0 +1,144 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ConversationAlreadyStartedException</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.exception</a>
+</div>
+
+<h1>Coverage Summary for Class: ConversationAlreadyStartedException (com.what2see.exception)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ConversationAlreadyStartedException</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    14,3%
+  </span>
+  <span class="absValue">
+    (1/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (2/8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.exception;
+&nbsp;
+&nbsp;import com.what2see.model.user.Conversation;
+&nbsp;
+&nbsp;/**
+&nbsp; * Exception thrown when a tourist tries to start a conversation with a guide when a conversation already exists.
+&nbsp; * @see com.what2see.service.user.ConversationService#startConversation
+&nbsp; */
+&nbsp;public class ConversationAlreadyStartedException extends RuntimeException {
+&nbsp;
+&nbsp;    private Conversation existingConversation;
+&nbsp;
+<b class="fc">&nbsp;    public ConversationAlreadyStartedException(Conversation existingConversation) {</b>
+<b class="fc">&nbsp;        this.existingConversation = existingConversation;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ConversationAlreadyStartedException(String message) {
+<b class="nc">&nbsp;        super(message);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ConversationAlreadyStartedException(String message, Throwable cause) {
+<b class="nc">&nbsp;        super(message, cause);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ConversationAlreadyStartedException(Throwable cause) {
+<b class="nc">&nbsp;        super(cause);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ConversationAlreadyStartedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+<b class="nc">&nbsp;        super(message, cause, enableSuppression, writableStackTrace);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Conversation getExistingConversation() {
+<b class="nc">&nbsp;        return existingConversation;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setExistingConversation(Conversation existingConversation) {
+<b class="nc">&nbsp;        this.existingConversation = existingConversation;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

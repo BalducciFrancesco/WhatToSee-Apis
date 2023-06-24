@@ -1,0 +1,93 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > UserRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.repository.user</a>
+</div>
+
+<h1>Coverage Summary for Class: UserRepository (com.what2see.repository.user)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">UserRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.repository.user;
+&nbsp;
+&nbsp;import com.what2see.model.user.User;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.repository.NoRepositoryBean;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;/**
+&nbsp; * Repository that provides CRUD operations for {@link User} entities.&lt;br&gt;
+&nbsp; * This repository is used for typing purposes only and can&#39;t be injected directly.
+&nbsp; * @param &lt;T&gt; type of the {@link User} subclass (including {@link User} itself)
+&nbsp; */
+&nbsp;@NoRepositoryBean
+&nbsp;public interface UserRepository&lt;T extends User&gt; extends JpaRepository&lt;T, Long&gt; {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Authenticates a {@link User} subclass (including {@link User} itself) with the given username and password.&lt;br&gt;
+&nbsp;     * This method must be overridden by all subclasses.
+&nbsp;     * @param username username to test with
+&nbsp;     * @param password password to test with
+&nbsp;     * @return authenticated entity if found, {@link Optional#empty()} otherwise
+&nbsp;     */
+&nbsp;    Optional&lt;T&gt; authenticate(String username, String password);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

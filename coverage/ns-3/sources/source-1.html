@@ -1,0 +1,269 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ConversationController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.controller.user</a>
+</div>
+
+<h1>Coverage Summary for Class: ConversationController (com.what2see.controller.user)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ConversationController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (1/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    2,5%
+  </span>
+  <span class="absValue">
+    (1/40)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.controller.user;
+&nbsp;
+&nbsp;import com.what2see.dto.user.ConversationCreateDTO;
+&nbsp;import com.what2see.dto.user.ConversationResponseDTO;
+&nbsp;import com.what2see.dto.user.MessageCreateDTO;
+&nbsp;import com.what2see.dto.user.MessageResponseDTO;
+&nbsp;import com.what2see.exception.ConversationAlreadyStartedException;
+&nbsp;import com.what2see.mapper.user.ConversationDTOMapper;
+&nbsp;import com.what2see.mapper.user.MessageDTOMapper;
+&nbsp;import com.what2see.model.user.Conversation;
+&nbsp;import com.what2see.model.user.Guide;
+&nbsp;import com.what2see.model.user.Message;
+&nbsp;import com.what2see.model.user.Tourist;
+&nbsp;import com.what2see.service.user.ConversationService;
+&nbsp;import com.what2see.service.user.MessageService;
+&nbsp;import com.what2see.service.user.UserService;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import org.springframework.web.server.ResponseStatusException;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.NoSuchElementException;
+&nbsp;
+&nbsp;/**
+&nbsp; * Controller for conversions and messages endpoints
+&nbsp; */
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/conversation&quot;)
+&nbsp;public class ConversationController {
+&nbsp;
+&nbsp;    // dependencies autowired by spring boot
+&nbsp;
+&nbsp;    private final ConversationService conversationService;
+&nbsp;
+&nbsp;    private final ConversationDTOMapper conversationMapper;
+&nbsp;
+&nbsp;    private final MessageService messageService;
+&nbsp;
+&nbsp;    private final MessageDTOMapper messageMapper;
+&nbsp;
+&nbsp;    private final UserService&lt;Tourist&gt; touristService;
+&nbsp;
+&nbsp;    private final UserService&lt;Guide&gt; guideService;
+&nbsp;
+&nbsp;
+&nbsp;    /*
+&nbsp;     * Some validations are not explicitly performed with try/catch&#39;s since RuntimeExceptions are expected to
+&nbsp;     * be called and managed from the Spring Boot container in case of failed validation or user not found.
+&nbsp;     */
+&nbsp;
+&nbsp;    // -------
+&nbsp;    // GET
+&nbsp;    // -------
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get all conversations of the requesting user (tourist or guide)
+&nbsp;     * @param userId requesting user (must be a tourist or a guide)
+&nbsp;     * @return list of conversations (DTO alternative without info about messages for performance reasons)
+&nbsp;     * @see ConversationResponseDTO#messages
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/all&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;ConversationResponseDTO&gt;&gt; getAll(@RequestHeader(value=&quot;Authentication&quot;) Long userId) {
+&nbsp;        List&lt;Conversation&gt; c;
+&nbsp;        try {
+<b class="nc">&nbsp;            Tourist t = touristService.findById(userId);</b>
+<b class="nc">&nbsp;            c = t.getConversations();</b>
+<b class="nc">&nbsp;        } catch (NoSuchElementException e) {</b>
+<b class="nc">&nbsp;            Guide g = guideService.findById(userId);</b>
+<b class="nc">&nbsp;            c = g.getConversations();</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(conversationMapper.convertResponseLight(c));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get a specific conversation (if already started) by its id &lt;i&gt;or&lt;/i&gt;, indirectly, by guide id (only for tourists).&lt;br&gt;
+&nbsp;     * It is intended to only be used by one of the conversation participants (tourist or guide).
+&nbsp;     * @param conversationId conversation to get &lt;i&gt;or&lt;/i&gt;
+&nbsp;     * @param guideId guide to get conversation with (only for tourists)
+&nbsp;     * @param userId requesting user (must be a tourist or a guide and one of the conversation participants)
+&nbsp;     * @return wanted conversation or empty response if not started yet
+&nbsp;     * @exception ResponseStatusException {@link HttpStatus#UNAUTHORIZED} if user is not authorized to see the wanted conversation
+&nbsp;     */
+&nbsp;    @GetMapping()// by conversation id or guide id, can return null if not existing yet
+&nbsp;    public ResponseEntity&lt;ConversationResponseDTO&gt; getById(@RequestParam(required = false) Long conversationId, @RequestParam(required = false) Long guideId, @RequestHeader(value=&quot;Authentication&quot;) Long userId) {
+&nbsp;        try {
+<b class="nc">&nbsp;            touristService.findById(userId);</b>
+<b class="nc">&nbsp;        } catch (NoSuchElementException e) {</b>
+<b class="nc">&nbsp;            guideService.findById(userId);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        if(conversationId != null) { // is tourist or guide get by conversation id</b>
+<b class="nc">&nbsp;            Conversation c = conversationService.findById(conversationId);</b>
+<b class="nc">&nbsp;            if(!conversationService.isVisible(c, userId)) { // ensure user can actually see the wanted conversation</b>
+<b class="nc">&nbsp;                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, &quot;Non sei autorizzato a visualizzare questa conversazione&quot;);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return ResponseEntity.ok(conversationMapper.convertResponse(c));</b>
+<b class="nc">&nbsp;        } else if(guideId != null) {    // is tourist get by guide id, if exists</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                Conversation c = conversationService.findByParticipants(userId, guideId);   // if not existing yet, NoSuchElementException is thrown</b>
+<b class="nc">&nbsp;                return ResponseEntity.ok(conversationMapper.convertResponse(c));</b>
+<b class="nc">&nbsp;            } catch (NoSuchElementException e) {</b>
+<b class="nc">&nbsp;                return ResponseEntity.noContent().build();</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // -------
+&nbsp;    // POST
+&nbsp;    // -------
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Start a new conversation with a guide.&lt;br&gt;
+&nbsp;     * It is intended to only be used by tourists and only if the conversation has not been already started.
+&nbsp;     * @param c conversation to start with at least one message
+&nbsp;     * @param touristId requesting tourist
+&nbsp;     * @return created conversation
+&nbsp;     * @exception ResponseStatusException {@link HttpStatus#BAD_REQUEST} if conversation has been already started
+&nbsp;     */
+&nbsp;    @PostMapping()
+&nbsp;    public ResponseEntity&lt;ConversationResponseDTO&gt; startConversation(@RequestBody @Valid ConversationCreateDTO c, @RequestHeader(value=&quot;Authentication&quot;) Long touristId) {
+<b class="nc">&nbsp;        touristService.findById(touristId);</b>
+&nbsp;        Conversation createdConversation;
+&nbsp;        try {
+<b class="nc">&nbsp;            createdConversation = conversationService.startConversation(conversationMapper.convertCreate(c, touristId));</b>
+<b class="nc">&nbsp;        } catch (ConversationAlreadyStartedException e) {</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Esiste già una conversazione con questa guida&quot;);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(conversationMapper.convertResponse(createdConversation));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Send a message in an existing conversation.&lt;br&gt;
+&nbsp;     * It is intended to only be used by one of the conversation participants (tourist or guide).&lt;br&gt;
+&nbsp;     * Note that {@link Message#direction} boolean is automatically set, based on the requesting user role.
+&nbsp;     * @param m message to send (including conversation id)
+&nbsp;     * @param userId requesting user (must be a tourist or a guide and one of the conversation participants)
+&nbsp;     * @return created message
+&nbsp;     * @exception ResponseStatusException {@link HttpStatus#UNAUTHORIZED} if user is not authorized to send a message in the wanted conversation
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/message&quot;)
+&nbsp;    public ResponseEntity&lt;MessageResponseDTO&gt; sendMessage(@RequestBody @Valid MessageCreateDTO m, @RequestHeader(value=&quot;Authentication&quot;) Long userId) {
+&nbsp;        boolean direction;  // true if guide, false if tourist
+&nbsp;        try {
+<b class="nc">&nbsp;            touristService.findById(userId);</b>
+<b class="nc">&nbsp;            direction = false;</b>
+<b class="nc">&nbsp;        } catch (NoSuchElementException e) {</b>
+<b class="nc">&nbsp;            guideService.findById(userId);</b>
+<b class="nc">&nbsp;            direction = true;</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        Conversation c = conversationService.findById(m.getConversationId());</b>
+<b class="nc">&nbsp;        if(!conversationService.isVisible(c, userId)) {</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, &quot;Non sei autorizzato a inviare un messaggio in questa conversazione&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Message createdMessage = messageService.sendMessage(messageMapper.convertCreate(m, direction));</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(messageMapper.convertResponse(createdMessage));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

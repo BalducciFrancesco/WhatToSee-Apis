@@ -1,0 +1,189 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > UserService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.service.user</a>
+</div>
+
+<h1>Coverage Summary for Class: UserService (com.what2see.service.user)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.service.user;
+&nbsp;
+&nbsp;import com.what2see.dto.user.UserLoginDTO;
+&nbsp;import com.what2see.model.user.User;
+&nbsp;import com.what2see.repository.user.UserRepository;
+&nbsp;import com.what2see.utils.PasswordManager;
+&nbsp;import org.springframework.dao.DataIntegrityViolationException;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Implementation of the &lt;b&gt;Factory Method&lt;/b&gt; design pattern.&lt;br&gt;
+&nbsp; * Service class that handles the common business logic for all {@link User} subclasses, independently of their concrete type.
+&nbsp; * It is used for typing purposes only and can&#39;t be injected directly.&lt;br&gt;
+&nbsp; * Note that, in practice at the current state of code, the concrete repository is just a restriction of the pool of
+&nbsp; * {@link User} on which the methods are applied.&lt;br&gt;
+&nbsp; * @param &lt;T&gt; type of the {@link User} subclass (including {@link User} itself)
+&nbsp; */
+<b class="fc">&nbsp;public abstract class UserService&lt;T extends User&gt; {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the concrete instance of the {@link UserRepository} interface for {@link User} entities.
+&nbsp;     * This is the only method that needs to be implemented by the subclasses.
+&nbsp;     * @return repository instance
+&nbsp;     */
+&nbsp;    public abstract UserRepository&lt;T&gt; getRepository();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns all {@link User} entities of type {@link T}.
+&nbsp;     * @return list of all entities
+&nbsp;     */
+&nbsp;    public List&lt;T&gt; findAll() {
+<b class="fc">&nbsp;        return this.getRepository().findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Registers a new {@link User} entity of type {@link T}.&lt;br&gt;
+&nbsp;     * The username is normalized to lowercase and trimmed.&lt;br&gt;
+&nbsp;     * The first and last name are trimmed.&lt;br&gt;
+&nbsp;     * The password is hashed.
+&nbsp;     * @param user entity to be registered
+&nbsp;     * @return registered entity
+&nbsp;     * @throws DataIntegrityViolationException if the username is already taken
+&nbsp;     * @see PasswordManager#hashPassword(String)
+&nbsp;     */
+&nbsp;    public T register(T user) throws DataIntegrityViolationException {
+<b class="fc">&nbsp;        user.setUsername(normalize(user.getUsername()));</b>
+<b class="fc">&nbsp;        user.setFirstName(user.getFirstName().trim());</b>
+<b class="fc">&nbsp;        user.setLastName(user.getLastName().trim());</b>
+<b class="fc">&nbsp;        user.setPassword(PasswordManager.hashPassword(user.getPassword()));</b>
+<b class="fc">&nbsp;        return getRepository().save(user);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Authenticates a {@link User} entity of type {@link T}.&lt;br&gt;
+&nbsp;     * The username is normalized to lowercase and trimmed.&lt;br&gt;
+&nbsp;     * The password is hashed.
+&nbsp;     * @param login credentials to be authenticated
+&nbsp;     * @return authenticated entity or null if the credentials are invalid
+&nbsp;     */
+&nbsp;    public T login(UserLoginDTO login) {
+<b class="fc">&nbsp;        login.setUsername(normalize(login.getUsername()));</b>
+<b class="fc">&nbsp;        login.setPassword(PasswordManager.hashPassword(login.getPassword()));</b>
+<b class="fc">&nbsp;        return getRepository().authenticate(login.getUsername(), login.getPassword()).orElse(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds a {@link User} entity of type {@link T} by its id.
+&nbsp;     * @param userId id of the entity to be found
+&nbsp;     * @return found entity
+&nbsp;     * @throws java.util.NoSuchElementException if the entity is not found
+&nbsp;     */
+&nbsp;    public T findById(Long userId) {
+<b class="fc">&nbsp;        return getRepository().findById(userId).orElseThrow();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Normalizes a string to lowercase and trims it.
+&nbsp;     * @param s string to be normalized
+&nbsp;     * @return normalized string
+&nbsp;     */
+&nbsp;    private String normalize(String s) {
+<b class="fc">&nbsp;        return s.trim().toLowerCase();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

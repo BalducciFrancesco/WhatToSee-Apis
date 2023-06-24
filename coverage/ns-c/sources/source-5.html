@@ -1,0 +1,113 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > TourSearchStrategy</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.service.tour.search</a>
+</div>
+
+<h1>Coverage Summary for Class: TourSearchStrategy (com.what2see.service.tour.search)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">TourSearchStrategy</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.service.tour.search;
+&nbsp;
+&nbsp;import com.what2see.model.tour.City;
+&nbsp;import com.what2see.model.tour.Tag;
+&nbsp;import com.what2see.model.tour.Theme;
+&nbsp;import com.what2see.model.tour.Tour;
+&nbsp;import com.what2see.model.user.User;
+&nbsp;import com.what2see.repository.tour.TourRepository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Implementation of the &lt;b&gt;Strategy&lt;/b&gt; design pattern.&lt;br&gt;
+&nbsp; * This interface generalizes a search strategy for tours.
+&nbsp; */
+&nbsp;public interface TourSearchStrategy {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes a search for tours based on the given parameters.&lt;br&gt;
+&nbsp;     * Concrete strategy must be provided by the implementing class.
+&nbsp;     * @param repository tour repository (should be autowired in the client class)
+&nbsp;     * @param requesting user that is requesting the search
+&nbsp;     * @param city city filter (optional)
+&nbsp;     * @param theme theme filter (optional)
+&nbsp;     * @param approxDuration maximum duration filter (optional)
+&nbsp;     * @param tags tags filter (optional)
+&nbsp;     * @return list of tours that match the given criteria
+&nbsp;     */
+&nbsp;    List&lt;Tour&gt; executeSearch(TourRepository repository, User requesting, City city, Theme theme, String approxDuration, List&lt;Tag&gt; tags);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes a sort for tours based on the given parameters.&lt;br&gt;
+&nbsp;     * Usually called on the result of {@link #executeSearch}.&lt;br&gt;
+&nbsp;     * Concrete strategy must be provided by the implementing class.
+&nbsp;     * @param toSort list of tours to sort
+&nbsp;     * @param repository tour repository (should be autowired in the client class)
+&nbsp;     * @param requesting user that is requesting the ordering
+&nbsp;     * @param city city filter (optional)
+&nbsp;     * @param theme theme filter (optional)
+&nbsp;     * @param approxDuration maximum duration filter (optional)
+&nbsp;     * @param tags tags filter (optional)
+&nbsp;     * @return sorted list of tours passed as first parameter
+&nbsp;     */
+&nbsp;    List&lt;Tour&gt; executeSort(List&lt;Tour&gt; toSort, TourRepository repository, User requesting, City city, Theme theme, String approxDuration, List&lt;Tag&gt; tags);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

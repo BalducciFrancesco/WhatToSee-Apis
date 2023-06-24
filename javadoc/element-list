@@ -1,0 +1,16 @@
+com.what2see
+com.what2see.controller.tour
+com.what2see.controller.user
+com.what2see.dto.tour
+com.what2see.dto.user
+com.what2see.exception
+com.what2see.mapper.tour
+com.what2see.mapper.user
+com.what2see.model.tour
+com.what2see.model.user
+com.what2see.repository.tour
+com.what2see.repository.user
+com.what2see.service.tour
+com.what2see.service.tour.search
+com.what2see.service.user
+com.what2see.utils

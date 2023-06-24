@@ -1,0 +1,153 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ThemeController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.controller.tour</a>
+</div>
+
+<h1>Coverage Summary for Class: ThemeController (com.what2see.controller.tour)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ThemeController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33,3%
+  </span>
+  <span class="absValue">
+    (1/3)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.controller.tour;
+&nbsp;
+&nbsp;import com.what2see.dto.tour.ThemeResponseDTO;
+&nbsp;import com.what2see.mapper.tour.ThemeDTOMapper;
+&nbsp;import com.what2see.model.user.User;
+&nbsp;import com.what2see.service.tour.ThemeService;
+&nbsp;import com.what2see.service.user.UserService;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestHeader;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Controller for theme endpoints
+&nbsp; */
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/theme&quot;)
+&nbsp;public class ThemeController {
+&nbsp;
+&nbsp;    // dependencies autowired by spring boot
+&nbsp;
+&nbsp;    private final ThemeService themeService;
+&nbsp;
+&nbsp;    private final ThemeDTOMapper themeMapper;
+&nbsp;
+&nbsp;    private final UserService&lt;User&gt; userService;
+&nbsp;
+&nbsp;
+&nbsp;    /*
+&nbsp;     * Some validations are not explicitly performed with try/catch&#39;s since RuntimeExceptions are expected to
+&nbsp;     * be called and managed from the Spring Boot container in case of failed validation or user not found.
+&nbsp;     */
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get the list of available themes
+&nbsp;     * @param userId requesting user
+&nbsp;     * @return list of available themes as id / name DTO
+&nbsp;     */
+&nbsp;    @GetMapping()
+&nbsp;    public ResponseEntity&lt;List&lt;ThemeResponseDTO&gt;&gt; getAll(@RequestHeader(value=&quot;Authentication&quot;) Long userId) {
+<b class="nc">&nbsp;        userService.findById(userId);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(themeService.findAll().stream().map(themeMapper::convertResponse).toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

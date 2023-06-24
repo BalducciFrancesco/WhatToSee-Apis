@@ -1,0 +1,185 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Guide</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.model.user</a>
+</div>
+
+<h1>Coverage Summary for Class: Guide (com.what2see.model.user)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Guide</td>
+<td class="coverageStat">
+  <span class="percent">
+    33,3%
+  </span>
+  <span class="absValue">
+    (2/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33,3%
+  </span>
+  <span class="absValue">
+    (2/6)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Guide$GuideBuilder</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">Guide$GuideBuilderImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">Guide$HibernateProxy$LOUK4UK3</td>
+  </tr>
+  <tr>
+    <td class="name">Guide$HibernateProxy$XwGh6etX</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (4/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (4/8)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.model.user;
+&nbsp;
+&nbsp;import com.what2see.model.tour.Tour;
+&nbsp;import jakarta.persistence.CascadeType;
+&nbsp;import jakarta.persistence.Entity;
+&nbsp;import jakarta.persistence.OneToMany;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.EqualsAndHashCode;
+&nbsp;import lombok.NoArgsConstructor;
+&nbsp;import lombok.experimental.SuperBuilder;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * Entity that represents a guide in the database.
+&nbsp; * @see User
+&nbsp; */
+<b class="nc">&nbsp;@Data</b>
+&nbsp;@Entity
+<b class="fc">&nbsp;@SuperBuilder</b>
+<b class="fc">&nbsp;@NoArgsConstructor</b>
+<b class="nc">&nbsp;@EqualsAndHashCode(callSuper = true)</b>
+&nbsp;public class Guide extends User {
+&nbsp;
+&nbsp;    @OneToMany(mappedBy = &quot;author&quot;, cascade = CascadeType.ALL)
+<b class="nc">&nbsp;    private List&lt;Tour&gt; createdTours;</b>
+&nbsp;
+&nbsp;    @OneToMany(mappedBy = &quot;guide&quot;, cascade = CascadeType.ALL)
+<b class="nc">&nbsp;    private List&lt;Conversation&gt; conversations;</b>
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

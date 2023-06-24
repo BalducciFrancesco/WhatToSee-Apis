@@ -1,0 +1,378 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > TourService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.service.tour</a>
+</div>
+
+<h1>Coverage Summary for Class: TourService (com.what2see.service.tour)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TourService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (46/46)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">TourService$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">TourService$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (47/47)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.service.tour;
+&nbsp;
+&nbsp;import com.what2see.dto.tour.TourActionsResponseDTO;
+&nbsp;import com.what2see.dto.tour.TourSearchDTO;
+&nbsp;import com.what2see.dto.user.UserRole;
+&nbsp;import com.what2see.exception.InteractionAlreadyPerformedException;
+&nbsp;import com.what2see.mapper.user.UserRoleMapper;
+&nbsp;import com.what2see.model.tour.City;
+&nbsp;import com.what2see.model.tour.Tag;
+&nbsp;import com.what2see.model.tour.Theme;
+&nbsp;import com.what2see.model.tour.Tour;
+&nbsp;import com.what2see.model.user.Administrator;
+&nbsp;import com.what2see.model.user.Tourist;
+&nbsp;import com.what2see.model.user.User;
+&nbsp;import com.what2see.repository.tour.TourRepository;
+&nbsp;import com.what2see.service.tour.search.*;
+&nbsp;import com.what2see.service.user.UserService;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.dao.DataIntegrityViolationException;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.NoSuchElementException;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;/**
+&nbsp; * Service class that handles the business logic for {@link Tour} entities.
+&nbsp; */
+&nbsp;@Service
+&nbsp;@Transactional
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;public class TourService {
+&nbsp;
+&nbsp;    // dependencies autowired by spring boot
+&nbsp;
+&nbsp;    private final TourRepository tourRepository;
+&nbsp;
+&nbsp;    private final CityService cityService;
+&nbsp;
+&nbsp;    private final TagService tagService;
+&nbsp;
+&nbsp;    private final ThemeService themeService;
+&nbsp;
+&nbsp;    private final UserService&lt;Administrator&gt; administratorService;
+&nbsp;
+&nbsp;    private final UserService&lt;User&gt; userService;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new {@link Tour} entity.
+&nbsp;     * @param t tour to be created (without id)
+&nbsp;     * @return created tour (with id)
+&nbsp;     * @throws DataIntegrityViolationException if the tour is not valid (e.g. title already existing, etc.)
+&nbsp;     */
+&nbsp;    public Tour create(Tour t) throws DataIntegrityViolationException {
+<b class="fc">&nbsp;        return tourRepository.save(t);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates an existing {@link Tour} entity.&lt;br&gt;
+&nbsp;     * The tour to be updated must have an id.&lt;br&gt;
+&nbsp;     * The following fields modifications are &lt;b&gt;ignored and not updated&lt;/b&gt;:
+&nbsp;     * &lt;ul&gt;&lt;li&gt;
+&nbsp;     *     id
+&nbsp;     * &lt;/li&gt;&lt;li&gt;
+&nbsp;     *     author
+&nbsp;     * &lt;/li&gt;&lt;li&gt;
+&nbsp;     *     creationDate
+&nbsp;     * &lt;/li&gt;&lt;li&gt;
+&nbsp;     *     reviews
+&nbsp;     * &lt;/li&gt;&lt;li&gt;
+&nbsp;     *     reports
+&nbsp;     * &lt;/li&gt;&lt;/ul&gt;
+&nbsp;     * @param oldTour tour to be updated (from repository, with id)
+&nbsp;     * @param newTour tour to be updated to (from client, without id)
+&nbsp;     */
+&nbsp;    public void update(Tour oldTour, Tour newTour) {
+<b class="fc">&nbsp;        oldTour.setTitle(newTour.getTitle());</b>
+<b class="fc">&nbsp;        oldTour.setDescription(newTour.getDescription());</b>
+<b class="fc">&nbsp;        oldTour.setPublic(newTour.isPublic());</b>
+<b class="fc">&nbsp;        oldTour.setCity(newTour.getCity());</b>
+<b class="fc">&nbsp;        oldTour.setTags(newTour.getTags());</b>
+<b class="fc">&nbsp;        oldTour.setTheme(newTour.getTheme());</b>
+<b class="fc">&nbsp;        oldTour.setApproxCost(newTour.getApproxCost());</b>
+<b class="fc">&nbsp;        oldTour.setApproxDuration(newTour.getApproxDuration());</b>
+<b class="fc">&nbsp;        newTour.getStops().forEach(s -&gt; s.setTour(oldTour));    // important because of single-side relation ownership</b>
+<b class="fc">&nbsp;        oldTour.setStops(newTour.getStops());</b>
+<b class="fc">&nbsp;        oldTour.setSharedTourists(newTour.getSharedTourists());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Searches for tours according to the specified search criteria (all optional) and based on the requesting {@link User}.&lt;br&gt;
+&nbsp;     * In particular, the user role is used to determine the most appropriate search strategy to be used.&lt;br&gt;
+&nbsp;     * @param u requesting user
+&nbsp;     * @param s search criteria
+&nbsp;     * @return list of sorted tours matching the search criteria
+&nbsp;     * @throws NoSuchElementException if at least one of the search criteria is specified but does not match an existing entity
+&nbsp;     * @see TourSearchStrategy
+&nbsp;     * @see TourSearchDTO
+&nbsp;     */
+&nbsp;    public List&lt;Tour&gt; search(User u, TourSearchDTO s) throws NoSuchElementException {
+&nbsp;        // find entities of search criteria from ids
+<b class="fc">&nbsp;        City cityFilter = s.getCityId() != null ? cityService.findById(s.getCityId()) : null;</b>
+<b class="fc">&nbsp;        Theme themeFilter = s.getThemeId() != null ? themeService.findById(s.getThemeId()) : null;</b>
+<b class="fc">&nbsp;        List&lt;Tag&gt; tagsFilter = s.getTagIds() != null ? tagService.findAllById(s.getTagIds()) : null;</b>
+&nbsp;
+&nbsp;        // find appropriate search strategy based on user role
+<b class="fc">&nbsp;        TourSearchStrategy strategy = switch(UserRoleMapper.mapUserToRole(u)) {</b>
+<b class="fc">&nbsp;            case TOURIST -&gt; new TourSearchStrategyTourist();</b>
+<b class="fc">&nbsp;            case GUIDE -&gt; new TourSearchStrategyGuide();</b>
+<b class="fc">&nbsp;            case ADMINISTRATOR -&gt; new TourSearchStrategyAdministrator();</b>
+&nbsp;        };
+&nbsp;        // search and sort tours with the selected strategy, then return them
+<b class="fc">&nbsp;        TourSearch searcher = new TourSearch(strategy, tourRepository);</b>
+<b class="fc">&nbsp;        return searcher.searchWithStrategy(u, cityFilter, themeFilter, s.getApproxDuration(), tagsFilter);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a {@link Tour} entity with the given id.
+&nbsp;     * @param tourId id of the city
+&nbsp;     * @return tour with the given id
+&nbsp;     * @throws NoSuchElementException if no tour with the given id exists
+&nbsp;     */
+&nbsp;    public Tour findById(Long tourId) throws NoSuchElementException {
+<b class="fc">&nbsp;        return tourRepository.findById(tourId).orElseThrow();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns all{@link Tour} entities that have at least one report or none.
+&nbsp;     * @param isReported whether to search for tours with reports or without
+&nbsp;     * @return list of tours that match the given criteria
+&nbsp;     */
+&nbsp;    public List&lt;Tour&gt; findAllByReported(boolean isReported) {
+<b class="fc">&nbsp;        return tourRepository.findAllByReported(isReported);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    // if is public or is author or is one of the shared tourists
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns whether the given {@link Tour} entity is visible to the given {@link User}.&lt;br&gt;
+&nbsp;     * A tour is visible if it is:
+&nbsp;     * &lt;ul&gt;&lt;li&gt;
+&nbsp;     *     public
+&nbsp;     * &lt;/li&gt;&lt;li&gt;
+&nbsp;     *     private but the requesting user is a guide and also its author
+&nbsp;     * &lt;/li&gt;&lt;li&gt;
+&nbsp;     *     private but the requesting user a tourist and also among the shared tourists
+&nbsp;     * &lt;/li&gt;&lt;li&gt;
+&nbsp;     *     private but the requesting user is an administrator
+&nbsp;     * &lt;/li&gt;&lt;/ul&gt;
+&nbsp;     * @param t tour to be checked
+&nbsp;     * @param userId requesting user id
+&nbsp;     * @return whether the tour is visible to the user
+&nbsp;     */
+&nbsp;    public boolean isVisible(Tour t, Long userId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            return t.isPublic() || (t.getAuthor().getId().equals(userId) || t.getSharedTourists().stream().anyMatch(tt -&gt; tt.getId().equals(userId))) || administratorService.findById(userId) != null;</b>
+<b class="fc">&nbsp;        } catch (NoSuchElementException e) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns whether the given {@link Tour} entity is deletable by the given {@link User}.&lt;br&gt;
+&nbsp;     * A tour is deletable if the requesting user is:
+&nbsp;     * &lt;ul&gt;&lt;li&gt;
+&nbsp;     *     a guide and also its author
+&nbsp;     * &lt;/li&gt;&lt;li&gt;
+&nbsp;     *     an administrator
+&nbsp;     * &lt;/li&gt;&lt;/ul&gt;
+&nbsp;     * @param t tour to be checked
+&nbsp;     * @param userId requesting user id
+&nbsp;     * @return whether the tour is deletable by the user
+&nbsp;     */
+&nbsp;    public boolean isDeletable(Tour t, Long userId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            return t.getAuthor().getId().equals(userId) || administratorService.findById(userId) != null;</b>
+<b class="fc">&nbsp;        } catch (NoSuchElementException e) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deletes the given {@link Tour} entity.&lt;br&gt;
+&nbsp;     * In case this action is requested by client side, it is recommended to first {@link #isDeletable(Tour, Long) check} whether the action is allowed.
+&nbsp;     * @param t tour to be deleted
+&nbsp;     */
+&nbsp;    public void delete(Tour t) {
+<b class="fc">&nbsp;        tourRepository.delete(t);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Marks the given {@link Tour} entity as completed by the given {@link Tourist} entity.&lt;br&gt;
+&nbsp;     * @param t tour to be marked as completed
+&nbsp;     * @param tt requesting tourist
+&nbsp;     * @throws InteractionAlreadyPerformedException if the tourist has already marked the tour as completed
+&nbsp;     */
+&nbsp;    public void markAsCompleted(Tour t, Tourist tt) throws InteractionAlreadyPerformedException {
+&nbsp;        // check if the tourist has already marked the tour as completed
+<b class="fc">&nbsp;        List&lt;Tourist&gt; completes = t.getMarkedTourists();</b>
+<b class="fc">&nbsp;        if(completes.contains(tt))</b>
+<b class="fc">&nbsp;            throw new InteractionAlreadyPerformedException(t, tt);</b>
+&nbsp;
+<b class="fc">&nbsp;        completes.add(tt);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a {@link TourActionsResponseDTO} containing the available actions for the given {@link User} onto the specified {@link Tour} entity&lt;br&gt;
+&nbsp;     * Its purpose is to provide the client a way to dynamically show or hide UI elements based on actually performable actions.&lt;br&gt;
+&nbsp;     * It should not replace server side checks.
+&nbsp;     * @param t tour to be checked
+&nbsp;     * @param userId requesting user id
+&nbsp;     * @return available actions for the user
+&nbsp;     * @see TourActionsResponseDTO
+&nbsp;     */
+&nbsp;    public TourActionsResponseDTO getAvailableActions(Tour t, Long userId) {
+<b class="fc">&nbsp;        UserRole role = UserRoleMapper.mapUserToRole(userService.findById(userId)); // get user role</b>
+<b class="fc">&nbsp;        return TourActionsResponseDTO.builder()</b>
+&nbsp;                // create report: if user is tourist and has not already performed the action
+<b class="fc">&nbsp;                .createReport(role == UserRole.TOURIST &amp;&amp; t.getReports().stream().noneMatch(r -&gt; r.getAuthor().getId().equals(userId)))</b>
+&nbsp;                // mark as completed: see above
+<b class="fc">&nbsp;                .markAsCompleted(role == UserRole.TOURIST &amp;&amp; t.getMarkedTourists().stream().noneMatch(tt -&gt; tt.getId().equals(userId)))</b>
+&nbsp;                // review: see above, plus it must have previously marked the tour as completed
+<b class="fc">&nbsp;                .review(role == UserRole.TOURIST &amp;&amp; t.getReviews().stream().noneMatch(r -&gt; r.getAuthor().getId().equals(userId)) &amp;&amp; t.getMarkedTourists().stream().map(User::getId).anyMatch(userId::equals))</b>
+&nbsp;                // send message to guide from tour page: if user is tourist
+<b class="fc">&nbsp;                .sendMessage(role == UserRole.TOURIST)</b>
+&nbsp;                // edit tour: if user is guide and is also the author
+<b class="fc">&nbsp;                .edit(role == UserRole.GUIDE &amp;&amp; t.getAuthor().getId().equals(userId))</b>
+&nbsp;                // view reports: if user is administrator
+<b class="fc">&nbsp;                .viewReports(role == UserRole.ADMINISTRATOR)</b>
+&nbsp;                // delete tour: if user is administrator or is guide and is also the author
+<b class="fc">&nbsp;                .delete(role == UserRole.ADMINISTRATOR || (role == UserRole.GUIDE &amp;&amp; t.getAuthor().getId().equals(userId)))</b>
+<b class="fc">&nbsp;                .build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a list of {@link Tour} entities that are marked as completed by the given {@link Tourist} entity.&lt;br&gt;
+&nbsp;     * Note that excludes tours that are no longer visible to the tourist because they have been made private by the author and the tourist is not among the shared tourists.
+&nbsp;     * @param tt tourist to be checked
+&nbsp;     * @return list of tours that match the given criteria
+&nbsp;     */
+&nbsp;    public List&lt;Tour&gt; getCompletedTours(Tourist tt) {
+<b class="fc">&nbsp;        return tt.getMarkedTours().stream().filter(t -&gt; t.isPublic() || t.getSharedTourists().contains(tt)).collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

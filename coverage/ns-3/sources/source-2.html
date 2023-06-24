@@ -1,0 +1,245 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > UserController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.controller.user</a>
+</div>
+
+<h1>Coverage Summary for Class: UserController (com.what2see.controller.user)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserController</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (1/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5%
+  </span>
+  <span class="absValue">
+    (1/20)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">UserController$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (1/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4,8%
+  </span>
+  <span class="absValue">
+    (1/21)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.controller.user;
+&nbsp;
+&nbsp;import com.what2see.dto.user.UserLoginDTO;
+&nbsp;import com.what2see.dto.user.UserRegisterDTO;
+&nbsp;import com.what2see.dto.user.UserResponseDTO;
+&nbsp;import com.what2see.dto.user.UserRole;
+&nbsp;import com.what2see.mapper.user.GuideDTOMapper;
+&nbsp;import com.what2see.mapper.user.TouristDTOMapper;
+&nbsp;import com.what2see.mapper.user.UserDTOMapper;
+&nbsp;import com.what2see.model.user.Guide;
+&nbsp;import com.what2see.model.user.Tourist;
+&nbsp;import com.what2see.model.user.User;
+&nbsp;import com.what2see.service.user.UserService;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.dao.DataIntegrityViolationException;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import org.springframework.web.server.ResponseStatusException;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;import java.util.stream.Stream;
+&nbsp;
+&nbsp;/**
+&nbsp; * Controller for user endpoints
+&nbsp; * @see UserRole
+&nbsp; */
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/user&quot;)
+&nbsp;public class UserController {
+&nbsp;
+&nbsp;    // dependencies autowired by spring boot
+&nbsp;
+&nbsp;    private final UserService&lt;User&gt; userService;
+&nbsp;
+&nbsp;    private final UserService&lt;Tourist&gt; touristService;
+&nbsp;
+&nbsp;    private final UserService&lt;Guide&gt; guideService;
+&nbsp;
+&nbsp;    private final UserDTOMapper userMapper;
+&nbsp;
+&nbsp;    private final TouristDTOMapper touristMapper;
+&nbsp;
+&nbsp;    private final GuideDTOMapper guideMapper;
+&nbsp;
+&nbsp;
+&nbsp;    /*
+&nbsp;     * Some validations are not explicitly performed with try/catch&#39;s since RuntimeExceptions are expected to
+&nbsp;     * be called and managed from the Spring Boot container in case of failed validation or user not found.
+&nbsp;     */
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get all users of the specified role.&lt;br&gt;
+&nbsp;     * It is intended to only be used for tourists or guides, since administrators are not supposed to be known.
+&nbsp;     * @param roleId the role of the users to get
+&nbsp;     * @return list of users of the specified role
+&nbsp;     * @exception ResponseStatusException {@link HttpStatus#BAD_REQUEST} if the role is administrator
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/{roleId}&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;UserResponseDTO&gt;&gt; getAll(@PathVariable int roleId) {
+<b class="nc">&nbsp;        UserRole role = UserRole.values()[roleId];</b>
+<b class="nc">&nbsp;        Stream&lt;User&gt; response = switch(role) {</b>
+<b class="nc">&nbsp;            case TOURIST -&gt; touristService.findAll().stream().map(u -&gt; (User) u);</b>
+<b class="nc">&nbsp;            case GUIDE -&gt; guideService.findAll().stream().map(u -&gt; (User) u);</b>
+<b class="nc">&nbsp;            case ADMINISTRATOR -&gt; throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Non è possibile conoscere gli amministratori&quot;);</b>
+&nbsp;        };
+<b class="nc">&nbsp;        return ResponseEntity.ok(response.map(userMapper::convertResponse).collect(Collectors.toList()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Attempts to log in a user with the specified credentials.&lt;br&gt;
+&nbsp;     * Note that the {@link UserLoginDTO#username} field is trimmed and case-insensitive.
+&nbsp;     * @param l the credentials of the user to log in
+&nbsp;     * @return the logged user &lt;i&gt;or&lt;/i&gt;
+&nbsp;     * @exception ResponseStatusException {@link HttpStatus#BAD_REQUEST} if no user is found with the specified credentials
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/login&quot;)
+&nbsp;    public ResponseEntity&lt;UserResponseDTO&gt; login(@RequestBody @Valid UserLoginDTO l) {
+<b class="nc">&nbsp;        User logged = userService.login(l); // used generic user service in order to not have to check the role (username is unique)</b>
+<b class="nc">&nbsp;        if(logged != null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(userMapper.convertResponse(logged));</b>
+<b class="nc">&nbsp;        } else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Credenziali non valide&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Attempts to register a new user with the specified credentials.&lt;br&gt;
+&nbsp;     * It is intended to only be used for tourists or guides, since administrators are not supposed to be registered from outside the database.&lt;br&gt;
+&nbsp;     * Note that the {@link UserRegisterDTO#username} field is trimmed and case-insensitive while
+&nbsp;     * {@link UserRegisterDTO#firstName} and {@link UserRegisterDTO#lastName} fields are trimmed only.
+&nbsp;     * @param roleId the role of the user to register
+&nbsp;     * @param r the credentials and personal info of the user to register
+&nbsp;     * @return the registered user
+&nbsp;     * @exception ResponseStatusException {@link HttpStatus#BAD_REQUEST} if the username is already taken or if attempting to register an administrator
+&nbsp;     */
+&nbsp;    // username is trimmed and case-insensitive
+&nbsp;    // first name and last name are trimmed
+&nbsp;    @PostMapping(&quot;/{roleId}/register&quot;)
+&nbsp;    public ResponseEntity&lt;UserResponseDTO&gt; register(@PathVariable int roleId, @RequestBody @Valid UserRegisterDTO r) {
+&nbsp;        User created;
+<b class="nc">&nbsp;        UserRole role = UserRole.values()[roleId];</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            created = switch(role) {</b>
+<b class="nc">&nbsp;                case TOURIST -&gt; touristService.register(touristMapper.convertRegister(r));</b>
+<b class="nc">&nbsp;                case GUIDE -&gt; guideService.register(guideMapper.convertRegister(r));</b>
+<b class="nc">&nbsp;                case ADMINISTRATOR -&gt; throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Non è possibile registrare nuovi amministratori&quot;);</b>
+&nbsp;            };
+<b class="nc">&nbsp;        } catch (DataIntegrityViolationException e) {</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Username già esistente&quot;);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(userMapper.convertResponse(created));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

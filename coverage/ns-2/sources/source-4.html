@@ -1,0 +1,440 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > TourController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.controller.tour</a>
+</div>
+
+<h1>Coverage Summary for Class: TourController (com.what2see.controller.tour)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TourController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    6,2%
+  </span>
+  <span class="absValue">
+    (1/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1,5%
+  </span>
+  <span class="absValue">
+    (1/67)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.controller.tour;
+&nbsp;
+&nbsp;
+&nbsp;import com.what2see.dto.tour.*;
+&nbsp;import com.what2see.dto.user.UserResponseDTO;
+&nbsp;import com.what2see.exception.InteractionAlreadyPerformedException;
+&nbsp;import com.what2see.exception.TourNotMarkedException;
+&nbsp;import com.what2see.mapper.tour.ReportDTOMapper;
+&nbsp;import com.what2see.mapper.tour.ReviewDTOMapper;
+&nbsp;import com.what2see.mapper.tour.TourDTOMapper;
+&nbsp;import com.what2see.mapper.user.UserDTOMapper;
+&nbsp;import com.what2see.model.tour.Report;
+&nbsp;import com.what2see.model.tour.Review;
+&nbsp;import com.what2see.model.tour.Tour;
+&nbsp;import com.what2see.model.user.Administrator;
+&nbsp;import com.what2see.model.user.Guide;
+&nbsp;import com.what2see.model.user.Tourist;
+&nbsp;import com.what2see.model.user.User;
+&nbsp;import com.what2see.service.tour.ReportService;
+&nbsp;import com.what2see.service.tour.ReviewService;
+&nbsp;import com.what2see.service.tour.TagService;
+&nbsp;import com.what2see.service.tour.TourService;
+&nbsp;import com.what2see.service.user.UserService;
+&nbsp;import jakarta.validation.Valid;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.dao.DataIntegrityViolationException;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import org.springframework.web.server.ResponseStatusException;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;/**
+&nbsp; * Controller for tour endpoints
+&nbsp; */
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/tour&quot;)
+&nbsp;public class TourController {
+&nbsp;
+&nbsp;    // dependencies autowired by spring boot
+&nbsp;
+&nbsp;    private final TourService tourService;
+&nbsp;
+&nbsp;    private final TourDTOMapper tourMapper;
+&nbsp;
+&nbsp;    private final TagService tagService;
+&nbsp;
+&nbsp;    private final ReviewService reviewService;
+&nbsp;
+&nbsp;    private final ReviewDTOMapper reviewMapper;
+&nbsp;
+&nbsp;    private final ReportService reportService;
+&nbsp;
+&nbsp;    private final ReportDTOMapper reportMapper;
+&nbsp;
+&nbsp;    private final UserService&lt;User&gt; userService;
+&nbsp;
+&nbsp;    private final UserService&lt;Tourist&gt; touristService;
+&nbsp;
+&nbsp;    private final UserService&lt;Guide&gt; guideService;
+&nbsp;
+&nbsp;    private final UserService&lt;Administrator&gt; administratorService;
+&nbsp;
+&nbsp;    private final UserDTOMapper userMapper;
+&nbsp;
+&nbsp;
+&nbsp;    /*
+&nbsp;     * Some validations are not explicitly performed with try/catch&#39;s since RuntimeExceptions are expected to
+&nbsp;     * be called and managed from the Spring Boot container in case of failed validation or user not found.
+&nbsp;     */
+&nbsp;
+&nbsp;    // -------
+&nbsp;    // GET
+&nbsp;    // -------
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get a specific tour by its ID
+&nbsp;     * @param tourId wanted tour
+&nbsp;     * @param userId requesting user
+&nbsp;     * @return wanted tour DTO
+&nbsp;     * @exception ResponseStatusException {@link HttpStatus#UNAUTHORIZED} if user is not authorized to see the wanted tour
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/{tourId}&quot;)
+&nbsp;    public ResponseEntity&lt;TourResponseDTO&gt; getById(@PathVariable Long tourId, @RequestHeader(value=&quot;Authentication&quot;) Long userId) {
+<b class="nc">&nbsp;        Tour t = tourService.findById(tourId);</b>
+<b class="nc">&nbsp;        userService.findById(userId);</b>
+<b class="nc">&nbsp;        if(!tourService.isVisible(t, userId)) { // ensure user (tourist, guide or administrator) can actually see the wanted tour</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, &quot;Non sei autorizzato a visualizzare questo tour&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ResponseEntity.ok(tourMapper.convertResponse(t));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get all tours that match &lt;b&gt;all&lt;/b&gt; specified criteria.&lt;br&gt;
+&nbsp;     * For tags, it is sufficient that at least one is present.&lt;br&gt;
+&nbsp;     * For maximum duration, it is sufficient that it is lower or equal.
+&nbsp;     * @param s DTO representing criteria (city and/or tags and/or theme and/or maximum duration) to search with
+&nbsp;     * @param userId requesting user
+&nbsp;     * @return list of tours that match all specified criteria
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/search&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;TourResponseDTO&gt;&gt; search(@Valid TourSearchDTO s, @RequestHeader(value=&quot;Authentication&quot;) Long userId) {
+<b class="nc">&nbsp;        User u = userService.findById(userId);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(tourMapper.convertResponse(tourService.search(u, s)));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get the interactions that the requesting user is able to perform on the specified tour.&lt;br&gt;
+&nbsp;     * @param tourId tour to check
+&nbsp;     * @param userId requesting user
+&nbsp;     * @return list of available actions as key (actionName) / value (boolean) DTO
+&nbsp;     * @see TourActionsResponseDTO
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/{tourId}/availableActions&quot;)
+&nbsp;    public ResponseEntity&lt;TourActionsResponseDTO&gt; getAvailableActions(@PathVariable Long tourId, @RequestHeader(value=&quot;Authentication&quot;) Long userId) {
+<b class="nc">&nbsp;        Tour t = tourService.findById(tourId);</b>
+<b class="nc">&nbsp;        userService.findById(userId);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(this.tourService.getAvailableActions(t, userId));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get the list of &lt;i&gt;users&lt;/i&gt; that have been shared the specified tour with and therefore are able to see it even if private.&lt;br&gt;
+&nbsp;     * It is intended to only be used by the tour author guide.
+&nbsp;     * @param tourId tour to check
+&nbsp;     * @param guideId requesting guide (tour&#39;s author)
+&nbsp;     * @return list of users that have been shared the specified tour with
+&nbsp;     * @exception ResponseStatusException {@link HttpStatus#UNAUTHORIZED} if user is not tour&#39;s author
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/{tourId}/shared&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;UserResponseDTO&gt;&gt; getSharedTourists(@PathVariable Long tourId, @RequestHeader(value=&quot;Authentication&quot;) Long guideId) {
+<b class="nc">&nbsp;        Tour t = tourService.findById(tourId);</b>
+<b class="nc">&nbsp;        Guide g = guideService.findById(guideId);</b>
+<b class="nc">&nbsp;        if(!t.getAuthor().equals(g)) {  // ensure guide is actually the tour&#39;s author</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, &quot;Non sei autorizzato a visualizzare le condivisioni di questo tour&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ResponseEntity.ok(t.getSharedTourists().stream().map(userMapper::convertResponse).collect(Collectors.toList()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get the list of tours that have been shared with the requesting user and therefore is able to see even if private.&lt;br&gt;
+&nbsp;     * @param touristId requesting tourist
+&nbsp;     * @return list of tours that have been shared with the requesting user
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/shared&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;TourResponseDTO&gt;&gt; getSharedWithMe(@RequestHeader(value=&quot;Authentication&quot;) Long touristId) {
+<b class="nc">&nbsp;        Tourist t = touristService.findById(touristId);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(tourMapper.convertResponse(t.getSharedTours()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get the list of tours that have at have been reported at least once
+&nbsp;     * @param administratorId requesting administrator
+&nbsp;     * @return list of tours that have at have been reported at least once
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/reported&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;TourResponseDTO&gt;&gt; getReported(@RequestHeader(value=&quot;Authentication&quot;) Long administratorId) {
+<b class="nc">&nbsp;        administratorService.findById(administratorId);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(tourMapper.convertResponse(tourService.findAllByReported(true)));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get the list of tours that have been created by the requesting guide
+&nbsp;     * @param guideId requesting guide
+&nbsp;     * @return list of tours that have been created by the requesting guide
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/created&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;TourResponseDTO&gt;&gt; getCreatedByMe(@RequestHeader(value=&quot;Authentication&quot;) Long guideId) {
+<b class="nc">&nbsp;        Guide g = guideService.findById(guideId);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(tourMapper.convertResponse(g.getCreatedTours()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get the list of &lt;i&gt;reports&lt;/i&gt; created by tourists onto the specified tour
+&nbsp;     * @param tourId tour to check
+&nbsp;     * @param administratorId requesting administrator
+&nbsp;     * @return list of reports created by tourists onto the specified tour
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/{tourId}/report&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;ReportResponseDTO&gt;&gt; getReportsById(@PathVariable Long tourId, @RequestHeader(value=&quot;Authentication&quot;) Long administratorId) {
+<b class="nc">&nbsp;        administratorService.findById(administratorId);</b>
+<b class="nc">&nbsp;        List&lt;Report&gt; reports = tourService.findById(tourId).getReports();</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(reports.stream().map(reportMapper::convertResponse).collect(Collectors.toList()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get the list of tours that have been completed by the requesting tourist
+&nbsp;     * @param touristId requesting tourist
+&nbsp;     * @return list of tours that have been completed by the requesting tourist
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/completed&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;TourResponseDTO&gt;&gt; getCompletedByMe(@RequestHeader(value=&quot;Authentication&quot;) Long touristId) {
+<b class="nc">&nbsp;        Tourist t = touristService.findById(touristId);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(tourMapper.convertResponse(tourService.getCompletedTours(t)));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // -------
+&nbsp;    // PATCH
+&nbsp;    // -------
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Edit the specified tour with the provided data.&lt;br&gt;
+&nbsp;     * It is intended to only be used by the tour author guide.
+&nbsp;     * @param editedTour DTO representing the data to update the tour with.
+&nbsp;     *                   It is essentially the same object that is returned by {@link TourController#create} method, 
+&nbsp;     *                   with modifications to the fields that are expected to be changed.
+&nbsp;     * @param tourId tour to edit
+&nbsp;     * @param guideId requesting guide (must be the tour&#39;s author)
+&nbsp;     * @return the updated tour
+&nbsp;     * @exception ResponseStatusException {@link HttpStatus#UNAUTHORIZED} if user is not tour&#39;s author
+&nbsp;     */
+&nbsp;    @PatchMapping(&quot;/{tourId}&quot;)
+&nbsp;    public ResponseEntity&lt;TourResponseDTO&gt; editById(@RequestBody @Valid TourCreateDTO editedTour, @PathVariable Long tourId, @RequestHeader(value=&quot;Authentication&quot;) Long guideId) {
+<b class="nc">&nbsp;        Tour oldTour = tourService.findById(tourId);</b>
+<b class="nc">&nbsp;        Guide g = guideService.findById(guideId);</b>
+<b class="nc">&nbsp;        if(!oldTour.getAuthor().equals(g)) {  // ensure guide is actually the tour&#39;s author</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, &quot;Non sei autorizzato a modificre questo tour&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        tourService.update(oldTour, tourMapper.convertCreate(editedTour, guideId));</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(tourMapper.convertResponse(oldTour));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // -------
+&nbsp;    // DELETE
+&nbsp;    // -------
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Delete the specified tour.&lt;br&gt;
+&nbsp;     * It is intended to only be used by the tour author guide or by an administrator.
+&nbsp;     * @param tourId tour to delete
+&nbsp;     * @param userId requesting guide (must be the tour&#39;s author or an administrator)
+&nbsp;     * @return {@link HttpStatus#OK} (empty response body) if the tour has been deleted successfully
+&nbsp;     * @exception ResponseStatusException {@link HttpStatus#UNAUTHORIZED} if user is not tour&#39;s author or an administrator
+&nbsp;     */
+&nbsp;    @DeleteMapping(&quot;/{tourId}&quot;)
+&nbsp;    public ResponseEntity&lt;Void&gt; deleteById(@PathVariable Long tourId, @RequestHeader(value=&quot;Authentication&quot;) Long userId) {
+<b class="nc">&nbsp;        Tour t = tourService.findById(tourId);</b>
+<b class="nc">&nbsp;        userService.findById(userId);</b>
+<b class="nc">&nbsp;        if(!tourService.isDeletable(t, userId)) {   // ensure user is actually the tour&#39;s author or an administrator</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, &quot;Non sei autorizzato a eliminare questo tour&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        tourService.delete(t);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok().build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // -------
+&nbsp;    // POST
+&nbsp;    // -------
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create a new tour with the provided data.&lt;br&gt;
+&nbsp;     * The title must be unique and tags will be created on the fly if not already existing.
+&nbsp;     * @param t DTO representing the data to create the tour with
+&nbsp;     * @param guideId requesting guide
+&nbsp;     * @return the created tour
+&nbsp;     * @exception ResponseStatusException {@link HttpStatus#BAD_REQUEST} if the tour name is already taken
+&nbsp;     */
+&nbsp;    @PostMapping()
+&nbsp;    public ResponseEntity&lt;TourResponseDTO&gt; create(@RequestBody @Valid TourCreateDTO t, @RequestHeader(value=&quot;Authentication&quot;) Long guideId) {
+<b class="nc">&nbsp;        guideService.findById(guideId);</b>
+<b class="nc">&nbsp;        tagService.createByNames(t.getTagNames()); // create tags if not already existing</b>
+&nbsp;        Tour created;
+&nbsp;        try {
+<b class="nc">&nbsp;            created = tourService.create(tourMapper.convertCreate(t, guideId));</b>
+<b class="nc">&nbsp;        } catch (DataIntegrityViolationException e) {</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Nome tour già esistente&quot;);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(tourMapper.convertResponse(created));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Leave a new review on the specified tour.&lt;br&gt;
+&nbsp;     * It is intended to only be used by a tourist that has actually marked the tour as {@link TourController#markAsCompletedByMe completed} and only once per tour.
+&nbsp;     * @param tourId tour to review
+&nbsp;     * @param r DTO representing the data to create the review with
+&nbsp;     * @param touristId requesting tourist
+&nbsp;     * @return the created review
+&nbsp;     * @exception ResponseStatusException {@link HttpStatus#BAD_REQUEST} if the tour was not marked as completed or if was already reviewed by the requesting tourist
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/{tourId}/review&quot;)
+&nbsp;    public ResponseEntity&lt;ReviewResponseDTO&gt; createReview(@PathVariable Long tourId, @RequestBody @Valid ReviewCreateDTO r, @RequestHeader(value=&quot;Authentication&quot;) Long touristId) {
+<b class="nc">&nbsp;        touristService.findById(touristId);</b>
+&nbsp;        Review createdReview;
+&nbsp;        try {
+<b class="nc">&nbsp;            createdReview = reviewService.create(reviewMapper.convertCreate(r, tourId, touristId));</b>
+<b class="nc">&nbsp;        } catch (TourNotMarkedException e) {</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Non è possibile recensire tour che non sono stati segnati come percorsi&quot;);</b>
+<b class="nc">&nbsp;        } catch (InteractionAlreadyPerformedException e) {</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Hai già recensito questo tour&quot;);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(reviewMapper.convertResponse(createdReview));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Leave a new report on the specified tour.&lt;br&gt;
+&nbsp;     * It is intended to only be used by a tourist once per tour.
+&nbsp;     * @param tourId tour to report
+&nbsp;     * @param r DTO representing the data to create the report with
+&nbsp;     * @param touristId requesting tourist
+&nbsp;     * @return the created report
+&nbsp;     * @exception ResponseStatusException {@link HttpStatus#BAD_REQUEST} if the tour was already reported by the requesting tourist
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/{tourId}/report&quot;)
+&nbsp;    public ResponseEntity&lt;ReportResponseDTO&gt; createReport(@PathVariable Long tourId, @RequestBody @Valid ReportCreateDTO r, @RequestHeader(value=&quot;Authentication&quot;) Long touristId) {
+<b class="nc">&nbsp;        touristService.findById(touristId);</b>
+&nbsp;        Report createdReport;
+&nbsp;        try {
+<b class="nc">&nbsp;            createdReport = reportService.create(reportMapper.convertCreate(r, tourId, touristId));</b>
+<b class="nc">&nbsp;        } catch (InteractionAlreadyPerformedException e) {</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Hai già segnalato questo tour&quot;);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(reportMapper.convertResponse(createdReport));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Mark the specified tour as completed by the requesting tourist.&lt;br&gt;
+&nbsp;     * It is intended to only be used by a tourist once per tour.
+&nbsp;     * @param tourId tour to mark as completed
+&nbsp;     * @param touristId requesting tourist
+&nbsp;     * @return {@link HttpStatus#OK} (empty response body) if the tour has been marked as completed successfully
+&nbsp;     * @exception ResponseStatusException {@link HttpStatus#BAD_REQUEST} if the tour was already marked as completed by the requesting tourist
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/{tourId}/completed&quot;)
+&nbsp;    public ResponseEntity&lt;Void&gt; markAsCompletedByMe(@PathVariable Long tourId, @RequestHeader(value=&quot;Authentication&quot;) Long touristId) {
+<b class="nc">&nbsp;        Tour t = tourService.findById(tourId);</b>
+<b class="nc">&nbsp;        Tourist tt = touristService.findById(touristId);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            tourService.markAsCompleted(t, tt);</b>
+<b class="nc">&nbsp;        } catch (InteractionAlreadyPerformedException e) {</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;Hai già segnato come percorso questo tour&quot;);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok().build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

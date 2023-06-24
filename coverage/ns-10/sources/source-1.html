@@ -1,0 +1,95 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > AdministratorRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.repository.user</a>
+</div>
+
+<h1>Coverage Summary for Class: AdministratorRepository (com.what2see.repository.user)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">AdministratorRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.repository.user;
+&nbsp;
+&nbsp;import com.what2see.model.user.Administrator;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;/**
+&nbsp; * Repository that provides CRUD operations for {@link Administrator} entities.&lt;br&gt;
+&nbsp; * Only overrides interface method for typing purposes.&lt;br&gt;
+&nbsp; * Should be injected as &lt;code&gt;UserRepository&amp;lt;Administrator&amp;gt;&lt;/code&gt; for type safety.
+&nbsp; * @see UserRepository
+&nbsp; */
+&nbsp;@Repository
+&nbsp;public interface AdministratorRepository extends UserRepository&lt;Administrator&gt; {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Authenticates an {@link Administrator} with the given username and password.
+&nbsp;     * @param username username to test with
+&nbsp;     * @param password password to test with
+&nbsp;     * @return authenticated entity if found, {@link Optional#empty()} otherwise
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    @Query(&quot;select t from Administrator t where t.username = :username and t.password = :password&quot;)
+&nbsp;    Optional&lt;Administrator&gt; authenticate(String username, String password);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

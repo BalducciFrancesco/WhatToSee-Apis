@@ -1,0 +1,182 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > TourSearchStrategyAdministrator</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.service.tour.search</a>
+</div>
+
+<h1>Coverage Summary for Class: TourSearchStrategyAdministrator (com.what2see.service.tour.search)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TourSearchStrategyAdministrator</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.service.tour.search;
+&nbsp;
+&nbsp;import com.what2see.model.tour.City;
+&nbsp;import com.what2see.model.tour.Tag;
+&nbsp;import com.what2see.model.tour.Theme;
+&nbsp;import com.what2see.model.tour.Tour;
+&nbsp;import com.what2see.model.user.User;
+&nbsp;import com.what2see.repository.tour.TourRepository;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;import java.util.stream.Stream;
+&nbsp;
+&nbsp;/**
+&nbsp; * Implementation of the &lt;b&gt;Strategy&lt;/b&gt; design pattern.&lt;br&gt;
+&nbsp; * This class represents a concrete strategy for searching tours that is suitable for &lt;b&gt;Administrators&lt;/b&gt;.&lt;br&gt;
+&nbsp; * This strategy can look for &lt;b&gt;public and private&lt;/b&gt;e tours and sort them by &lt;i&gt;descending&lt;/i&gt; order based on the following criteria (order of precedence):
+&nbsp; * &lt;ol&gt;&lt;li&gt;
+&nbsp; *     reports count
+&nbsp; * &lt;/li&gt;&lt;li&gt;
+&nbsp; *     reviews count
+&nbsp; * &lt;/li&gt;&lt;li&gt;
+&nbsp; *     marked count
+&nbsp; * &lt;/li&gt;&lt;/ol&gt;
+&nbsp; */
+<b class="fc">&nbsp;public class TourSearchStrategyAdministrator implements TourSearchStrategy {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Searches tours based on the given parameters independently of their visibility.
+&nbsp;     * @param repository tour repository (should be autowired in the client class)
+&nbsp;     * @param requesting administrator that is requesting the search
+&nbsp;     * @param city city filter (optional)
+&nbsp;     * @param theme theme filter (optional)
+&nbsp;     * @param approxDuration maximum duration filter (optional)
+&nbsp;     * @param tags tags filter (optional)
+&nbsp;     * @return list of tours that match the given criteria
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public List&lt;Tour&gt; executeSearch(TourRepository repository, User requesting, City city, Theme theme, String approxDuration, List&lt;Tag&gt; tags) {
+<b class="fc">&nbsp;        Stream&lt;Tour&gt; result = repository.searchAll(city, theme, approxDuration).stream();   // get all tours that match the given criteria, whether they are public or private</b>
+<b class="fc">&nbsp;        if(tags != null &amp;&amp; !tags.isEmpty()) {</b>
+&nbsp;            // filter the tours for those who contain at least one of the requested tags
+<b class="fc">&nbsp;            result = result.filter(tour -&gt; tour.getTags().stream().anyMatch(tags::contains));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result.collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sorts the given list of tours by &lt;i&gt;descending&lt;/i&gt; order based on the following criteria (order of precedence):
+&nbsp;     * &lt;ol&gt;&lt;li&gt;
+&nbsp;     *     reports count
+&nbsp;     * &lt;/li&gt;&lt;li&gt;
+&nbsp;     *     reviews count
+&nbsp;     * &lt;/li&gt;&lt;li&gt;
+&nbsp;     *     marked count
+&nbsp;     * &lt;/li&gt;&lt;/ol&gt;
+&nbsp;     * @param toSort list of tours to sort
+&nbsp;     * @param repository tour repository (should be autowired in the client class)
+&nbsp;     * @param requesting administrator that is requesting the ordering
+&nbsp;     * @param city city filter (optional)
+&nbsp;     * @param theme theme filter (optional)
+&nbsp;     * @param approxDuration maximum duration filter (optional)
+&nbsp;     * @param tags tags filter (optional)
+&nbsp;     * @return sorted list of tours passed as first parameter
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public List&lt;Tour&gt; executeSort(List&lt;Tour&gt; toSort, TourRepository repository, User requesting, City city, Theme theme, String approxDuration, List&lt;Tag&gt; tags) {
+<b class="fc">&nbsp;        List&lt;Tour&gt; sorted = new ArrayList&lt;&gt;(toSort);</b>
+<b class="fc">&nbsp;        sorted.sort((Tour t1, Tour t2) -&gt; {</b>
+<b class="fc">&nbsp;            int reportComp = t2.getReports().size() - t1.getReports().size();</b>
+<b class="fc">&nbsp;            int reviewComp = t2.getReviews().size() - t1.getReviews().size();</b>
+<b class="fc">&nbsp;            int markedComp = t2.getMarkedTourists().size() - t1.getMarkedTourists().size();</b>
+<b class="fc">&nbsp;            return reportComp != 0 ? reportComp : reviewComp != 0 ? reviewComp : markedComp;</b>
+&nbsp;        });
+<b class="fc">&nbsp;        return sorted;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

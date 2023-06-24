@@ -1,0 +1,196 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ConversationDTOMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.mapper.user</a>
+</div>
+
+<h1>Coverage Summary for Class: ConversationDTOMapper (com.what2see.mapper.user)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ConversationDTOMapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (1/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4,2%
+  </span>
+  <span class="absValue">
+    (1/24)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.mapper.user;
+&nbsp;
+&nbsp;import com.what2see.dto.user.ConversationCreateDTO;
+&nbsp;import com.what2see.dto.user.ConversationResponseDTO;
+&nbsp;import com.what2see.model.user.Conversation;
+&nbsp;import com.what2see.model.user.Guide;
+&nbsp;import com.what2see.model.user.Message;
+&nbsp;import com.what2see.model.user.Tourist;
+&nbsp;import com.what2see.service.user.UserService;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;/**
+&nbsp; * Service that converts {@link Conversation} entities from and to DTOs.&lt;br&gt;
+&nbsp; * Is usually used in controller to communicate with client side.
+&nbsp; */
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;@Service
+&nbsp;public class ConversationDTOMapper {
+&nbsp;
+&nbsp;    // dependencies autowired by spring boot
+&nbsp;
+&nbsp;    private final UserService&lt;Guide&gt; guideService;
+&nbsp;
+&nbsp;    private final UserService&lt;Tourist&gt; touristService;
+&nbsp;
+&nbsp;    private final UserDTOMapper userMapper;
+&nbsp;
+&nbsp;    private final MessageDTOMapper messageMapper;
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Converts a {@link ConversationCreateDTO DTO} to a {@link Conversation entity} that can be persisted
+&nbsp;     * @param c DTO to be converted
+&nbsp;     * @param touristId id of the tourist that is creating the conversation
+&nbsp;     * @return entity that can be persisted
+&nbsp;     */
+&nbsp;    public Conversation convertCreate(ConversationCreateDTO c, Long touristId) {
+<b class="nc">&nbsp;        Message m = Message.builder()</b>
+<b class="nc">&nbsp;                .content(c.getMessage())</b>
+<b class="nc">&nbsp;                .direction(false)</b>
+<b class="nc">&nbsp;                .build();</b>
+<b class="nc">&nbsp;        Conversation conversation = Conversation.builder()</b>
+<b class="nc">&nbsp;                .guide(guideService.findById(c.getGuideId()))</b>
+<b class="nc">&nbsp;                .tourist(touristService.findById(touristId))</b>
+<b class="nc">&nbsp;                .messages(List.of(m))</b>
+<b class="nc">&nbsp;                .build();</b>
+<b class="nc">&nbsp;        m.setConversation(conversation);    // important because of single-side relation ownership</b>
+<b class="nc">&nbsp;        return conversation;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Converts a {@link Conversation entity} to a {@link ConversationResponseDTO DTO} that can be sent to client
+&nbsp;     * @param c entity to be converted
+&nbsp;     * @return DTO that can be sent to client
+&nbsp;     */
+&nbsp;    public ConversationResponseDTO convertResponse(Conversation c) {
+<b class="nc">&nbsp;        return ConversationResponseDTO.builder()</b>
+<b class="nc">&nbsp;                .id(c.getId())</b>
+<b class="nc">&nbsp;                .tourist(userMapper.convertResponse(c.getTourist()))</b>
+<b class="nc">&nbsp;                .guide(userMapper.convertResponse(c.getGuide()))</b>
+<b class="nc">&nbsp;                .messages(messageMapper.convertResponse(c.getMessages()))</b>
+<b class="nc">&nbsp;                .build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Converts a {@link Conversation entity} to a {@link ConversationResponseDTO DTO} that can be sent to client.&lt;br&gt;
+&nbsp;     * Note that this DTO does not contain the messages of the conversation. Can be used to reduce the amount of data sent to client.
+&nbsp;     * @param c entity to be converted
+&nbsp;     * @return DTO that can be sent to client
+&nbsp;     */
+&nbsp;    public ConversationResponseDTO convertResponseLight(Conversation c) {
+<b class="nc">&nbsp;        return ConversationResponseDTO.builder()</b>
+<b class="nc">&nbsp;                .id(c.getId())</b>
+<b class="nc">&nbsp;                .tourist(userMapper.convertResponse(c.getTourist()))</b>
+<b class="nc">&nbsp;                .guide(userMapper.convertResponse(c.getGuide()))</b>
+<b class="nc">&nbsp;                .build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Converts a list of {@link Conversation entities} to a list of {@link ConversationResponseDTO DTOs} that can be sent to client.&lt;br&gt;
+&nbsp;     * Note that these DTOs do not contain the messages of the conversations. Can be used to reduce the amount of data sent to client.
+&nbsp;     * @param c list of entities to be converted
+&nbsp;     * @return list of DTOs that can be sent to client
+&nbsp;     */
+&nbsp;    public List&lt;ConversationResponseDTO&gt; convertResponseLight(List&lt;Conversation&gt; c) {
+<b class="nc">&nbsp;        return c.stream().map(this::convertResponseLight).collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>

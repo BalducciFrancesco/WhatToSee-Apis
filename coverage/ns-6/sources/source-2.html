@@ -1,0 +1,157 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > InteractionAlreadyPerformedException</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.what2see.exception</a>
+</div>
+
+<h1>Coverage Summary for Class: InteractionAlreadyPerformedException (com.what2see.exception)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">InteractionAlreadyPerformedException</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    11,1%
+  </span>
+  <span class="absValue">
+    (1/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    27,3%
+  </span>
+  <span class="absValue">
+    (3/11)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.what2see.exception;
+&nbsp;
+&nbsp;import com.what2see.model.tour.Tour;
+&nbsp;import com.what2see.model.user.Tourist;
+&nbsp;
+&nbsp;/**
+&nbsp; * Exception thrown when a user tries to interact with a tour when that interaction has already been performed and isn&#39;t expected to be repeatable.
+&nbsp; * (e.g. tourist tries to mark / review / report a tour multiple times)
+&nbsp; * @see com.what2see.service.tour.ReviewService#create
+&nbsp; */
+&nbsp;public class InteractionAlreadyPerformedException extends RuntimeException {
+&nbsp;
+&nbsp;    private Tour tour;
+&nbsp;
+&nbsp;    private Tourist tourist;
+&nbsp;
+<b class="fc">&nbsp;    public InteractionAlreadyPerformedException(Tour tour, Tourist tourist) {</b>
+<b class="fc">&nbsp;        this.tour = tour;</b>
+<b class="fc">&nbsp;        this.tourist = tourist;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public InteractionAlreadyPerformedException(String message) {
+<b class="nc">&nbsp;        super(message);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public InteractionAlreadyPerformedException(String message, Throwable cause) {
+<b class="nc">&nbsp;        super(message, cause);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public InteractionAlreadyPerformedException(Throwable cause) {
+<b class="nc">&nbsp;        super(cause);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public InteractionAlreadyPerformedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+<b class="nc">&nbsp;        super(message, cause, enableSuppression, writableStackTrace);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Tour getTour() {
+<b class="nc">&nbsp;        return tour;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setTour(Tour tour) {
+<b class="nc">&nbsp;        this.tour = tour;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Tourist getTourist() {
+<b class="nc">&nbsp;        return tourist;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setTourist(Tourist tourist) {
+<b class="nc">&nbsp;        this.tourist = tourist;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-06-21 21:50</div>
+</div>
+</body>
+</html>
